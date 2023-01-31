@@ -69,14 +69,28 @@ class FileOperation:
         with open(self.cammy_data_path, 'r', encoding='utf-8') as file:
             return json.load(file)
 
-    def write_json_file(self, json_data: dict) -> bool:
+    def write_json_file(self, json_data: dict) -> [bool, str]:
         """写入JSON文件
         :param json_data 写入的数据
-        :return: bool
+        :return: [bool, str]
         """
-        with open(self.cammy_data_path, 'w', encoding='utf-8') as file:
-            json.dump(json_data, file)
-        return True
+        try:
+            with open(self.cammy_data_path, 'r', encoding='utf-8') as file:
+                old_json_data: dict = json.load(file)
+            if self.json_is_empty():
+                # 判断是否为初始化时创建的数据,如果不是则追加,如果是则覆盖
+                print(json_data.values())
+                old_json_data[list(json_data.keys())[0]] = list(json_data.values())[0]
+            else:
+                old_json_data.clear()
+                print(json_data.keys())
+                old_json_data[list(json_data.keys())[0]] = list(json_data.values())[0]
+            with open(self.cammy_data_path, 'w', encoding='utf-8') as file:
+                json.dump(old_json_data, file)
+            return True
+        except Exception as msg:
+            print(msg)
+            return False, msg
 
     def json_is_empty(self) -> bool:
         """判断Json是否为空或者为初始化创建的
@@ -85,8 +99,13 @@ class FileOperation:
         """
         try:
             with open(self.cammy_data_path, 'r', encoding='utf-8') as file:
-                print(json.load(file)['0'])
-            return True
+                json_data: dict = json.load(file)
+            for i in json_data.keys():
+                # 判断是否为初始化创建的数据
+                if i == '0':
+                    return False
+                else:
+                    return True
         except NameError:
             self.del_json_found()
             return False

@@ -22,14 +22,14 @@ QListWidget#list_widget {
 }
 QListWidget#list_widget::item {
     border-radius: 10px;
-    margin: 10px 2px 10px 2px;
-    padding: 10px 2px 10px 2px;
+    margin: 10px 2px 10px 4px;
+    padding: 10px 2px 10px 4px;
     background-color: #FFFFFF;
 }
 QListWidget#list_widget::item:hover {
-    border: 1px solid #8B8989;
+    border: 0px solid #8B8989;
     show-decoration-selected:0;
-    background:#8B8989;
+    background-color:#8B8989;
     color:#CDC9C9;
 }
 QListWidget#list_widget::item:selected {
@@ -92,34 +92,25 @@ QStackedWidget#right_stacked_widget {
     border-bottom-right-radius: 15;
 }
 
-QWidget#null_widget {
-    border-radius: 8px;
-    background-color: #E0E0E0;
-}
-QWidget#null_widget:hover {
-    border-radius: 8px;
-    background-color: #CBCBCB;
-}
-QWidget#null_widget:pressed {
-    border-radius: 8px;
-    background-color: #CBCBCB;
-}
-QLabel#null_label {
-    color:#838B8B;
-    background: #E0E0E0;
-}
-
+/*滚动窗体控件设置*/
 QScrollArea#scroll {
     background-color: #F2F2F2;
     border: 0px solid #F2F2F2;
 }
 QScrollArea#scroll QWidget {
+    /*设置滚动窗体子类的QWidget*/
     background-color: #F2F2F2;
     border:0px solid #F2F2F2;
+    border-radius: 8px;
 }
 QScrollArea#scroll QWidget:hover {
+    /*设置滚动窗体子类的QWidget*/
     background-color: #F2F2F2;
-    border:0px solid #F2F2F2;
+    border: 0px solid #F2F2F2;
+}
+QScrollArea#scroll QWidget QLabel {
+    /*设置滚动窗体子类QWidget的子类QLabel*/
+    background-color: transparent;
 }
 QScrollArea#scroll QScrollBar {
     background-color: #F2F2F2;

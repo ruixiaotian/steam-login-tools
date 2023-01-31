@@ -197,7 +197,7 @@ class SteamLoginUI(QMainWindow):
         self.login_list_layout = QVBoxLayout()  # 设置布局
 
         # 判断是否为初始化
-        if FileOperation().json_is_empty():
+        if not FileOperation().json_is_empty():
             self.login_list_layout.addWidget(self.null_cammy_widget_found(), Qt.AlignTop)
 
         login_layout.addLayout(self.login_list_layout, 0, 0, 1, 1)
@@ -220,7 +220,7 @@ class SteamLoginUI(QMainWindow):
         :return: QScrollArea
         """
         null_widget = QWidget()  # 创建控件
-        null_widget.setFixedSize(410, 120)  # 设置控件大小
+        null_widget.setFixedSize(425, 120)  # 设置控件大小
         null_widget.setObjectName("null_widget")
         null_widget_layout = QGridLayout(null_widget)  # 创建布局
 
@@ -232,6 +232,7 @@ class SteamLoginUI(QMainWindow):
         null_widget_layout.addWidget(null_label, 0, 0, 1, 1, Qt.AlignCenter)  # 添加到布局
         scroll = QScrollArea()  # 创建滚动控件
         scroll.setObjectName("scroll")  # 设置对象名称
+        scroll.setAlignment(Qt.AlignHCenter)
         scroll.setWidget(null_widget)  # 设置滚动页面
 
         return scroll
@@ -316,7 +317,7 @@ class SteamLoginUI(QMainWindow):
                 i.setFont(QFont(self.font_chinese_name, 13))
                 if i == cammy_ok_btn:
                     # TODO:需要一个添加Json的功能
-                    i.clicked.connect(lambda: self.add_cammy_json(cammy_edit.text()))
+                    i.clicked.connect(lambda: self.cammy_add_json("cammy", cammy_edit.text()))
                 if i == cammy_exit_btn:
                     cammy_exit_btn.clicked.connect(lambda: self.page_widget.setCurrentIndex(0))
         # 添加到布局
@@ -362,8 +363,7 @@ class SteamLoginUI(QMainWindow):
             if i in [user_and_pwd_ok_btn, user_and_pwd_exit_btn]:
                 if i == user_and_pwd_ok_btn:
                     i.clicked.connect(lambda: (
-                        self.add_user_and_pwd_json(user_line_edit.text(), pwd_line_edit.text(),
-                                                   ssfn_line_edit.text(), page_widget),
+                        self.cammy_add_json("up", user_line_edit.text(), pwd_line_edit.text(), ssfn_line_edit.text()),
                         user_line_edit.clear(), pwd_line_edit.clear(), ssfn_line_edit.clear()))
                 if i == user_and_pwd_exit_btn:
                     i.clicked.connect(lambda: self.page_widget.setCurrentIndex(0))
@@ -378,6 +378,55 @@ class SteamLoginUI(QMainWindow):
         user_and_pwd_widget_layout.addItem(QSpacerItem(10, 3), 2, 3, 1, 1)
 
         return user_and_pwd_widget
+
+    def cammy_add_json(self, mod: str, *args: list | str) -> bool:
+        """处理用户输入的卡密,并且判断是否要写入文件
+        :param mod ['cammy' | ''up']
+        :param *args 传入的参数
+        :return: bool
+        """
+        if mod == "cammy":
+            args = args[0].split('----')
+            if len(args) == 3:
+                json_data = {
+                    args[0]: {
+                        'cammy_user': args[0],
+                        'cammy_pwd': args[1],
+                        'cammy_ssfn': args[2],
+                        'steam64_id': '',
+                        'AccountName': '',
+                        'PersonaName': '',
+                        'WantsOfflineMode': '',
+                        'SkipOfflineModeWarning': '',
+                        'MostRecent': '',
+                        'Timestamp': '',
+                    }
+                }
+                FileOperation().write_json_file(json_data)
+            else:
+                return False
+        elif mod == "up":
+            if len(args) == 3:
+                user, pwd, ssfn = args
+                json_data = {
+                    user: {
+                        'cammy_user': user,
+                        'cammy_pwd': pwd,
+                        'cammy_ssfn': ssfn,
+                        'steam64_id': '',
+                        'AccountName': '',
+                        'PersonaName': '',
+                        'WantsOfflineMode': '',
+                        'SkipOfflineModeWarning': '',
+                        'MostRecent': '',
+                        'Timestamp': '',
+                    }
+                }
+                FileOperation().write_json_file(json_data)
+            else:
+                return False
+        else:
+            return False
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置
