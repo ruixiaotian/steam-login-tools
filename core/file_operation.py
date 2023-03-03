@@ -117,12 +117,8 @@ class FileOperation:
             return False
 
 
-class XmlFileOperation(FileOperation):
+class XmlFileOperation:
     """xml文件操作"""
-
-    def __init__(self):
-        """初始化对象"""
-        super().__init__()
 
     @staticmethod
     def revise_svg_color(svg_path, old_color, new_color) -> None:

@@ -12,6 +12,7 @@ import sys
 from PyQt5.Qt import *
 from core import FileOperation
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
+from ui.login_widget import login_widget_setup
 
 
 class SteamLoginUI(QMainWindow):
@@ -82,7 +83,8 @@ class SteamLoginUI(QMainWindow):
     def setup_layout(self) -> None:
         """设定窗体内布局"""
         layout = QGridLayout()  # 创建网格布局
-        layout.addWidget(self.left_widget_setup(), 0, 0, 1, 1, Qt.AlignLeft)
+        layout.addWidget(self.left_widget_setup(), 0, 0, 1, 1)
+        layout.addWidget(self.page_widget_setup(), 0, 1, 1, 1)
         layout.setContentsMargins(0, 0, 0, 0)
         self.main_widget.setLayout(layout)  # 设置窗体内布局
 
@@ -101,6 +103,17 @@ class SteamLoginUI(QMainWindow):
         layout.addWidget(left_button_setup(QFont(self.font_name, 13)), 2, 0, 1, 1, Qt.AlignTop)
         layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Minimum), 3, 0, 1, 1)
         layout.addWidget(left_label_setup(self.font_name, self), 4, 0, 1, 1, Qt.AlignBottom)
+
+        return widget
+
+    def page_widget_setup(self) -> QStackedWidget:
+        """页面窗体设置"""
+        widget = QStackedWidget()
+        widget.setObjectName("page_widget")
+
+        widget.addWidget(login_widget_setup(self.font_name))
+
+        widget.resize(500, 400)
 
         return widget
 

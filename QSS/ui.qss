@@ -1,24 +1,24 @@
 QWidget#base_widget {
-/*透明窗体设置*/
+    /*透明窗体设置*/
     border-radius: 7px;
     background-color: #FFF;
 }
 QWidget#main_widget {
-/*主要显示窗体设置*/
+    /*主要显示窗体设置*/
     border-radius: 16px;
     border: 3px solid #FAF7FF;
     background-color: #E4EEF8;
 }
 
 QWidget#left_widget {
-/*左方窗体设置*/
+    /*左方窗体设置*/
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     background-color: transparent;
     border-right: 2px solid #CACCD2;
 }
 QLabel#logo_word_label {
-/*左方窗体的顶部logo文字设置*/
+    /*左方窗体的顶部logo文字设置*/
     background-color: transparent;
     color: #53658B;
 }
@@ -54,4 +54,103 @@ QPushButton#exit_button {
 }
 QLabel#version_label {
     color: #596B8F;
+}
+
+QStackedWidget#page_widget {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置圆角*/
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+QLabel#title_label {
+    /*设置字体颜色*/
+    color: #4530B3;
+    font-weight: bold;
+}
+QWidget#login_widget {
+    /*设置背景颜色*/
+    background-color: transparent;
+}
+QWidget#add_account_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 15px 10px 15px;
+    /*设置圆角*/
+    border-radius: 24px;
+}
+QWidget#server_status_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 15px 10px 15px;
+    /*设置圆角*/
+    border-radius: 24px;
+}
+QWidget#account_info_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 15px 10px 15px;
+    /*设置圆角*/
+    border-radius: 24px;
+}
+QLineEdit#user_edit {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置内间距*/
+    padding: 0 0 0 0;
+    margin:  0 0 0 0;
+    /*设置圆角*/
+    border-radius: 6px;
+    /*设置边框*/
+    border: 2px solid #1DBEF5;
+    color: rgba(89, 107, 143, 90);
+}
+QLineEdit#password_edit {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置内间距*/
+    padding: 0 0 0 0;
+    margin:  0 0 0 0;
+    /*设置圆角*/
+    border-radius: 6px;
+    /*设置边框*/
+    border: 2px solid #1DBEF5;
+    color: rgba(89, 107, 143, 90);
+}
+QLineEdit#ssfn_edit {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置内间距*/
+    padding: 0 0 0 0;
+    margin:  0 0 0 0;
+    /*设置圆角*/
+    border-radius: 6px;
+    /*设置边框*/
+    border: 2px solid #1DBEF5;
+    color: rgba(89, 107, 143, 90);
+}
+QPushButton#login_button {
+    /*设置背景颜色*/
+    background-color: #4530B3;
+    /*设置字体颜色*/
+    color: #FFFFFF;
+    /*设置边框和圆角*/
+    border: 1px solid #4530B3;
+    border-radius: 16px;
+    /*设置边距*/
+    margin-left: 10px;
+}
+QPushButton#save_button {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置字体颜色*/
+    color: #001447;
+    /*设置边框和圆角*/
+    border: 2px solid #D9D9D9;
+    border-radius: 16px;
+    /*设置边距*/
+    margin-right: 10px;
 }

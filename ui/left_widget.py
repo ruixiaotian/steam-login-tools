@@ -9,6 +9,7 @@
 """
 import sys
 from PyQt5.Qt import *
+from core.event_judgment import list_widget_icon_color
 
 
 def top_icon_setup(font: QFont) -> QWidget:
@@ -64,7 +65,8 @@ def left_button_setup(font: str) -> QWidget:
     layout = QGridLayout(widget)
 
     # 创建svg文件指向
-    file_name_list = ["./img/icon/user.svg", "./img/icon/net_acceleration.svg", "./img/icon/fun_setting.svg"]
+    file_name_list = ["./img/icon/item_icon/user.svg", "./img/icon/item_icon/net_acceleration.svg",
+                      "./img/icon/item_icon/fun_setting.svg"]
 
     # 窗体设置
     widget.resize(140, 200)
@@ -86,8 +88,12 @@ def left_button_setup(font: str) -> QWidget:
     for i in item_list:
         widget_list.addItem(i)
         i.setTextAlignment(Qt.AlignCenter)
+
     # 设置单独属性
     widget_list.setIconSize(QSize(24, 24))
+    widget_list.currentItemChanged.connect(list_widget_icon_color)  # 绑定事件
+    widget_list.setCurrentRow(0)
+
     # 添加到布局
     layout.addWidget(widget_list, 0, 0, 1, 2)
     layout.setContentsMargins(0, 0, 0, 0)
@@ -111,7 +117,7 @@ def left_label_setup(font: str, ui: QMainWindow) -> QWidget:
     label.setFont(QFont(font, 6))
 
     # 设置图标和对象名称
-    button.setIcon(QIcon("./img/icon/exit.svg"))
+    button.setIcon(QIcon("./img/icon/item_icon/exit.svg"))
     button.setObjectName("exit_button")
     label.setObjectName("version_label")
 
@@ -125,5 +131,3 @@ def left_label_setup(font: str, ui: QMainWindow) -> QWidget:
     layout.setContentsMargins(0, 0, 0, 0)
 
     return widget
-
-
