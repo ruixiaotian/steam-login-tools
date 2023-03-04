@@ -117,33 +117,5 @@ class FileOperation:
             return False
 
 
-class XmlFileOperation:
-    """xml文件操作"""
-
-    @staticmethod
-    def revise_svg_color(svg_path, old_color, new_color) -> None:
-        """
-        该函数用于修改xml文件中的颜色
-        需要传入svg文件路径，旧颜色，新颜色(需要十六进制格式)
-        :param svg_path:
-        :param old_color:
-        :param new_color:
-        :return: None
-        """
-        # 解析SVG文件
-        with open(svg_path, 'r', encoding='utf-8') as f:  # 读入文件
-            parser = etree.XMLParser(remove_blank_text=True)  # 删除掉空白文本
-            svg = etree.parse(f, parser)  # 解析SVG文件
-
-        # 修改颜色
-        for element in svg.iter():  # 变例历所有元素
-            if 'fill' in element.attrib:  # 判断是否包含fill属性
-                element.attrib['fill'] = element.attrib['fill'].replace(old_color, new_color)  # 替换颜色
-
-        # 保存修改后的文件
-        with open(svg_path, 'wb') as f:  # 读入文件
-            f.write(etree.tostring(svg, pretty_print=True))  # 写入文件
-
-
 if __name__ == '__main__':
     f = FileOperation()

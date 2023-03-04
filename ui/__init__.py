@@ -111,7 +111,7 @@ class SteamLoginUI(QMainWindow):
         widget = QStackedWidget()
         widget.setObjectName("page_widget")
 
-        widget.addWidget(login_widget_setup(self.font_name))
+        widget.addWidget(login_widget_setup(self.font_name, self))
 
         widget.resize(500, 400)
 

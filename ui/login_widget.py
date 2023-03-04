@@ -17,12 +17,15 @@
 """
 
 from PyQt5.Qt import *
+from pathlib import Path
+from core.network_threads import PingServerThread
 
 
-def login_widget_setup(font: str):
+def login_widget_setup(font: str, ui: QMainWindow):
     """
     设置登录界面
     :param font:
+    :param ui:
     :return:
     """
     widget = QWidget()
@@ -32,16 +35,28 @@ def login_widget_setup(font: str):
     widget.resize(400, 500)
     widget.setObjectName('login_widget')
 
+    # 获取控件
+    title_widget = title_widget_setup(font)
+    add_account_widget = add_account_widget_setup(font)
+    server_status_widget = server_status_widget_setup(font, ui)
+    account_info_widget = account_info_widget_setup(font, add_account_widget, server_status_widget)
     # 添加控件
-    layout.addWidget(title_widget_setup(font), 0, 0, 1, 2)
-    layout.addWidget(add_account_widget_setup(font), 1, 0, 1, 1)
-    layout.addWidget(server_status_widget_setup(font), 1, 1, 1, 1)
-    layout.addWidget(account_info_widget_setup(font), 2, 0, 1, 2)
+    layout.addWidget(title_widget, 0, 0, 1, 2)
+    layout.addWidget(add_account_widget, 1, 0, 1, 1)
+    layout.addWidget(server_status_widget, 1, 1, 1, 1)
+    layout.addWidget(account_info_widget, 2, 0, 1, 2)
 
     return widget
 
 
 def title_widget_setup(font: str):
+    """
+    设置顶部标题的控件
+
+    :param font:
+    :return:
+    """
+    # 创建控件
     widget = QWidget()
     layout = QGridLayout(widget)
 
@@ -60,6 +75,12 @@ def title_widget_setup(font: str):
 
 
 def add_account_widget_setup(font: str):
+    """
+    设置添加账号的控件
+
+    :param font:
+    :return:
+    """
     widget = QWidget()
     layout = QGridLayout(widget)
 
@@ -78,14 +99,16 @@ def add_account_widget_setup(font: str):
     place_text_list = ['USER-账号', 'PASSWORD-密码', 'SSFN(如果有)']
     icon_path_list = ['./img/icon/add_account/user.svg', './img/icon/add_account/pwd.svg',
                       './img/icon/add_account/ssfn.svg']
+
+    # 单独设置属性
+    widget.setObjectName('add_account_widget')
+
     # 循环设置对象名称
     for edit, name in zip(edit_list, edit_obj_name_list):
         edit.setObjectName(name)
     for btn, name in zip(btn_list, btn_obj_name_list):
         btn.setObjectName(name)
 
-    # 单独设置属性
-    widget.setObjectName('add_account_widget')
     # 循环设置属性
     for edit, text in zip(edit_list, place_text_list):
         # 设置输入框通用属性
@@ -116,7 +139,14 @@ def add_account_widget_setup(font: str):
     return widget
 
 
-def server_status_widget_setup(font: str):
+def server_status_widget_setup(font: str, ui: QMainWindow):
+    """
+    设置服务器状态的控件
+
+    :param font:
+    :param ui:
+    :return:
+    """
     widget = QWidget()
     layout = QGridLayout(widget)
 
@@ -124,7 +154,130 @@ def server_status_widget_setup(font: str):
     widget.resize(400, 500)
     widget.setObjectName('server_status_widget')
 
-    # 添加控件
+    # 图标路径
+    online_icon = [
+        './img/icon/server_status/server_normal.svg',  # 服务器在线图标
+        './img/icon/server_status/online.png'  # 在线状态图标
+    ]
+    offline_icon = [
+        './img/icon/server_status/server_error.svg',  # 服务器离线图标
+        './img/icon/server_status/offline.png'  # 离线状态图标
+    ]
+    online_server_icon = [
+        online_icon[0],
+        online_icon[0],
+        online_icon[0]
+    ]
+    online_icon_list = [
+        online_icon[1],
+        online_icon[1],
+        online_icon[1],
+    ]
+    offline_server_icon = [
+        offline_icon[0],
+        offline_icon[0],
+        offline_icon[0],
+    ]
+    offline_icon_list = [
+        offline_icon[1],
+        offline_icon[1],
+        offline_icon[1],
+    ]
+    # 服务器IP列表
+    server_ip_list = [
+        '1.15.97.14',
+        'wp.qiao.icu',
+        'ssfnbox.com'
+    ]
+    port_list = [
+        8848,
+        80,
+        80
+    ]
+
+    # 创建控件
+    server_icon_label_list = [QLabel(), QLabel(), QLabel()]
+    server_num_label_list = [QLabel(), QLabel(), QLabel()]
+    server_status_icon_list = [QLabel(), QLabel(), QLabel()]
+    server_status_label_list = [QLabel(), QLabel(), QLabel()]
+
+    # 循环设置控件
+    for label, num in zip(server_icon_label_list, range(1, 4)):
+        # 设置图标
+        label.setPixmap(QPixmap(online_icon[0]))  # 服务器在线图标
+        # 设置对象名称
+        label.setObjectName(f'server_icon_label_{num}')
+
+    for label, num in zip(server_num_label_list, range(1, 4)):
+        # 设置服务器编号和字体
+        label.setText(f"授权服务器 {num}号")
+        label.setFont(QFont(font, 10))
+        # 设置对象名称
+        label.setObjectName(f'server_num_label_{num}')
+
+    for label, num in zip(server_status_icon_list, range(1, 4)):
+        # 设置大小
+        label.setFixedSize(14, 14)
+        # 设置图标
+        label.setPixmap(QPixmap(online_icon[1]))  # 在线图标
+        # 设置自动缩放
+        label.setScaledContents(True)
+        # 设置对象名称
+        label.setObjectName(f'server_status_icon_{num}')
+
+    for label, num in zip(server_status_label_list, range(1, 4)):
+        # 设置显示内容和字体
+        label.setText('在线')
+        label.setFont(QFont(font, 10))
+        # 设置对象名称
+        label.setObjectName(f'server_status_label_{num}')
+
+    for server_label_icon, server_state_label, state_label, online_state_icon, offline_state_icon, online_icon, offline_icon, ip, port in zip(
+            server_icon_label_list,
+            server_status_icon_list,
+            server_status_label_list,
+            online_server_icon,
+            offline_server_icon,
+            online_icon_list,
+            offline_icon_list,
+            server_ip_list,
+            port_list
+    ):
+        ping = PingServerThread(
+            server_label_icon,
+            server_state_label,
+            state_label,
+            online_state_icon,
+            offline_state_icon,
+            online_icon,
+            offline_icon,
+            ip,
+            port,
+            ui
+        )
+        ping.sever_signal.connect(print)
+        ping.start()
+
+    # 添加到布局
+    for label, num in zip(server_icon_label_list, range(1, 4)):
+        # 将服务器状态图标添加到布局
+        layout.addWidget(label, num, 0, 1, 1)
+
+    for label, num in zip(server_num_label_list, range(1, 4)):
+        # 将服务器编号添加到布局
+        layout.addWidget(label, num, 1, 1, 1)
+
+    for label, num in zip(server_status_icon_list, range(1, 4)):
+        # 将状态图标添加到布局
+        layout.addWidget(label, num, 2, 1, 1)
+
+    for label, num in zip(server_status_label_list, range(1, 4)):
+        # 将服务器状态添加到布局
+        layout.addWidget(label, num, 3, 1, 1)
+
+    # 设置布局边距
+    layout.setContentsMargins(55, 0, 60, 0)
+    layout.setSpacing(5)
 
     # 设置阴影
     shadow_setup(widget)
@@ -132,9 +285,22 @@ def server_status_widget_setup(font: str):
     return widget
 
 
-def account_info_widget_setup(font: str):
+def account_info_widget_setup(font: str, add_account_widget, server_status_widget):
+    """
+    设置账号信息的控件
+
+    :param font:
+    :param add_account_widget:
+    :param server_status_widget:
+    :return:
+    """
+    # 创建控件
     widget = QWidget()
     layout = QGridLayout(widget)
+    # 左侧
+
+    # 右侧
+    size_button = QPushButton(QIcon('./img/icon/add_account/size.svg'))
 
     # 设置属性
     widget.resize(400, 200)
@@ -150,11 +316,11 @@ def account_info_widget_setup(font: str):
 
 def shadow_setup(target: QWidget):
     # 设置阴影
-    effect_shadow = QGraphicsDropShadowEffect(target)
+    effect_shadow = QGraphicsDropShadowEffect(target)  # 创建阴影效果对象
     effect_shadow.setOffset(2, 3)  # 阴影的偏移量
     effect_shadow.setBlurRadius(25)  # 阴影的模糊程度
     effect_shadow.setColor(QColor(29, 190, 245, 80))  # 阴影的颜色
-    target.setGraphicsEffect(effect_shadow)
+    target.setGraphicsEffect(effect_shadow)  # 设置阴影效果
 
 
 def edit_icon_setup(target: QLineEdit, path: str):
@@ -164,9 +330,9 @@ def edit_icon_setup(target: QLineEdit, path: str):
     :param path:
     :return:
     """
-    action = QAction(target)
-    action.setIcon(QIcon(path))
-    target.addAction(action, QLineEdit.LeadingPosition)
+    action = QAction(target)  # 创建一个QAction对象
+    action.setIcon(QIcon(path))  # 设置图标
+    target.addAction(action, QLineEdit.LeadingPosition)  # 将QAction添加到输入框上
 
 
 if __name__ == '__main__':
