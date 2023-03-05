@@ -143,6 +143,10 @@ QPushButton#login_button {
     /*设置边距*/
     margin-left: 10px;
 }
+QPushButton#login_button:focus {
+    /*移除虚线框*/
+    outline: none;
+}
 QPushButton#save_button {
     /*设置背景颜色*/
     background-color: transparent;
@@ -154,3 +158,28 @@ QPushButton#save_button {
     /*设置边距*/
     margin-right: 10px;
 }
+QPushButton#save_button:focus {
+    /*移除虚线框*/
+    outline: none;
+}
+
+QCheckBox#size_button::indicator:unchecked  {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/account_info/size_button_unchecked.svg')
+}
+QCheckBox#size_button::indicator:checked  {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+     /*设置背景图片*/
+    image: url('./img/icon/account_info/size_button_checked.svg')
+}
+
+

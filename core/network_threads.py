@@ -21,6 +21,7 @@ from tcping import Ping
 
 class PingServerThread(QThread):
     sever_signal = pyqtSignal(str)
+    end_signal = True
 
     def __init__(
             self,
@@ -48,31 +49,46 @@ class PingServerThread(QThread):
         self.port: int = port
 
     def run(self):
-        while True:
-            self.sleep(3)
-            ping = Ping(self.ip, self.port, 1)
+        while self.end_signal:
+            self.sleep(1)
+            ping = Ping(self.ip, self.port, 0.5)
             ping.ping(1)
             if '0 successed' in ping.result.raw:
                 # 判断是否能ping通,不能则修改为离线状态
-                # 服务器图标
-                self.server_icon_label.setPixmap(QPixmap(self.offline_state_icon_path))
-                # 服务器状态图标
-                self.server_state_label.setFixedSize(14, 14)
-                self.server_state_label.setPixmap(QPixmap(self.offline_icon_path))
-                self.server_state_label.setScaledContents(True)
-                # 服务器状态标签
-                self.state_label.setText('离线')
-                # 返回离线状态
-                self.sever_signal.emit(f"{self.state_label.objectName()} : 离线")
+                self.modify_server_state()
             else:
                 # 能ping通则修改为在线状态
-                # 服务器图标
-                self.server_icon_label.setPixmap(QPixmap(self.online_state_icon_path))
-                # 服务器状态图标
-                self.server_state_label.setFixedSize(14, 14)
-                self.server_state_label.setPixmap(QPixmap(self.online_icon_path))
-                self.server_state_label.setScaledContents(True)
-                # 服务器状态标签
-                self.state_label.setText('在线')
-                # 返回在线状态
-                self.sever_signal.emit(f"{self.state_label.objectName()} : 在线")
+                self.modify_to_online()
+        return
+
+    def modify_to_online(self):
+        if self.state_label.text() == '在线':
+            # 判断是否要改变,不需要则直接返回
+            return
+        else:
+            # 服务器图标
+            self.server_icon_label.setPixmap(QPixmap(self.online_state_icon_path))
+            # 服务器状态图标
+            self.server_state_label.setFixedSize(14, 14)
+            self.server_state_label.setPixmap(QPixmap(self.online_icon_path))
+            self.server_state_label.setScaledContents(True)
+            # 服务器状态标签
+            self.state_label.setText('在线')
+            # 返回在线状态
+            self.sever_signal.emit(f"{self.state_label.objectName()} : 在线")
+
+    def modify_to_offline(self):
+        if self.state_label.text() == '离线':
+            # 判断是否要改变,不需要则直接返回
+            return
+        else:
+            # 服务器图标
+            self.server_icon_label.setPixmap(QPixmap(self.offline_state_icon_path))
+            # 服务器状态图标
+            self.server_state_label.setFixedSize(14, 14)
+            self.server_state_label.setPixmap(QPixmap(self.offline_icon_path))
+            self.server_state_label.setScaledContents(True)
+            # 服务器状态标签
+            self.state_label.setText('离线')
+            # 返回离线状态
+            self.sever_signal.emit(f"{self.state_label.objectName()} : 离线")

@@ -19,6 +19,7 @@
 from PyQt5.Qt import *
 from pathlib import Path
 from core.network_threads import PingServerThread
+from core.event_judgment import size_button_checked_event
 
 
 def login_widget_setup(font: str, ui: QMainWindow):
@@ -38,7 +39,7 @@ def login_widget_setup(font: str, ui: QMainWindow):
     # 获取控件
     title_widget = title_widget_setup(font)
     add_account_widget = add_account_widget_setup(font)
-    server_status_widget = server_status_widget_setup(font, ui)
+    server_status_widget, pings = server_status_widget_setup(font, ui)
     account_info_widget = account_info_widget_setup(font, add_account_widget, server_status_widget)
     # 添加控件
     layout.addWidget(title_widget, 0, 0, 1, 2)
@@ -46,7 +47,7 @@ def login_widget_setup(font: str, ui: QMainWindow):
     layout.addWidget(server_status_widget, 1, 1, 1, 1)
     layout.addWidget(account_info_widget, 2, 0, 1, 2)
 
-    return widget
+    return widget, pings
 
 
 def title_widget_setup(font: str):
@@ -187,7 +188,7 @@ def server_status_widget_setup(font: str, ui: QMainWindow):
     server_ip_list = [
         '1.15.97.14',
         'wp.qiao.icu',
-        'ssfnbox.com'
+        'wp.qiao.icu'
     ]
     port_list = [
         8848,
@@ -232,6 +233,7 @@ def server_status_widget_setup(font: str, ui: QMainWindow):
         # 设置对象名称
         label.setObjectName(f'server_status_label_{num}')
 
+    pings = []  # 创建线程列队
     for server_label_icon, server_state_label, state_label, online_state_icon, offline_state_icon, online_icon, offline_icon, ip, port in zip(
             server_icon_label_list,
             server_status_icon_list,
@@ -257,6 +259,7 @@ def server_status_widget_setup(font: str, ui: QMainWindow):
         )
         ping.sever_signal.connect(print)
         ping.start()
+        pings.append(ping)
 
     # 添加到布局
     for label, num in zip(server_icon_label_list, range(1, 4)):
@@ -282,7 +285,7 @@ def server_status_widget_setup(font: str, ui: QMainWindow):
     # 设置阴影
     shadow_setup(widget)
 
-    return widget
+    return widget, pings
 
 
 def account_info_widget_setup(font: str, add_account_widget, server_status_widget):
@@ -297,16 +300,41 @@ def account_info_widget_setup(font: str, add_account_widget, server_status_widge
     # 创建控件
     widget = QWidget()
     layout = QGridLayout(widget)
+
+    # 图标路径
+    icon_list = [
+        './img/icon/account_info/size_button_unchecked.svg',
+        './img/icon/account_info/size_button_checked.svg'
+    ]
+
     # 左侧
 
     # 右侧
-    size_button = QPushButton(QIcon('./img/icon/add_account/size.svg'))
+    size_button = QCheckBox()
+
+    # 单独设置属性
+    # 放大_缩小按钮设置, 绑定事件
+    size_button.setObjectName('size_button')
+    size_button.setFixedSize(32, 32)
+    # int类型 当选中时为2,未选中时为0
+    size_button.stateChanged.connect(
+        lambda state:
+        size_button_checked_event(
+            size_button,
+            icon_list,
+            state,
+            widget,
+            add_account_widget,
+            server_status_widget
+        )
+    )
 
     # 设置属性
-    widget.resize(400, 200)
+    widget.resize(540, 200)
     widget.setObjectName('account_info_widget')
 
     # 添加控件
+    layout.addWidget(size_button, 0, 1, 1, 1)
 
     # 设置阴影
     shadow_setup(widget)

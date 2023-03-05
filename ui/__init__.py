@@ -17,6 +17,8 @@ from ui.login_widget import login_widget_setup
 
 class SteamLoginUI(QMainWindow):
     """程序UI的绘制"""
+    close_state = True
+
 
     def __init__(self) -> None:
         """初始化程序设定"""
@@ -111,7 +113,10 @@ class SteamLoginUI(QMainWindow):
         widget = QStackedWidget()
         widget.setObjectName("page_widget")
 
-        widget.addWidget(login_widget_setup(self.font_name, self))
+        # 接收控件和线程列队
+        login_widget, self.pings = login_widget_setup(self.font_name, self)
+
+        widget.addWidget(login_widget)
 
         widget.resize(500, 400)
 
@@ -147,6 +152,29 @@ class SteamLoginUI(QMainWindow):
         :return: None
         """
         self._mouse_flag = False  # 设置鼠标跟踪为关
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if self.close_state:  # 判断是否关闭
+            event.ignore()
+        self.close_state = False
+        # 创建动画对象
+        animation = QPropertyAnimation(self, b"windowOpacity", self)
+        # 设置透明度
+        animation.setDuration(2000)
+        animation.setStartValue(1)
+        animation.setEndValue(0)
+        # 等待动画结束
+        animation.finished.connect(lambda: self.close())
+        # 启动动画
+        animation.start()
+
+        # 结束所有ping线程并实现关闭动画
+        for ping in self.pings:
+            # 结束ping线程
+            ping.end_signal = False
+        for ping in self.pings:
+            # 等待线程安全退出
+            ping.quit()
 
 
 if __name__ == '__main__':
