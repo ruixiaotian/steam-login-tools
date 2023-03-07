@@ -16,106 +16,100 @@ from json.decoder import JSONDecodeError
 class FileOperation:
     """文件各类文件操作"""
 
+    __config = []
+
+    template = {  # 文件模板
+        'cammy_user': '',
+        'cammy_pwd': '',
+        'cammy_ssfn': '',
+        'steam64_id': '',
+        'AccountName': '',
+        'WantsOfflineMode': '',
+        'SkipOfflineModeWarning': '',
+        'MostRecent': '',
+        'Timestamp': '',
+    }
+
     def __init__(self):
         """初始化对象"""
-        self.document_path = Path(winreg.QueryValueEx(
-            winreg.OpenKeyEx(
-                winreg.HKEY_CURRENT_USER,  # 传入Key
-                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"  # 获取主要路径
-            ), 'Personal'  # 传入Key
-        )[0]
-                                  )
+        self.get_path()
+        self.init_file()
+
+    def get_path(self):
+        """
+        获取重新需要用到的路径
+        :return:
+        """
+        # 获取系统文档路径
+        shell_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
+        winreg_key = winreg.HKEY_CURRENT_USER
+        open_reg = winreg.OpenKeyEx(winreg_key, shell_path)
+        self.document_path = Path(winreg.QueryValueEx(open_reg, 'Personal')[0])
+
+        # 获取软件数据存放路径
         self.ridge_club_path = self.document_path / 'Bridge Club'
         self.login_data_path = self.ridge_club_path / 'steam_login_data'
         self.cammy_data_path = self.login_data_path / 'cammy.json'
-        self.init_file()
 
     def init_file(self):
         """判断文件是否存在,不存在则创建"""
+        # 程序目录判断
         self.ridge_club_path.mkdir(exist_ok=True)
         self.login_data_path.mkdir(exist_ok=True)
+        # 卡密数据json创建
         if not self.cammy_data_path.exists():
-            config = {
-                '0': {
-                    'cammy_user': '',
-                    'cammy_pwd': '',
-                    'cammy_ssfn': '',
-                    'steam64_id': '',
-                    'AccountName': '',
-                    'PersonaName': '',
-                    'WantsOfflineMode': '',
-                    'SkipOfflineModeWarning': '',
-                    'MostRecent': '',
-                    'Timestamp': '',
-                }
-            }
-            with open(self.cammy_data_path, 'w', encoding='utf-8') as file:
-                json.dump(config, file)
+            # 如果文件不存在就创建
+            with open(self.cammy_data_path, 'w', encoding='utf-8') as f:
+                # 编码为utf-8, 否则会报错, 会导致json解析失败, 所以需要使用ensure_ascii=False
+                json.dump(self.__config, f, ensure_ascii=False, indent=4)
 
-    def del_json_found(self) -> bool:
-        """删除原json重新创建
-
-        :return: bool
-        """
-        if self.cammy_data_path.exists():
-            self.cammy_data_path.unlink()
-        self.init_file()
-
-    def read_json_file(self) -> dict:
-        """读取json文件并返回
-
-        :return: dict
-        """
-        with open(self.cammy_data_path, 'r', encoding='utf-8') as file:
-            return json.load(file)
-
-    def write_json_file(self, json_data: dict) -> [bool, str]:
-        """写入JSON文件
-        :param json_data 写入的数据
-        :return: [bool, str]
-        """
+    def read_json(self) -> list:
+        """读取json文件"""
         try:
-            with open(self.cammy_data_path, 'r', encoding='utf-8') as file:
-                old_json_data: dict = json.load(file)
-            if self.json_is_empty():
-                # 判断是否为初始化时创建的数据,如果不是则追加,如果是则覆盖
-                print(json_data.values())
-                old_json_data[list(json_data.keys())[0]] = list(json_data.values())[0]
-            else:
-                old_json_data.clear()
-                print(json_data.keys())
-                old_json_data[list(json_data.keys())[0]] = list(json_data.values())[0]
-            with open(self.cammy_data_path, 'w', encoding='utf-8') as file:
-                json.dump(old_json_data, file)
-            return True
-        except Exception as msg:
-            print(msg)
-            return False, msg
+            with open(self.cammy_data_path, 'r', encoding='utf-8') as f:
+                # 编码为utf-8, 否则会报错, 会导致json解析失败, 所以需要使用ensure_ascii=False
+                return json.load(f)
+        except JSONDecodeError as e:
+            return e
 
-    def json_is_empty(self) -> bool:
-        """判断Json是否为空或者为初始化创建的
+    def write_json(self, data):
+        """写入json文件"""
+        with open(self.cammy_data_path, 'w', encoding='utf-8') as f:
+            # 编码为utf-8, 否则会报错, 会导致json解析失败, 所以需要使用ensure_ascii=False
+            json.dump(data, f, ensure_ascii=False, indent=4)
 
-        :return: bool
+    def modify_json(self, data: dict | int, insert: bool = False, add: bool = False, remove: bool = False):
         """
-        try:
-            with open(self.cammy_data_path, 'r', encoding='utf-8') as file:
-                json_data: dict = json.load(file)
-            for i in json_data.keys():
-                # 判断是否为初始化创建的数据
-                if i == '0':
-                    return False
-                else:
-                    return True
-        except NameError:
-            self.del_json_found()
-            return False
-        except JSONDecodeError:
-            self.del_json_found()
-            return False
-        except KeyError:
-            self.del_json_found()
-            return False
+        修改json文件, 主要操作为插入/追加/删除某个值
+        传入格式:
+
+        insert模式:
+        data : dict 传入一个字典,其key为要插入的序号,value为要插入的数据
+        insert 传入 True
+
+        add模式:
+        data : dict 传入数据,直接追加到最后
+        add 传入 True
+
+        remove模式:
+        data : int 传入一个数字,其为要删除的序号
+        remove 传入 True
+        """
+        if insert and type(data) == dict:
+            # 如果是插入模式
+            config = self.read_json()  # 读取json文件
+            config.insert(data.keys()[0], data.values()[0])  # 插入数据
+            self.write_json(config)  # 写入入json文件
+        if add and type(data) == dict:
+            config = self.read_json()  # 读取json文件
+            config.append(data)  # 加入数据
+            self.write_json(config)  # 写入入json文件
+        if remove and type(data) == int:
+            config = self.read_json()  # 读取json文件
+            config.pop(data)  # 删除数据
+            self.write_json(config)  # 写入入json文件
 
 
 if __name__ == '__main__':
     f = FileOperation()
+    print(f.template)

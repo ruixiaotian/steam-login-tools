@@ -10,7 +10,7 @@
 
 import sys
 from PyQt5.Qt import *
-from core import FileOperation
+
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import login_widget_setup
 

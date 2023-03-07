@@ -182,4 +182,13 @@ QCheckBox#size_button::indicator:checked  {
     image: url('./img/icon/account_info/size_button_checked.svg')
 }
 
-
+QScrollArea#scroll_widget {
+    /*设置边框*/
+    border: none;
+    /*设置背景*/
+    background-color: transparent;
+}
+QWidget#scroll_widget_content {
+    /*设置背景*/
+    background-color: transparent;
+}

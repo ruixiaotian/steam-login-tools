@@ -108,8 +108,8 @@ def account_animation_min(
         )
     )  # 结束位置
 
+
     # 添加到动画组
-    # 串行动画组
     animation_sequent_group = QParallelAnimationGroup(info_widget)
     animation_sequent_group.addAnimation(info_widget_animation_resize)
     animation_sequent_group.addAnimation(info_widget_animation_move)

@@ -15,11 +15,14 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
-
+import json
 from PyQt5.Qt import *
 from pathlib import Path
+from core.file_operation import FileOperation
 from core.network_threads import PingServerThread
 from core.event_judgment import size_button_checked_event
+
+__file_operation = FileOperation()
 
 
 def login_widget_setup(font: str, ui: QMainWindow):
@@ -102,13 +105,18 @@ def add_account_widget_setup(font: str):
                       './img/icon/add_account/ssfn.svg']
 
     # 单独设置属性
-    widget.setObjectName('add_account_widget')
+    widget.setObjectName('add_account_widget')  # 设置控件的名字
+    edit_list[1].setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码输入模式
+    # 设置可见与不可见切换和联想器
+    pwd_edit_toggles_visible_state(edit_list[1])
+    ssfn_edit_completer(edit_list[2])
 
     # 循环设置对象名称
     for edit, name in zip(edit_list, edit_obj_name_list):
-        edit.setObjectName(name)
+        edit.setObjectName(name)  # 设置对象名称
+        edit.setClearButtonEnabled(True)  # 设置清除按钮
     for btn, name in zip(btn_list, btn_obj_name_list):
-        btn.setObjectName(name)
+        btn.setObjectName(name)  # 设置对象名称
 
     # 循环设置属性
     for edit, text in zip(edit_list, place_text_list):
@@ -118,12 +126,20 @@ def add_account_widget_setup(font: str):
         edit.setFont(QFont(font, 8))
     for edit, path in zip(edit_list, icon_path_list):
         # 循环设置输入款图标
-        edit_icon_setup(edit, path)
+        edit.addAction(QIcon(path), QLineEdit.LeadingPosition)
 
     for btn in btn_list:
         # 设置按钮通用属性
         btn.setFixedSize(80, 35)
         btn.setFont(QFont(font, 11))
+
+    # 绑定按钮信号
+    save_button.clicked.connect(lambda:
+                                account_save_file(
+                                    user_edit.text(),
+                                    password_edit.text(),
+                                    ssfn_edit.text()
+                                ))
 
     # 添加到布局
     layout.setContentsMargins(0, 30, 0, 20)
@@ -298,7 +314,7 @@ def account_info_widget_setup(font: str, add_account_widget, server_status_widge
     :return:
     """
     # 创建控件
-    widget = QWidget()
+    widget = QLabel()
     layout = QGridLayout(widget)
 
     # 图标路径
@@ -308,8 +324,34 @@ def account_info_widget_setup(font: str, add_account_widget, server_status_widge
     ]
 
     # 左侧
+    scroll_widget = account_info_widget_right()
 
     # 右侧
+    size_button = account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget)
+
+    # 设置控件属性
+    widget.resize(540, 200)
+    widget.setObjectName('account_info_widget')
+
+    # 添加控件
+    layout.addWidget(scroll_widget, 0, 0, 1, 1)
+    layout.addWidget(size_button, 0, 1, 1, 1)
+
+    # 设置阴影
+    shadow_setup(widget)
+
+    return widget
+
+
+def account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget) -> QCheckBox:
+    """
+    设置右侧的放大/缩小控件
+    :param icon_list:  图标列表
+    :param widget:  承载窗体
+    :param add_account_widget:  添加账号的控件
+    :param server_status_widget:  服务器状态的控件
+    :return:
+    """
     size_button = QCheckBox()
 
     # 单独设置属性
@@ -329,17 +371,37 @@ def account_info_widget_setup(font: str, add_account_widget, server_status_widge
         )
     )
 
-    # 设置属性
-    widget.resize(540, 200)
-    widget.setObjectName('account_info_widget')
+    return size_button
 
-    # 添加控件
-    layout.addWidget(size_button, 0, 1, 1, 1)
 
-    # 设置阴影
-    shadow_setup(widget)
+def account_info_widget_right() -> QWidget:
+    """设置左侧的滚动窗体控件"""
 
-    return widget
+    # 创建滚动窗体
+    scroll_widget = QScrollArea()
+    scroll_widget.setObjectName('scroll_widget')
+    scroll_widget.setWidgetResizable(True)
+
+    # 创建滚动窗体内窗体
+    scroll_widget_content = QWidget()
+    scroll_widget_content.setObjectName('scroll_widget_content')
+    scroll_widget_content.resize(540, 200)
+
+    scroll_widget.setWidget(scroll_widget_content)
+
+    return scroll_widget
+
+
+def scroll_widget_content_setup(account_info: list):
+    """
+    设置scroll_widget中的账号信息
+    :param account_info:
+    :return:
+    """
+
+    if not account_info:
+        # 判断是否有账号信息
+        return
 
 
 def shadow_setup(target: QWidget):
@@ -351,16 +413,54 @@ def shadow_setup(target: QWidget):
     target.setGraphicsEffect(effect_shadow)  # 设置阴影效果
 
 
-def edit_icon_setup(target: QLineEdit, path: str):
+def account_save_file(user: str, pwd: str, ssfn: str = ''):
     """
-    设置输入框的图标
-    :param target:
-    :param path:
+    保存按钮槽函数
+    :param user:
+    :param pwd:
+    :param ssfn:
     :return:
     """
-    action = QAction(target)  # 创建一个QAction对象
-    action.setIcon(QIcon(path))  # 设置图标
-    target.addAction(action, QLineEdit.LeadingPosition)  # 将QAction添加到输入框上
+    config = __file_operation.template
+    config['cammy_user'] = user
+    config['cammy_pwd'] = pwd
+    config['cammy_ssfn'] = ssfn
+    print(config)
+
+    __file_operation.modify_json(config, add=True)
+
+
+def pwd_edit_toggles_visible_state(pwd_edit: QLineEdit):
+    def judgement():
+        # 定义判断函数
+        if pwd_edit.echoMode() == QLineEdit.PasswordEchoOnEdit:
+            # 如果是密码输入模式,则切换回普通模式
+            pwd_edit.setEchoMode(QLineEdit.Normal)  # 设置普通模式
+            action.setIcon(QIcon('./img/icon/add_account/invisible.svg'))
+        else:
+            # 如果是普通输入模式,则切换回密码输入模式
+            pwd_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码模式
+            action.setIcon(QIcon('./img/icon/add_account/visible.svg'))
+
+    # 设置行为
+    action = QAction(pwd_edit)
+    action.setIcon(QIcon('./img/icon/add_account/visible.svg'))
+    action.triggered.connect(judgement)
+
+    # 添加到输入框
+    pwd_edit.addAction(action, QLineEdit.TrailingPosition)
+
+
+def ssfn_edit_completer(ssfn_edit: QLineEdit):
+    # 创建一个字符串列表作为自动补全的候选项
+    with open('./data/ssfn_list.json', 'r', encoding='utf-8') as f:
+        ssfn_list = json.load(f)
+    # 创建一个 QCompleter 对象，并将字符串列表设置为其自动补全的候选项
+    completer = QCompleter(ssfn_list, ssfn_edit)
+    completer.setObjectName("ssfn_edit_completer")
+    completer.setCompletionMode(QCompleter.InlineCompletion)  # 设置自动补全模式
+    # 将 QCompleter 对象设置为 QLineEdit 的自动补全器
+    ssfn_edit.setCompleter(completer)
 
 
 if __name__ == '__main__':

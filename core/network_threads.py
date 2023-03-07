@@ -55,7 +55,7 @@ class PingServerThread(QThread):
             ping.ping(1)
             if '0 successed' in ping.result.raw:
                 # 判断是否能ping通,不能则修改为离线状态
-                self.modify_server_state()
+                self.modify_to_offline()
             else:
                 # 能ping通则修改为在线状态
                 self.modify_to_online()
