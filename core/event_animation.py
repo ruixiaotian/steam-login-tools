@@ -104,7 +104,7 @@ def account_animation_min(
     info_widget_animation_resize.setEndValue(
         QSize(
             info_widget.width(),
-            info_widget.height() - 206
+            info_widget.height() - 200
         )
     )  # 结束位置
 

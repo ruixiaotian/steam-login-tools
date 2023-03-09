@@ -28,6 +28,7 @@ class FileOperation:
         'SkipOfflineModeWarning': '',
         'MostRecent': '',
         'Timestamp': '',
+        'img_path': '',
     }
 
     def __init__(self):
@@ -112,4 +113,4 @@ class FileOperation:
 
 if __name__ == '__main__':
     f = FileOperation()
-    print(f.template)
+    f.modify_json(f.template, add=True)

@@ -16,6 +16,7 @@
  *                   不见满街漂亮妹，哪个归得程序员？
 """
 import json
+import datetime
 from PyQt5.Qt import *
 from pathlib import Path
 from core.file_operation import FileOperation
@@ -324,18 +325,18 @@ def account_info_widget_setup(font: str, add_account_widget, server_status_widge
     ]
 
     # 左侧
-    scroll_widget = account_info_widget_right()
+    scroll_widget = account_info_widget_right(font)
 
     # 右侧
     size_button = account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget)
 
     # 设置控件属性
-    widget.resize(540, 200)
+    widget.resize(540, 220)
     widget.setObjectName('account_info_widget')
 
     # 添加控件
     layout.addWidget(scroll_widget, 0, 0, 1, 1)
-    layout.addWidget(size_button, 0, 1, 1, 1)
+    layout.addWidget(size_button, 0, 1, 1, 1, Qt.AlignTop)
 
     # 设置阴影
     shadow_setup(widget)
@@ -374,7 +375,7 @@ def account_info_widget_left(icon_list, widget, add_account_widget, server_statu
     return size_button
 
 
-def account_info_widget_right() -> QWidget:
+def account_info_widget_right(font: str) -> QWidget:
     """设置左侧的滚动窗体控件"""
 
     # 创建滚动窗体
@@ -383,25 +384,263 @@ def account_info_widget_right() -> QWidget:
     scroll_widget.setWidgetResizable(True)
 
     # 创建滚动窗体内窗体
-    scroll_widget_content = QWidget()
+    scroll_widget_content = loop_add_widget(font)
     scroll_widget_content.setObjectName('scroll_widget_content')
-    scroll_widget_content.resize(540, 200)
+    scroll_widget_content.resize(540, 220)
 
     scroll_widget.setWidget(scroll_widget_content)
 
     return scroll_widget
 
 
-def scroll_widget_content_setup(account_info: list):
+def loop_add_widget(font: str) -> QWidget:
     """
-    设置scroll_widget中的账号信息
+    循环添加控件
+    :return:
+    """
+    widget = QWidget()
+    layout = QGridLayout(widget)
+
+    account: list = __file_operation.read_json()  # 读取账号信息
+    for i, num in zip(account, range(len(account))):
+        # 循环创建控件
+        layout.addWidget(scroll_widget_card_setup(font, i), num, 0, 1, 1, Qt.AlignTop)
+
+    layout.setContentsMargins(0, 0, 0, 0)
+    layout.setSpacing(0)
+
+    return widget
+
+
+def scroll_widget_card_setup(font: str, account: dict) -> QWidget:
+    """
+    设置滚动窗体内卡片控件
+    :param font:
+    :param account:
+    :return:
+    """
+    widget = QWidget()
+    layout = QGridLayout(widget)
+    # 设置控件属性
+    widget.setObjectName("scroll_widget_card")
+    widget.setFixedSize(435, 85)
+
+    # 设置头像
+    avatar_img = __scroll_widget_card_avatar_img(account)
+    # 设置显示名称
+    avatar_name = __scroll_widget_card_avatar_name(account, font)
+    # 账号属性: 最近登录
+    recently_logged = __scroll_widget_card_recently_logged(font)
+    offline_logged = __scroll_widget_card_offline(font)
+    time = __scroll_widget_card_time(account, font)
+
+    # 判断控件是否可见
+    __determine_account_attributes(account, recently_logged, offline_logged)
+
+    # 添加到控件
+    layout.addWidget(avatar_img, 0, 0, 4, 1)
+    layout.addWidget(avatar_name, 0, 1, 1, 1)
+    layout.addWidget(recently_logged, 1, 1, 1, 1)
+    layout.addWidget(offline_logged, 1, 2, 1, 1)
+    layout.addWidget(time, 3, 1, 1, 1, Qt.AlignTop | Qt.AlignLeft)
+
+    # 添加弹簧
+    layout.addItem(QSpacerItem(1000, 1, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 3, 1, 1)
+    layout.addItem(QSpacerItem(1000, 1, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 4, 1, 1)
+    layout.addItem(QSpacerItem(25, 1, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 5, 1, 1)
+    layout.addItem(QSpacerItem(1, 2, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding), 2, 1, 1, 1)
+
+    # 设置弹簧
+    layout.setContentsMargins(0, 6, 0, 6)
+
+    layout.setVerticalSpacing(7)
+
+
+    return widget
+
+
+def __scroll_widget_card_avatar_img(account_info: dict) -> QLabel:
+    """设置账号头像的控件"""
+    img = QLabel()
+    img.setPixmap(QPixmap(account_info['img_path']))
+    img.setFixedSize(75, 75)
+    img.setObjectName('avatar_img')
+    img.setScaledContents(True)
+
+    return img
+
+
+def __scroll_widget_card_avatar_name(account_info: dict, font: str) -> QWidget:
+    """设置账号名称的控件"""
+    widget = QWidget()  # 承载窗体
+    layout = QGridLayout(widget)  # 创建布局
+
+    # 创建控件
+    label = QLabel()
+    name_label = QLabel(account_info['cammy_user'])
+
+    # 设置窗体属性
+    widget.setFixedSize(widget.width(), 20)
+
+    # 设置图标属性
+    label.setFixedSize(16, 16)
+    label.setObjectName('account_img_label')
+    label.setPixmap(QPixmap("./img/icon/account_info/account_name_icon.svg"))
+    label.setScaledContents(True)
+
+    # 设置名字属性
+    name_label.setFixedSize(name_label.width(), 20)
+    name_label.setObjectName('account_name_label')
+    name_label.setFont(QFont(font, 11))
+
+    # 添加到控件
+    layout.addWidget(label, 0, 0, 1, 1)
+    layout.addWidget(name_label, 0, 1, 1, 1)
+    layout.setContentsMargins(0, 0, 0, 0)
+    layout.setSpacing(0)
+    layout.setHorizontalSpacing(5)
+
+    return widget
+
+
+def __scroll_widget_card_recently_logged(font: str) -> QWidget:
+    """
+    设置卡片显示的最近登录
+    :param account_info:
+    :param font:
+    :return:
+    """
+    widget = QWidget()  # 承载窗体
+    layout = QGridLayout(widget)  # 创建布局
+
+    # 创建控件
+    img = QLabel()
+    label = QLabel("最近登录")
+
+    # 设置窗体属性
+    widget.setObjectName("account_attributes")
+    widget.setFixedSize(80, 25)
+
+    # 设置图标属性
+    img.setFixedSize(16, 16)
+    img.setObjectName('recently_logged')
+    img.setPixmap(QPixmap("./img/icon/account_info/recently_logged_icon.svg"))
+    img.setScaledContents(True)
+
+    # 设置名字属性
+    label.setFixedSize(55, 24)
+    label.setObjectName('recently_logged')
+    label.setFont(QFont(font, 9))
+
+    # 添加到控件
+    layout.addWidget(img, 0, 0, 1, 1)
+    layout.addWidget(label, 0, 1, 1, 1)
+    layout.setContentsMargins(5, 0, 0, 0)
+    layout.setSpacing(0)
+    layout.setHorizontalSpacing(5)
+
+    return widget
+
+
+def __scroll_widget_card_offline(font: str) -> QWidget:
+    """
+    设置卡片显示的最近登录
+    :param account_info:
+    :param font:
+    :return:
+    """
+    widget = QWidget()  # 承载窗体
+    layout = QGridLayout(widget)  # 创建布局
+
+    # 创建控件
+    img = QLabel()
+    label = QLabel("离线模式")
+
+    # 设置窗体属性
+    widget.setObjectName("account_attributes")
+    widget.setFixedSize(80, 25)
+
+    # 设置图标属性
+    img.setFixedSize(16, 16)
+    img.setObjectName('offline_logged')
+    img.setPixmap(QPixmap("./img/icon/account_info/offline_logged_icon.svg"))
+    img.setScaledContents(True)
+
+    # 设置名字属性
+    label.setFixedSize(55, 24)
+    label.setObjectName('offline_logged')
+    label.setFont(QFont(font, 9))
+
+    # 添加到控件
+    layout.addWidget(img, 0, 0, 1, 1)
+    layout.addWidget(label, 0, 1, 1, 1)
+    layout.setContentsMargins(5, 0, 0, 0)
+    layout.setSpacing(0)
+    layout.setHorizontalSpacing(5)
+
+    return widget
+
+
+def __scroll_widget_card_time(account_info: dict, font: str) -> QWidget:
+    """
+    设置登录时间的控件
+    :param font:
+    :return:
+    """
+    widget = QWidget()  # 承载窗体
+    layout = QGridLayout(widget)  # 创建布局
+
+    if not account_info['Timestamp']:
+        time = "暂未登录"
+    else:
+        # 时间戳转换
+        time = datetime.datetime.fromtimestamp(int(account_info['Timestamp'])).strftime("%Y-%m-%d %H:%M:%S")
+
+    # 创建控件
+    img = QLabel()
+    label = QLabel(time)
+
+    # 设置窗体属性
+    widget.setObjectName("logged_time_widget")
+    widget.setFixedSize(155, 14)
+
+    # 设置图标属性
+    img.setFixedSize(14, 14)
+    img.setObjectName('logged_time')
+    img.setPixmap(QPixmap("./img/icon/account_info/time_icon.svg"))
+    img.setScaledContents(True)
+
+    # 设置名字属性
+    label.setFixedSize(155, 14)
+    label.setObjectName('logged_time')
+    label.setFont(QFont(font, 8))
+
+    # 添加到控件
+    layout.addWidget(img, 0, 0, 1, 1)
+    layout.addWidget(label, 0, 1, 1, 1)
+
+    layout.setContentsMargins(0, 0, 0, 5)
+    layout.setHorizontalSpacing(5)
+
+    return widget
+
+
+def __determine_account_attributes(
+        account_info: dict,
+        recently_logged: QWidget,
+        offline_logged: QWidget
+):
+    """
+    判断属性是否要显示
     :param account_info:
     :return:
     """
-
-    if not account_info:
-        # 判断是否有账号信息
-        return
+    if account_info['MostRecent'] != '1':
+        # 判断是否为最近登录
+        recently_logged.setHidden(True)
+    if account_info['WantsOfflineMode'] != '1':
+        # 判断是否为离线模式
+        offline_logged.setHidden(True)
 
 
 def shadow_setup(target: QWidget):
