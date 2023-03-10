@@ -9,7 +9,10 @@
 """
 
 import sys
-from PyQt5.Qt import *
+from PyQt5.QtWidgets import QWidget, QMainWindow, QStackedWidget, QApplication, QSizePolicy, QGridLayout, \
+    QGraphicsDropShadowEffect, QSpacerItem
+from PyQt5.QtGui import QIcon, QFontDatabase, QMouseEvent, QCloseEvent, QColor, QFont
+from PyQt5.QtCore import Qt, QPropertyAnimation
 
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import login_widget_setup
@@ -18,7 +21,6 @@ from ui.login_widget import login_widget_setup
 class SteamLoginUI(QMainWindow):
     """程序UI的绘制"""
     close_state = True
-
 
     def __init__(self) -> None:
         """初始化程序设定"""

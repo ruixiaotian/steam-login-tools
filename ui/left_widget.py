@@ -8,7 +8,11 @@
 * 设置窗体左方的一些函数
 """
 import sys
-from PyQt5.Qt import *
+from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QMainWindow, QGridLayout, QListWidget, \
+    QListWidgetItem, QSizePolicy, QSpacerItem
+from PyQt5.QtGui import QFont, QPixmap, QIcon, QPainter
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtSvg import QSvgRenderer
 from core.event_judgment import list_widget_icon_color
 
 

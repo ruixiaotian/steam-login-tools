@@ -215,16 +215,19 @@ QScrollArea#scroll_widget QScrollBar {
     width: 0;
     height: 0;
 }
+
 QScrollArea#scroll_widget QScrollBar::vertical {
     /*隐藏滚动条*/
     width: 0;
     height: 0;
 }
+
 QScrollArea#scroll_widget QScrollBar::handle {
     /*隐藏滚动条*/
     width: 0;
     height: 0;
 }
+
 QScrollArea#scroll_widget QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {
     /*隐藏箭头*/
     width: 0;
@@ -232,8 +235,9 @@ QScrollArea#scroll_widget QScrollBar::sub-line:vertical, QScrollBar::add-line:ve
     /*设置背景*/
     background-color: transparent;
 }
+
 QScrollArea#scroll_widget QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-     /*隐藏箭头*/
+    /*隐藏箭头*/
     width: 0;
     height: 0;
     /*设置背景*/
@@ -253,6 +257,7 @@ QWidget#scroll_widget_card {
     /*设置圆角*/
     border-radius: 4px;
 }
+
 QLabel#avatar_img {
     /*设置背景*/
     background-color: transparent;
@@ -263,26 +268,66 @@ QLabel#avatar_img {
     /*设置边距*/
     padding: 0 0 0 0;
 }
+
 QLabel#account_img_label, QLabel#account_name_label {
     /*设置背景*/
     background-color: transparent;
 }
+
 QWidget#account_attributes {
     /*设置背景*/
     background-color: #1DBEF5;
     /*设置圆角*/
     border-radius: 6px;
 }
+
 QLabel#recently_logged, QLabel#offline_logged {
     /*设置颜色*/
     color: #FFFFFF;
 }
+
 QWidget#logged_time_widget {
     background-color: transparent;
 }
+
 QLabel#logged_time {
     /*设置背景*/
     background-color: transparent;
     /*设置颜色*/
     color: #C4C4C4;
+}
+
+QPushButton#other_btn {
+    /*设置背景*/
+    background-color: transparent;
+}
+
+QPushButton#other_btn::menu-indicator {
+    /*隐藏三角形*/
+    image: none;
+    padding: 0;
+    margin: -1;
+}
+
+QMenu#other_btn_menu {
+    /*设置颜色*/
+    color: #BEBEBE;
+    /*设置背景颜色*/
+    background-color: #E4EEF8;
+    /*设置边框*/
+    border: 3px solid #FAF7FF;
+    /*设置圆角*/
+    border-radius: 8px;
+    /*设置边距*/
+    padding: 5px 5px 5px 10px;
+}
+
+QMenu#other_btn_menu::item {
+    /*设置边距*/
+    padding: 5px 5px 5px 5px;
+}
+
+QMenu#other_btn_menu::item:selected {
+    /*设置圆角*/
+    border-radius: 3px;
 }

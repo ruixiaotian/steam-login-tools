@@ -15,7 +15,8 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
-from PyQt5.Qt import *
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import QThread, pyqtSignal
 from tcping import Ping
 
 

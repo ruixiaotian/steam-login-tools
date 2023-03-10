@@ -17,7 +17,11 @@
 """
 import json
 import datetime
-from PyQt5.Qt import *
+from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, \
+    QGridLayout, QCheckBox, QAction, QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, \
+    QSpacerItem
+from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter
+from PyQt5.QtCore import Qt
 from pathlib import Path
 from core.file_operation import FileOperation
 from core.network_threads import PingServerThread
@@ -429,10 +433,13 @@ def scroll_widget_card_setup(font: str, account: dict) -> QWidget:
     avatar_img = __scroll_widget_card_avatar_img(account)
     # 设置显示名称
     avatar_name = __scroll_widget_card_avatar_name(account, font)
-    # 账号属性: 最近登录
+    # 账号属性: 最近登录, 离线模式
     recently_logged = __scroll_widget_card_recently_logged(font)
     offline_logged = __scroll_widget_card_offline(font)
+    # 登录时间
     time = __scroll_widget_card_time(account, font)
+    # 更多按钮
+    other_btn = __scroll_widget_card_other_btn(account, font)
 
     # 判断控件是否可见
     __determine_account_attributes(account, recently_logged, offline_logged)
@@ -443,6 +450,7 @@ def scroll_widget_card_setup(font: str, account: dict) -> QWidget:
     layout.addWidget(recently_logged, 1, 1, 1, 1)
     layout.addWidget(offline_logged, 1, 2, 1, 1)
     layout.addWidget(time, 3, 1, 1, 1, Qt.AlignTop | Qt.AlignLeft)
+    layout.addWidget(other_btn, 0, 5, 1, 1)
 
     # 添加弹簧
     layout.addItem(QSpacerItem(1000, 1, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 3, 1, 1)
@@ -454,7 +462,6 @@ def scroll_widget_card_setup(font: str, account: dict) -> QWidget:
     layout.setContentsMargins(0, 6, 0, 6)
 
     layout.setVerticalSpacing(7)
-
 
     return widget
 
@@ -480,7 +487,7 @@ def __scroll_widget_card_avatar_name(account_info: dict, font: str) -> QWidget:
     name_label = QLabel(account_info['cammy_user'])
 
     # 设置窗体属性
-    widget.setFixedSize(widget.width(), 20)
+    widget.setFixedSize(300, 20)
 
     # 设置图标属性
     label.setFixedSize(16, 16)
@@ -625,6 +632,68 @@ def __scroll_widget_card_time(account_info: dict, font: str) -> QWidget:
     return widget
 
 
+def __scroll_widget_card_other_btn(account_info: dict, font: str) -> QPushButton:
+    """
+    设置卡片上的其他按钮
+    :param account_info:
+    :param font:
+    :return:
+    """
+    # 创建控件
+    btn = QPushButton()
+    btn.setIcon(QIcon("./img/icon/account_info/other_btn_icon.svg"))
+    btn.setFixedSize(24, 24)
+    btn.setObjectName('other_btn')
+
+    # 创建菜单
+    menu = QMenu(btn)
+    menu.setFixedSize(115, 135)
+
+    # 创建菜单项
+    menu_login_btn = QAction(QIcon('./img/icon/account_info/action_login_btn.svg'), "登录账号", menu)
+    menu_edit_btn = QAction(QIcon('./img/icon/account_info/action_edit_btn.svg'), "修改账号", menu)
+    menu_delete_btn = QAction(QIcon('./img/icon/account_info/action_delete_btn.svg'), "删除账号", menu)
+    menu_offline_login_btn = QAction(QIcon('./img/icon/account_info/other_btn_menu_offline_false.svg'), '离线登录', menu)
+
+    # 菜单项列表
+    menu_list = [
+        menu_login_btn,
+        menu_edit_btn,
+        menu_delete_btn,
+        menu_offline_login_btn,
+    ]
+
+    # 设置菜单
+    menu.setWindowFlags(menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+    menu.setAttribute(Qt.WA_TranslucentBackground)
+    # 设置菜单项可选
+    menu_offline_login_btn.setCheckable(True)
+
+    # 循环设置控件
+    for i in menu_list:
+        i.setFont(QFont(font, 12))  # 设置字体
+        menu.addAction(i)  # 添加到菜单
+
+
+    # 菜单项槽函数绑定
+    menu_offline_login_btn.triggered.connect(lambda: other_btn_menu_offline_action(menu_offline_login_btn, account_info))
+
+
+    # 设置控件对象名称
+    menu.setObjectName('other_btn_menu')
+
+    # 给菜单添加阴影
+    shadow = QGraphicsDropShadowEffect(menu)  # 创建阴影效果对象
+    shadow.setOffset(3, 2)  # 阴影的偏移量
+    shadow.setColor(QColor(29, 190, 245, 0))  # 阴影的颜色
+    menu.setGraphicsEffect(shadow)  # 设置阴影效果
+
+    # 设置按钮菜单
+    btn.setMenu(menu)
+
+    return btn
+
+
 def __determine_account_attributes(
         account_info: dict,
         recently_logged: QWidget,
@@ -700,6 +769,18 @@ def ssfn_edit_completer(ssfn_edit: QLineEdit):
     completer.setCompletionMode(QCompleter.InlineCompletion)  # 设置自动补全模式
     # 将 QCompleter 对象设置为 QLineEdit 的自动补全器
     ssfn_edit.setCompleter(completer)
+
+
+def other_btn_menu_offline_action(action: QAction, account_info: dict):
+    """
+    其他按钮中离线登录复选框的槽函数
+    :param action:
+    :return:
+    """
+    if action.isChecked():
+        action.setIcon(QIcon('./img/icon/account_info/other_btn_menu_offline_true.svg'))
+    else:
+        action.setIcon(QIcon('./img/icon/account_info/other_btn_menu_offline_false.svg'))
 
 
 if __name__ == '__main__':

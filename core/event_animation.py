@@ -15,7 +15,8 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
-from PyQt5.Qt import *
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import QSize, QParallelAnimationGroup, QPropertyAnimation, QPoint, QEasingCurve
 
 
 def account_animation_max(
@@ -84,7 +85,7 @@ def account_animation_min(
     :return:
     """
 
- # 移动
+    # 移动
     info_widget_animation_move = QPropertyAnimation(info_widget, b"pos")  # 创建移动动画对象
     info_widget_animation_move.setDuration(800)  # 设置动画持续时间
     info_widget_animation_move.setStartValue(QPoint(info_widget.x(), info_widget.y()))  # 初始位置
@@ -107,7 +108,6 @@ def account_animation_min(
             info_widget.height() - 200
         )
     )  # 结束位置
-
 
     # 添加到动画组
     animation_sequent_group = QParallelAnimationGroup(info_widget)
