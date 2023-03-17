@@ -422,7 +422,7 @@ def loop_add_widget(font: str) -> QWidget:
 
     layout.addItem(QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding), len(account) + 1, 0, 1, 1)
 
-    layout.setContentsMargins(10, 1, 0, 0)
+    layout.setContentsMargins(10, 2, 0, 0)
     layout.setSpacing(0)
 
     return widget
