@@ -15,8 +15,10 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
-from PyQt5.QtWidgets import QLabel
 from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QLabel
+from core.file_operation import FileOperation
 from tcping import Ping
 
 
@@ -93,3 +95,67 @@ class PingServerThread(QThread):
             self.state_label.setText('离线')
             # 返回离线状态
             self.sever_signal.emit(f"{self.state_label.objectName()} : 离线")
+
+
+class SteamLoginThread(QThread):
+    """登录线程"""
+    msg = pyqtSignal(str)
+    def __init__(
+            self,
+            user: str,
+            pwd: str,
+            ssfn: str = '',
+            login_method: int = 1,
+            offline: bool = False,
+            *args, **kwargs
+    ):
+        """
+        登录线程,需要传入以下参数
+        user - 账号
+        pwd - 密码
+        ssfn - 授权(可选)
+        login_method - 登录模式
+            - 0: 正常模式
+            - 1: 跳过令牌(大屏幕模式)
+        offline - 是否离线
+            - False: 不离线
+            - True: 离线
+        """
+        super(SteamLoginThread, self).__init__(*args, **kwargs)
+        self.file_path = FileOperation()  # 设置文件路径
+        self.user: str = user
+        self.pwd: str = pwd
+        self.ssfn: str = ssfn
+        self.login_method: int = login_method
+        self.offline: bool = offline
+
+    def run(self):
+        if not self.file_path.steam_install_state:
+            # 如果没有安装steam,则提示
+            self.msg.emit('请先安装steam')
+        else:
+            self.__determine_login_method()
+
+
+    def __determine_login_method(self):
+        # 设置steam路径
+        steam_path = self.file_path.steam_exe_path
+        if self.login_method == 0:
+            # 正常模式登录
+            return f"{steam_path} -login {self.user} -password {self.pwd}"
+        if self.login_method == 1:
+            # 跳过令牌模式登录
+            return f"{steam_path} -tenfoot -login {self.user} -password {self.pwd}"
+
+    def __determine_login_offline(self):
+        """判断是否需要离线"""
+        pass
+
+    def __write_config_file(self):
+        """判断配置文件中是否存在,否则写入"""
+        path = self.file_path.steam_user_path
+
+
+
+
+
