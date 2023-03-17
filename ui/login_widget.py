@@ -29,6 +29,9 @@ from core.event_judgment import size_button_checked_event
 
 __file_operation = FileOperation()
 
+scroll_widget = None
+content = None
+
 
 def login_widget_setup(font: str, ui: QMainWindow):
     """
@@ -140,11 +143,17 @@ def add_account_widget_setup(font: str):
 
     # 绑定按钮信号
     save_button.clicked.connect(lambda:
-                                account_save_file(
-                                    user_edit.text(),
-                                    password_edit.text(),
-                                    ssfn_edit.text()
-                                ))
+                                (
+                                    account_save_file(
+                                        user_edit.text(),
+                                        password_edit.text(),
+                                        ssfn_edit.text()
+                                    ),
+                                    refresh_widget(
+                                        font
+                                    )
+                                )
+                                )
 
     # 添加到布局
     layout.setContentsMargins(0, 30, 0, 20)
@@ -328,10 +337,11 @@ def account_info_widget_setup(font: str, add_account_widget, server_status_widge
         './img/icon/account_info/size_button_checked.svg'
     ]
 
-    # 左侧
-    scroll_widget = account_info_widget_right(font)
-
     # 右侧
+    global scroll_widget, content
+    scroll_widget, content = account_info_widget_right(font)
+
+    # 左侧
     size_button = account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget)
 
     # 设置控件属性
@@ -380,7 +390,7 @@ def account_info_widget_left(icon_list, widget, add_account_widget, server_statu
 
 
 def account_info_widget_right(font: str) -> QWidget:
-    """设置左侧的滚动窗体控件"""
+    """设置右侧的滚动窗体控件"""
 
     # 创建滚动窗体
     scroll_widget = QScrollArea()
@@ -394,7 +404,7 @@ def account_info_widget_right(font: str) -> QWidget:
 
     scroll_widget.setWidget(scroll_widget_content)
 
-    return scroll_widget
+    return scroll_widget, scroll_widget_content
 
 
 def loop_add_widget(font: str) -> QWidget:
@@ -410,7 +420,9 @@ def loop_add_widget(font: str) -> QWidget:
         # 循环创建控件
         layout.addWidget(scroll_widget_card_setup(font, i), num, 0, 1, 1, Qt.AlignTop)
 
-    layout.setContentsMargins(0, 0, 0, 0)
+    layout.addItem(QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding), len(account) + 1, 0, 1, 1)
+
+    layout.setContentsMargins(10, 2, 0, 0)
     layout.setSpacing(0)
 
     return widget
@@ -653,7 +665,8 @@ def __scroll_widget_card_other_btn(account_info: dict, font: str) -> QPushButton
     menu_login_btn = QAction(QIcon('./img/icon/account_info/action_login_btn.svg'), "登录账号", menu)
     menu_edit_btn = QAction(QIcon('./img/icon/account_info/action_edit_btn.svg'), "修改账号", menu)
     menu_delete_btn = QAction(QIcon('./img/icon/account_info/action_delete_btn.svg'), "删除账号", menu)
-    menu_offline_login_btn = QAction(QIcon('./img/icon/account_info/other_btn_menu_offline_false.svg'), '离线登录', menu)
+    menu_offline_login_btn = QAction(QIcon('./img/icon/account_info/other_btn_menu_offline_false.svg'), '离线登录',
+                                     menu)
 
     # 菜单项列表
     menu_list = [
@@ -674,10 +687,9 @@ def __scroll_widget_card_other_btn(account_info: dict, font: str) -> QPushButton
         i.setFont(QFont(font, 12))  # 设置字体
         menu.addAction(i)  # 添加到菜单
 
-
     # 菜单项槽函数绑定
-    menu_offline_login_btn.triggered.connect(lambda: other_btn_menu_offline_action(menu_offline_login_btn, account_info))
-
+    menu_offline_login_btn.triggered.connect(
+        lambda: other_btn_menu_offline_action(menu_offline_login_btn, account_info))
 
     # 设置控件对象名称
     menu.setObjectName('other_btn_menu')
@@ -781,6 +793,19 @@ def other_btn_menu_offline_action(action: QAction, account_info: dict):
         action.setIcon(QIcon('./img/icon/account_info/other_btn_menu_offline_true.svg'))
     else:
         action.setIcon(QIcon('./img/icon/account_info/other_btn_menu_offline_false.svg'))
+
+
+def refresh_widget(font):
+    """
+    刷新窗体
+    :param font:
+    :return:
+    """
+    global scroll_widget, content
+    content = loop_add_widget(font)
+    content.setObjectName('scroll_widget_content')
+    content.resize(540, 220)
+    scroll_widget.setWidget(content)
 
 
 if __name__ == '__main__':

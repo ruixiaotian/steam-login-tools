@@ -9,6 +9,7 @@
 """
 import json
 import winreg
+import vdf
 from pathlib import Path
 from json.decoder import JSONDecodeError
 
@@ -28,15 +29,17 @@ class FileOperation:
         'SkipOfflineModeWarning': '',
         'MostRecent': '',
         'Timestamp': '',
-        'img_path': '',
+        'first_login': True,
+        'img_path': './img/icon/icon.ico'
     }
 
     def __init__(self):
         """初始化对象"""
-        self.get_path()
-        self.init_file()
+        self.__get_path()
+        self.__get_steam_path()
+        self.__init_file()
 
-    def get_path(self):
+    def __get_path(self):
         """
         获取重新需要用到的路径
         :return:
@@ -52,7 +55,31 @@ class FileOperation:
         self.login_data_path = self.ridge_club_path / 'steam_login_data'
         self.cammy_data_path = self.login_data_path / 'cammy.json'
 
-    def init_file(self):
+    def __get_steam_path(self):
+        try:
+            # 打开Steam注册表键
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "SOFTWARE\\Valve\\Steam")
+            # 读取Steam安装路径的值
+            value = winreg.QueryValueEx(key, "SteamPath")
+            # 赋值Steam安装路径
+            # Steam根目录
+            self.steam_path = Path(value[0])
+            self.steam_exe_path = self.steam_path / 'steam.exe'
+            # Steam用户文件目录
+            self.__steam_config_path = self.steam_path / 'config'
+            self.steam_user_path = self.__steam_config_path / 'loginusers.vdf'
+            self.steam64id_path = self.__steam_config_path / 'config.vdf'
+            # Steam图片目录
+            self.steam_avatarcache_path = self.steam_path / 'avatarcache'
+
+            # 设置安装状态
+            self.steam_install_state = True
+        except Exception as e:
+            # 设置安装状态
+            self.steam_install_state = False
+            print(e)
+
+    def __init_file(self):
         """判断文件是否存在,不存在则创建"""
         # 程序目录判断
         self.ridge_club_path.mkdir(exist_ok=True)
@@ -111,6 +138,28 @@ class FileOperation:
             self.write_json(config)  # 写入入json文件
 
 
+class VdfOperation:
+    """Vdf文件操作"""
+
+    @staticmethod
+    def read_vdf(file_path: str) -> dict:
+        """读取Vdf文件"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return vdf.load(f)['users']
+        except Exception as e:
+            return e
+
+    @staticmethod
+    def write_vdf(file_path: str, data: dict):
+        """写入Vdf文件"""
+        with open(file_path, 'w', encoding='utf-8') as f:
+            vdf.dump(data, f, pretty=True)
+
+
 if __name__ == '__main__':
-    f = FileOperation()
-    f.modify_json(f.template, add=True)
+    f = VdfOperation()
+    txt = f.read_vdf(r'E:\Program Files\steam\config\loginusers.vdf')
+    for i in txt:
+        print(i)
+        print(txt[i])
