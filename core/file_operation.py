@@ -26,11 +26,11 @@ class FileOperation:
         'steam64_id': '',
         'AccountName': '',
         'WantsOfflineMode': '',
-        'SkipOfflineModeWarning': '',
         'MostRecent': '',
         'Timestamp': '',
         'first_login': True,
-        'img_path': './img/icon/icon.ico'
+        'img_path': './img/icon/icon.ico',
+        'login_method': 1
     }
 
     def __init__(self):
@@ -137,6 +137,18 @@ class FileOperation:
             config.pop(data)  # 删除数据
             self.write_json(config)  # 写入入json文件
 
+    def remove_ssfn(self):
+        """删除SSFN"""
+        try:
+            # 遍历文件夹中的所有文件
+            for file_path in self.steam_path.glob('*'):
+                # 判断是否为文件，且文件名是否以指定开头
+                if file_path.is_file() and file_path.name.startswith('ssfn'):
+                    # 删除文件
+                    file_path.unlink()
+        except Exception as e:
+            print(e)
+
 
 class VdfOperation:
     """Vdf文件操作"""
@@ -156,10 +168,49 @@ class VdfOperation:
         with open(file_path, 'w', encoding='utf-8') as f:
             vdf.dump(data, f, pretty=True)
 
+    @staticmethod
+    def wants_offline_mode(file_path: str, steam64id: str):
+        """
+        修改离线模式为True
+        判断是否默认离线模式,不是则修改
+        :param file_path:
+        :param steam64id:
+        :return:
+        """
+        with open(file_path, 'r', encoding='utf-8') as f:
+            config = vdf.load(f)
+
+        if config['users'][steam64id]['WantsOfflineMode'] == 0:
+            # 判断是否需要更改
+            return
+        else:
+            config['users'][steam64id]['WantsOfflineMode'] = 1
+            config['users'][steam64id]['SkipOfflineModeWarning'] = 1
+            with open(file_path, 'w', encoding='utf-8') as f:
+                vdf.dump(config, f, pretty=True)
+
+    @staticmethod
+    def not_offline_mode(file_path: str, steam64id: str):
+        """
+        修改离线模式为False
+        判断是否默认不离线模式,不是则修改
+        :param file_path:
+        :param steam64id:
+        :return:
+        """
+        with open(file_path, 'r', encoding='utf-8') as f:
+            config = vdf.load(f)
+
+        if config['users'][steam64id]['WantsOfflineMode'] == 0:
+            # 判断是否需要更改
+            return
+        else:
+            config['users'][steam64id]['WantsOfflineMode'] = 0
+            config['users'][steam64id]['SkipOfflineModeWarning'] = 0
+            with open(file_path, 'w', encoding='utf-8') as f:
+                vdf.dump(config, f, pretty=True)
+
 
 if __name__ == '__main__':
-    f = VdfOperation()
-    txt = f.read_vdf(r'E:\Program Files\steam\config\loginusers.vdf')
-    for i in txt:
-        print(i)
-        print(txt[i])
+    f = FileOperation()
+    f.remove_ssfn()

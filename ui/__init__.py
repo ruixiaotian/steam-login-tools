@@ -15,7 +15,7 @@ from PyQt5.QtGui import QIcon, QFontDatabase, QMouseEvent, QCloseEvent, QColor, 
 from PyQt5.QtCore import Qt, QPropertyAnimation
 
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
-from ui.login_widget import login_widget_setup
+from ui.login_widget import LoginWidget
 
 
 class SteamLoginUI(QMainWindow):
@@ -116,7 +116,9 @@ class SteamLoginUI(QMainWindow):
         widget.setObjectName("page_widget")
 
         # 接收控件和线程列队
-        login_widget, self.pings = login_widget_setup(self.font_name, self)
+        login = LoginWidget()
+        login_widget = login.login_widget_setup(self.font_name, self)
+        self.pings = login.pings
 
         widget.addWidget(login_widget)
 

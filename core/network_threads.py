@@ -15,11 +15,13 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
+import requests
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
-from core.file_operation import FileOperation
+from core.file_operation import FileOperation, VdfOperation
 from tcping import Ping
+import subprocess
 
 
 class PingServerThread(QThread):
@@ -100,34 +102,28 @@ class PingServerThread(QThread):
 class SteamLoginThread(QThread):
     """登录线程"""
     msg = pyqtSignal(str)
+
     def __init__(
-            self,
-            user: str,
-            pwd: str,
-            ssfn: str = '',
-            login_method: int = 1,
-            offline: bool = False,
-            *args, **kwargs
+            self, cammy: dict, *args, **kwargs
     ):
         """
-        登录线程,需要传入以下参数
-        user - 账号
-        pwd - 密码
-        ssfn - 授权(可选)
-        login_method - 登录模式
-            - 0: 正常模式
-            - 1: 跳过令牌(大屏幕模式)
-        offline - 是否离线
-            - False: 不离线
-            - True: 离线
+        登录线程,cammy参数文档:
+            cammy['cammy_user'] - 账号
+            cammy['cammy_pwd'] - 密码
+            cammy['cammy_ssfn'] - SSFN
+            cammy['steam64_id'] - 64id
+            cammy['WantsOfflineMode'] - 是否离线模式
+            cammy['login_method'] - 登录模式
+            cammy['first_login'] - 是否首次登录
         """
         super(SteamLoginThread, self).__init__(*args, **kwargs)
         self.file_path = FileOperation()  # 设置文件路径
-        self.user: str = user
-        self.pwd: str = pwd
-        self.ssfn: str = ssfn
-        self.login_method: int = login_method
-        self.offline: bool = offline
+        self.user: str = cammy['cammy_user']
+        self.pwd: str = cammy['cammy_pwd']
+        self.ssfn: str = cammy['cammy_ssfn']
+        self.steam64id: str = cammy['steam64_id']
+        self.login_method: int = cammy['login_method']
+        self.offline: bool = cammy['WantsOfflineMode']
 
     def run(self):
         if not self.file_path.steam_install_state:
@@ -135,27 +131,49 @@ class SteamLoginThread(QThread):
             self.msg.emit('请先安装steam')
         else:
             self.__determine_login_method()
+            self.__determine_login_offline()
+            self.__download_ssfn()
+            self.__login()
 
+    def __login(self):
+        """登录Steam"""
+        subprocess.run(
+            self.login_method,
+            cwd=self.file_path.steam_path
+        )
+
+    def __download_ssfn(self):
+        """
+        下载SSFN
+        :return:
+        """
+        if self.ssfn:
+            self.file_path.remove_ssfn()  # 删除SSFN
+            with open(self.file_path.steam_path / {self.ssfn}, 'wb') as f:
+                f.write(requests.get(f"http://1.15.97.14:8848/ssfn/{self}").content)
+        else:
+            pass
 
     def __determine_login_method(self):
         # 设置steam路径
         steam_path = self.file_path.steam_exe_path
         if self.login_method == 0:
             # 正常模式登录
-            return f"{steam_path} -login {self.user} -password {self.pwd}"
+            self.login_method = f"{steam_path} -login {self.user} -password {self.pwd}"
         if self.login_method == 1:
             # 跳过令牌模式登录
-            return f"{steam_path} -tenfoot -login {self.user} -password {self.pwd}"
+            self.login_method = f"{steam_path} -tenfoot -login {self.user} -password {self.pwd}"
 
     def __determine_login_offline(self):
         """判断是否需要离线"""
-        pass
-
-    def __write_config_file(self):
-        """判断配置文件中是否存在,否则写入"""
-        path = self.file_path.steam_user_path
-
-
-
-
-
+        vdf = VdfOperation()
+        if self.offline:
+            vdf.wants_offline_mode(
+                self.file_path.steam_user_path,
+                self.steam64id
+            )
+        else:
+            vdf.not_offline_mode(
+                self.file_path.steam_user_path,
+                self.steam64id
+            )
