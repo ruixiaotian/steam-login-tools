@@ -166,6 +166,8 @@ class SteamLoginThread(QThread):
 
     def __determine_login_offline(self):
         """判断是否需要离线"""
+        if not self.steam64id:
+            return
         vdf = VdfOperation()
         if self.offline:
             vdf.wants_offline_mode(

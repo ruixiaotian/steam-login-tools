@@ -16,31 +16,30 @@
  *                   不见满街漂亮妹，哪个归得程序员？
 """
 import json
+import sys
 import datetime
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, \
     QGridLayout, QCheckBox, QAction, QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, \
-    QSpacerItem
-from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter
+    QSpacerItem, QDialog
+from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
 from PyQt5.QtCore import Qt
 from pathlib import Path
 from core.file_operation import FileOperation
 from core.network_threads import PingServerThread, SteamLoginThread
 from core.event_judgment import size_button_checked_event
 
-scroll_widget = None
-content = None
-
 
 class LoginWidget:
     __file_operation = FileOperation()
 
-    def __init__(self):
+    def __init__(self, parent, font: str):
+        self.parent = parent
+        self.font = font
         self.pings = None
 
-    def login_widget_setup(self, font: str, ui: QMainWindow):
+    def login_widget_setup(self, ui: QMainWindow):
         """
         设置登录界面
-        :param font:
         :param ui:
         :return:
         """
@@ -52,10 +51,10 @@ class LoginWidget:
         widget.setObjectName('login_widget')
 
         # 获取控件
-        title_widget = self.title_widget_setup(font)
-        add_account_widget = self.add_account_widget_setup(font)
-        server_status_widget = self.server_status_widget_setup(font, ui)
-        account_info_widget = self.account_info_widget_setup(font, add_account_widget, server_status_widget)
+        title_widget = self.__title_widget_setup()
+        add_account_widget = self.__add_account_widget_setup()
+        server_status_widget = self.__server_status_widget_setup(ui)
+        account_info_widget = self.__account_info_widget_setup(add_account_widget, server_status_widget)
         # 添加控件
         layout.addWidget(title_widget, 0, 0, 1, 2)
         layout.addWidget(add_account_widget, 1, 0, 1, 1)
@@ -64,12 +63,10 @@ class LoginWidget:
 
         return widget
 
-    @staticmethod
-    def title_widget_setup(font: str):
+    def __title_widget_setup(self):
         """
         设置顶部标题的控件
 
-        :param font:
         :return:
         """
         # 创建控件
@@ -82,18 +79,17 @@ class LoginWidget:
 
         # 添加控件
         label = QLabel('Login')
-        label.setFont(QFont(font, 16))
+        label.setFont(QFont(self.font, 16))
         label.setObjectName('title_label')
         layout.addWidget(label, 0, 0, 1, 1, Qt.AlignLeft)
         layout.setContentsMargins(0, 0, 0, 0)
 
         return widget
 
-    def add_account_widget_setup(self, font: str):
+    def __add_account_widget_setup(self):
         """
         设置添加账号的控件
 
-        :param font:
         :return:
         """
         widget = QWidget()
@@ -134,7 +130,7 @@ class LoginWidget:
             # 设置输入框通用属性
             edit.setFixedSize(200, 30)
             edit.setPlaceholderText(text)
-            edit.setFont(QFont(font, 8))
+            edit.setFont(QFont(self.font, 8))
         for edit, path in zip(edit_list, icon_path_list):
             # 循环设置输入款图标
             edit.addAction(QIcon(path), QLineEdit.LeadingPosition)
@@ -142,19 +138,17 @@ class LoginWidget:
         for btn in btn_list:
             # 设置按钮通用属性
             btn.setFixedSize(80, 35)
-            btn.setFont(QFont(font, 11))
+            btn.setFont(QFont(self.font, 11))
 
         # 绑定按钮信号
         save_button.clicked.connect(lambda:
                                     (
-                                        account_save_file(
+                                        self.__account_save_file(
                                             user_edit.text(),
                                             password_edit.text(),
                                             ssfn_edit.text()
                                         ),
-                                        refresh_widget(
-                                            font
-                                        )
+                                        self.__refresh_widget()
                                     )
                                     )
 
@@ -172,11 +166,9 @@ class LoginWidget:
 
         return widget
 
-    def server_status_widget_setup(self, font: str, ui: QMainWindow):
+    def __server_status_widget_setup(self, ui: QMainWindow):
         """
         设置服务器状态的控件
-
-        :param font:
         :param ui:
         :return:
         """
@@ -244,7 +236,7 @@ class LoginWidget:
         for label, num in zip(server_num_label_list, range(1, 4)):
             # 设置服务器编号和字体
             label.setText(f"授权服务器 {num}号")
-            label.setFont(QFont(font, 10))
+            label.setFont(QFont(self.font, 10))
             # 设置对象名称
             label.setObjectName(f'server_num_label_{num}')
 
@@ -261,7 +253,7 @@ class LoginWidget:
         for label, num in zip(server_status_label_list, range(1, 4)):
             # 设置显示内容和字体
             label.setText('在线')
-            label.setFont(QFont(font, 10))
+            label.setFont(QFont(self.font, 10))
             # 设置对象名称
             label.setObjectName(f'server_status_label_{num}')
 
@@ -289,7 +281,6 @@ class LoginWidget:
                 port,
                 ui
             )
-            ping.sever_signal.connect(print)
             ping.start()
             self.pings.append(ping)
 
@@ -319,11 +310,10 @@ class LoginWidget:
 
         return widget
 
-    def account_info_widget_setup(self, font: str, add_account_widget, server_status_widget):
+    def __account_info_widget_setup(self, add_account_widget, server_status_widget):
         """
         设置账号信息的控件
 
-        :param font:
         :param add_account_widget:
         :param server_status_widget:
         :return:
@@ -339,10 +329,10 @@ class LoginWidget:
         ]
 
         # 右侧
-        self.account_info_widget_right(font)
+        self.__account_info_widget_right()
 
         # 左侧
-        size_button = self.account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget)
+        size_button = self.__account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget)
 
         # 设置控件属性
         widget.resize(540, 220)
@@ -358,7 +348,7 @@ class LoginWidget:
         return widget
 
     @staticmethod
-    def account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget) -> QCheckBox:
+    def __account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget) -> QCheckBox:
         """
         设置右侧的放大/缩小控件
         :param icon_list:  图标列表
@@ -388,7 +378,7 @@ class LoginWidget:
 
         return size_button
 
-    def account_info_widget_right(self, font: str) -> QWidget:
+    def __account_info_widget_right(self) -> QWidget:
         """设置右侧的滚动窗体控件"""
         # 创建滚动窗体
         self.scroll_widget = QScrollArea()
@@ -396,14 +386,13 @@ class LoginWidget:
         self.scroll_widget.setWidgetResizable(True)
 
         # 创建滚动窗体内窗体
-        self.scroll_widget_content = self.loop_add_widget(font)
+        self.scroll_widget_content = self.__loop_add_widget()
         self.scroll_widget_content.setObjectName('scroll_widget_content')
         self.scroll_widget_content.resize(540, 220)
 
         self.scroll_widget.setWidget(self.scroll_widget_content)
 
-
-    def loop_add_widget(self, font: str) -> QWidget:
+    def __loop_add_widget(self) -> QWidget:
         """
         循环添加控件
         :return:
@@ -414,7 +403,7 @@ class LoginWidget:
         account: list = self.__file_operation.read_json()  # 读取账号信息
         for i, num in zip(account, range(len(account))):
             # 循环创建控件
-            layout.addWidget(self.scroll_widget_card_setup(font, i), num, 0, 1, 1, Qt.AlignTop)
+            layout.addWidget(self.__scroll_widget_card_setup(i), num, 0, 1, 1, Qt.AlignTop)
 
         layout.addItem(QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding), len(account) + 1, 0, 1, 1)
 
@@ -423,10 +412,10 @@ class LoginWidget:
 
         return widget
 
-    def scroll_widget_card_setup(self, font: str, account: dict) -> QWidget:
+    def __scroll_widget_card_setup(self, account: dict) -> QWidget:
         """
         设置滚动窗体内卡片控件
-        :param font:
+
         :param account:
         :return:
         """
@@ -439,14 +428,14 @@ class LoginWidget:
         # 设置头像
         avatar_img = self.__scroll_widget_card_avatar_img(account)
         # 设置显示名称
-        avatar_name = self.__scroll_widget_card_avatar_name(account, font)
+        avatar_name = self.__scroll_widget_card_avatar_name(account)
         # 账号属性: 最近登录, 离线模式
-        recently_logged = self.__scroll_widget_card_recently_logged(font)
-        offline_logged = self.__scroll_widget_card_offline(font)
+        recently_logged = self.__scroll_widget_card_recently_logged()
+        offline_logged = self.__scroll_widget_card_offline()
         # 登录时间
-        time = self.__scroll_widget_card_time(account, font)
+        time = self.__scroll_widget_card_time(account)
         # 更多按钮
-        other_btn = self.__scroll_widget_card_other_btn(account, font)
+        other_btn = self.__scroll_widget_card_other_btn(account)
 
         # 判断控件是否可见
         self.__determine_account_attributes(account, recently_logged, offline_logged)
@@ -486,8 +475,7 @@ class LoginWidget:
 
         return img
 
-    @staticmethod
-    def __scroll_widget_card_avatar_name(account_info: dict, font: str) -> QWidget:
+    def __scroll_widget_card_avatar_name(self, account_info: dict) -> QWidget:
         """设置账号名称的控件"""
         widget = QWidget()  # 承载窗体
         layout = QGridLayout(widget)  # 创建布局
@@ -508,7 +496,7 @@ class LoginWidget:
         # 设置名字属性
         name_label.setFixedSize(name_label.width(), 20)
         name_label.setObjectName('account_name_label')
-        name_label.setFont(QFont(font, 11))
+        name_label.setFont(QFont(self.font, 11))
 
         # 添加到控件
         layout.addWidget(label, 0, 0, 1, 1)
@@ -519,12 +507,10 @@ class LoginWidget:
 
         return widget
 
-    @staticmethod
-    def __scroll_widget_card_recently_logged(font: str) -> QWidget:
+    def __scroll_widget_card_recently_logged(self) -> QWidget:
         """
         设置卡片显示的最近登录
         :param account_info:
-        :param font:
         :return:
         """
         widget = QWidget()  # 承载窗体
@@ -547,7 +533,7 @@ class LoginWidget:
         # 设置名字属性
         label.setFixedSize(55, 24)
         label.setObjectName('recently_logged')
-        label.setFont(QFont(font, 9))
+        label.setFont(QFont(self.font, 9))
 
         # 添加到控件
         layout.addWidget(img, 0, 0, 1, 1)
@@ -558,12 +544,10 @@ class LoginWidget:
 
         return widget
 
-    @staticmethod
-    def __scroll_widget_card_offline(font: str) -> QWidget:
+    def __scroll_widget_card_offline(self) -> QWidget:
         """
         设置卡片显示的最近登录
         :param account_info:
-        :param font:
         :return:
         """
         widget = QWidget()  # 承载窗体
@@ -586,7 +570,7 @@ class LoginWidget:
         # 设置名字属性
         label.setFixedSize(55, 24)
         label.setObjectName('offline_logged')
-        label.setFont(QFont(font, 9))
+        label.setFont(QFont(self.font, 9))
 
         # 添加到控件
         layout.addWidget(img, 0, 0, 1, 1)
@@ -597,11 +581,9 @@ class LoginWidget:
 
         return widget
 
-    @staticmethod
-    def __scroll_widget_card_time(account_info: dict, font: str) -> QWidget:
+    def __scroll_widget_card_time(self, account_info: dict) -> QWidget:
         """
         设置登录时间的控件
-        :param font:
         :return:
         """
         widget = QWidget()  # 承载窗体
@@ -630,7 +612,7 @@ class LoginWidget:
         # 设置名字属性
         label.setFixedSize(155, 14)
         label.setObjectName('logged_time')
-        label.setFont(QFont(font, 8))
+        label.setFont(QFont(self.font, 8))
 
         # 添加到控件
         layout.addWidget(img, 0, 0, 1, 1)
@@ -641,13 +623,10 @@ class LoginWidget:
 
         return widget
 
-
-    @staticmethod
-    def __scroll_widget_card_other_btn(account_info: dict, font: str) -> QPushButton:
+    def __scroll_widget_card_other_btn(self, account_info: dict) -> QPushButton:
         """
         设置卡片上的其他按钮
         :param account_info:
-        :param font:
         :return:
         """
         # 创建控件
@@ -683,14 +662,20 @@ class LoginWidget:
 
         # 循环设置控件
         for i in menu_list:
-            i.setFont(QFont(font, 12))  # 设置字体
+            i.setFont(QFont(self.font, 12))  # 设置字体
             menu.addAction(i)  # 添加到菜单
 
         # 菜单项槽函数绑定
         menu_offline_login_btn.triggered.connect(
-            lambda: __other_btn_menu_offline_action(menu_offline_login_btn, account_info))
+            lambda: self.__other_btn_menu_offline_action(menu_offline_login_btn, account_info))
         menu_login_btn.triggered.connect(
-            lambda: __other_btn_menu_login_action(menu_login_btn, account_info)
+            lambda: self.__other_btn_menu_login_action(menu_login_btn, account_info)
+        )
+        menu_edit_btn.triggered.connect(
+            lambda: self.__other_btn_menu_revise_action(account_info)
+        )
+        menu_delete_btn.triggered.connect(
+            lambda: self.__other_btn_menu_remove_action(account_info)
         )
 
         # 设置控件对象名称
@@ -734,8 +719,7 @@ class LoginWidget:
         effect_shadow.setColor(QColor(29, 190, 245, 80))  # 阴影的颜色
         target.setGraphicsEffect(effect_shadow)  # 设置阴影效果
 
-    @staticmethod
-    def account_save_file(user: str, pwd: str, ssfn: str = ''):
+    def __account_save_file(self, user: str, pwd: str, ssfn: str = ''):
         """
         保存按钮槽函数
         :param user:
@@ -743,16 +727,17 @@ class LoginWidget:
         :param ssfn:
         :return:
         """
-        config = __file_operation.template
+        config = self.__file_operation.template
         config['cammy_user'] = user
         config['cammy_pwd'] = pwd
         config['cammy_ssfn'] = ssfn
-        print(config)
 
-        __file_operation.modify_json(config, add=True)
+        self.__file_operation.modify_json(config, add=True)
 
     @staticmethod
     def __pwd_edit_toggles_visible_state(pwd_edit: QLineEdit):
+        """密码编辑框模式切换槽函数"""
+
         def judgement():
             # 定义判断函数
             if pwd_edit.echoMode() == QLineEdit.PasswordEchoOnEdit:
@@ -774,6 +759,7 @@ class LoginWidget:
 
     @staticmethod
     def __ssfn_edit_completer(ssfn_edit: QLineEdit):
+        """ssfn自动补全槽函数"""
         # 创建一个字符串列表作为 自动补全 的候选项
         with open('./data/ssfn_list.json', 'r', encoding='utf-8') as f:
             ssfn_list = json.load(f)
@@ -786,6 +772,7 @@ class LoginWidget:
 
     @staticmethod
     def __other_btn_menu_offline_action(action: QAction, account_info: dict):
+        """其他按钮的菜单离线登录选项行为槽函数"""
         """
         其他按钮中离线登录复选框的槽函数
         :param action:
@@ -798,21 +785,126 @@ class LoginWidget:
 
     @staticmethod
     def __other_btn_menu_login_action(action: QAction, account_info: dict):
+        """其他按钮的菜单登录账号选项行为槽函数"""
         login = SteamLoginThread(account_info, action)
         login.start()
 
-    @staticmethod
-    def refresh_widget(font):
+    def __other_btn_menu_remove_action(self, account_info: dict):
+        """其他按钮的菜单删除账号选项行为槽函数"""
+        # 读取卡密
+        cammy_list = self.__file_operation.read_json()
+        # 遍历卡密列表删除卡密
+        for cammy in cammy_list:
+            if cammy['cammy_user'] == account_info['cammy_user']:
+                cammy_list.remove(cammy)
+                break
+        # 写入卡密文件
+        self.__file_operation.write_json(cammy_list)
+        # 刷新窗体
+        self.__refresh_widget()
+
+    def __other_btn_menu_revise_action(self, account_info: dict):
+        """其他按钮的菜单修改账号选项行为槽函数"""
+        self.revise_dialog = ReviseDialog(self.parent, account_info)
+        self.revise_dialog.show()
+
+    def __refresh_widget(self):
         """
         刷新窗体
-        :param font:
         :return:
         """
-        global scroll_widget, content
-        content = loop_add_widget(font)
-        content.setObjectName('scroll_widget_content')
-        content.resize(540, 220)
-        scroll_widget.setWidget(content)
+        self.scroll_widget_content = self.__loop_add_widget()
+        self.scroll_widget_content.setObjectName('scroll_widget_content')
+        self.scroll_widget_content.resize(540, 220)
+        self.scroll_widget.setWidget(self.scroll_widget_content)
+
+
+class ReviseDialog(QMainWindow):
+    """修改账号信息弹窗"""
+
+    def __init__(self, parent: QMainWindow | None, account_info: dict):
+        super(ReviseDialog, self).__init__()
+        self.parent = parent
+        self.account_info = account_info
+        self.setup_form()
+        self.setup_window()
+        self.read_qss_file()
+
+    def setup_window(self) -> None:
+        """设定窗体各类参数
+
+        :return: None
+        """
+        self.setFixedSize(500, 300)  # 设定窗体大小
+        self.setWindowTitle("Steam上号器- 修改账号 - 开发版 - Qiao")  # 设定窗口名
+        self.setWindowIcon(QIcon("./img/icon/icon.ico"))  # 设定窗体图标
+        self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗体属性为透明
+        self.setWindowFlags(Qt.FramelessWindowHint)  # 隐藏框架,并且设置为主窗体
+
+    def read_qss_file(self) -> None:
+        """读取QSS文件
+
+        :return: None
+        """
+        with open('./QSS/ui.qss', 'r', encoding='utf-8') as file:
+            self.setStyleSheet(file.read())
+
+    def setup_form(self) -> None:
+        """窗体设定
+
+        :return: None
+        """
+        # 透明窗体
+        self.base_widget = QWidget()  # 创建透明窗口
+        self.base_widget.setObjectName("base_widget")  # 设置对象名称
+        self.base_layout = QGridLayout()  # 创建透明窗口布局
+        self.base_widget.setLayout(self.base_layout)  # 设置布局
+        self.base_widget.setAttribute(Qt.WA_TranslucentBackground)  # 隐藏背景
+
+        # 主窗体
+        self.main_widget = QWidget()  # 创建主窗体
+        self.main_widget.setObjectName("main_widget")  # 设置主窗体对象名称
+        self.base_layout.addWidget(self.main_widget)  # 添加到布局
+
+        self.setCentralWidget(self.base_widget)  # 设置窗口主部件
+
+        # 添加阴影
+        effect_shadow = QGraphicsDropShadowEffect(self)
+        effect_shadow.setOffset(0, 1)  # 偏移
+        effect_shadow.setBlurRadius(12)  # 阴影半径
+        effect_shadow.setColor(QColor("#1DBEF5"))  # 阴影颜色
+        self.main_widget.setGraphicsEffect(effect_shadow)  # 将设置套用到widget窗口中
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置
+
+        :param event:
+        :return: None
+        """
+        if event.button() == Qt.LeftButton:
+            # 如果按下按钮为左键
+            self._mouse_flag = True  # 设置鼠标跟踪开关为True
+            self.m_pos = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
+            event.accept()
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        """重构鼠标移动事件函数,进行监控鼠标移动并且判断是否拖动窗口
+
+        :param event:
+        :return: None
+        """
+        if Qt.LeftButton and self._mouse_flag:
+            # 如果是左键按下且鼠标跟踪打卡
+            self.move(event.globalPos() - self.m_pos)  # 更改窗口位置
+            event.accept()
+
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        """重构鼠标松开事件函数,进行监控鼠标状态
+
+        :param event:
+        :return: None
+        """
+        self._mouse_flag = False  # 设置鼠标跟踪为关
 
 
 if __name__ == '__main__':

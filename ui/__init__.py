@@ -116,8 +116,8 @@ class SteamLoginUI(QMainWindow):
         widget.setObjectName("page_widget")
 
         # 接收控件和线程列队
-        login = LoginWidget()
-        login_widget = login.login_widget_setup(self.font_name, self)
+        login = LoginWidget(self, self.font_name)
+        login_widget = login.login_widget_setup(self)
         self.pings = login.pings
 
         widget.addWidget(login_widget)
@@ -168,7 +168,7 @@ class SteamLoginUI(QMainWindow):
         animation.setStartValue(1)
         animation.setEndValue(0)
         # 等待动画结束
-        animation.finished.connect(lambda: self.close())
+        animation.finished.connect(lambda: sys.exit(0))  # 调用sys防止子窗体未推出
         # 启动动画
         animation.start()
 
