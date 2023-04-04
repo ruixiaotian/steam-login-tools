@@ -8,12 +8,26 @@
 程序的主入口~
 """
 import sys
-import os
+from pathlib import Path
 # import cgitb
+from loguru import logger
 from ui import SteamLoginUI, QApplication
 
 
+LOGO = r"""
+
+███████╗████████╗███████╗ █████╗ ███╗   ███╗      ██╗      ██████╗  ██████╗ ██╗███╗   ██╗
+██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗ ████║      ██║     ██╔═══██╗██╔════╝ ██║████╗  ██║
+███████╗   ██║   █████╗  ███████║██╔████╔██║█████╗██║     ██║   ██║██║  ███╗██║██╔██╗ ██║
+╚════██║   ██║   ██╔══╝  ██╔══██║██║╚██╔╝██║╚════╝██║     ██║   ██║██║   ██║██║██║╚██╗██║
+███████║   ██║   ███████╗██║  ██║██║ ╚═╝ ██║      ███████╗╚██████╔╝╚██████╔╝██║██║ ╚████║
+╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝      ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝
+
+"""
+
 def main():
+    # 打印一个华丽LOGO
+    logger.opt(colors=True).info(f"<blue>{LOGO}</>")
     # rush_backtracking()
     app = QApplication(sys.argv)
     win = SteamLoginUI()
@@ -26,10 +40,10 @@ def rush_backtracking():
     奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志
     :return:
     """
-    log_dir = os.path.join(os.path.expanduser('~'), 'Desktop')
-    if not os.path.exists(log_dir):
-        os.mkdir(log_dir)
-    cgitb.enable(display=0, format='log', logdir=log_dir, context=10)
+    log_dir = Path.home() / 'Desktop'
+    if not log_dir.exists():
+        log_dir.mkdir()
+    cgitb.enable(display=0, format='log', logdir=str(log_dir), context=10)
 
 
 if __name__ == '__main__':

@@ -15,13 +15,15 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
+import psutil
 import requests
+import subprocess
+from loguru import logger
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 from core.file_operation import FileOperation, VdfOperation
 from tcping import Ping
-import subprocess
 
 
 class PingServerThread(QThread):
@@ -113,8 +115,7 @@ class SteamLoginThread(QThread):
             cammy['cammy_ssfn'] - SSFN
             cammy['steam64_id'] - 64id
             cammy['WantsOfflineMode'] - 是否离线模式
-            cammy['login_method'] - 登录模式
-            cammy['first_login'] - 是否首次登录
+            cammy['skip_email'] - 登录模式
         """
         super(SteamLoginThread, self).__init__(*args, **kwargs)
         self.file_path = FileOperation()  # 设置文件路径
@@ -122,7 +123,7 @@ class SteamLoginThread(QThread):
         self.pwd: str = cammy['cammy_pwd']
         self.ssfn: str = cammy['cammy_ssfn']
         self.steam64id: str = cammy['steam64_id']
-        self.login_method: int = cammy['login_method']
+        self.skip_email: bool = cammy['skip_email']
         self.offline: bool = cammy['WantsOfflineMode']
 
     def run(self):
@@ -130,17 +131,39 @@ class SteamLoginThread(QThread):
             # 如果没有安装steam,则提示
             self.msg.emit('请先安装steam')
         else:
-            self.__determine_login_method()
-            self.__determine_login_offline()
-            self.__download_ssfn()
-            self.__login()
+            try:
+                self.__kill_steam()
+                self.__determine_login_method()
+                self.__determine_login_offline()
+                self.__download_ssfn()
+                logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
+                self.__login()
+            except Exception as e:
+                logger.error(f"登录失败:\n {e}")
 
     def __login(self):
         """登录Steam"""
         subprocess.run(
-            self.login_method,
+            self.skip_email,
             cwd=self.file_path.steam_path
         )
+
+    @staticmethod
+    def __kill_steam():
+        """结束steam进程"""
+        # 获取所有进程列表
+        processes = psutil.process_iter()
+        # 遍历所有进程
+        for proc in processes:
+            try:
+                # 获取进程名称
+                process_name = proc.name()
+                # 判断进程是否为Steam
+                if process_name == 'steam.exe':
+                    # 结束进程
+                    proc.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
 
     def __download_ssfn(self):
         """
@@ -157,12 +180,12 @@ class SteamLoginThread(QThread):
     def __determine_login_method(self):
         # 设置steam路径
         steam_path = self.file_path.steam_exe_path
-        if self.login_method == 0:
-            # 正常模式登录
-            self.login_method = f"{steam_path} -login {self.user} -password {self.pwd}"
-        if self.login_method == 1:
+        if self.skip_email:
             # 跳过令牌模式登录
-            self.login_method = f"{steam_path} -tenfoot -login {self.user} -password {self.pwd}"
+            self.skip_email = f"{steam_path} -tenfoot -login {self.user} {self.pwd}"
+        else:
+            # 正常模式登录
+            self.skip_email = f"{steam_path} -login {self.user} {self.pwd}"
 
     def __determine_login_offline(self):
         """判断是否需要离线"""

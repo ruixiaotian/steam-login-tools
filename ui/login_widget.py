@@ -22,9 +22,10 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QHBoxLayout, QVBo
     QGridLayout, QCheckBox, QAction, QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, \
     QSpacerItem, QDialog
 from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPropertyAnimation
+from typing import List
 from pathlib import Path
-from core.file_operation import FileOperation
+from core.file_operation import FileOperation, DetectVdfThread
 from core.network_threads import PingServerThread, SteamLoginThread
 from core.event_judgment import size_button_checked_event
 
@@ -113,10 +114,10 @@ class LoginWidget:
 
         # 单独设置属性
         widget.setObjectName('add_account_widget')  # 设置控件的名字
-        edit_list[1].setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码输入模式
+        password_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码输入模式
         # 设置可见与不可见切换和联想器
-        self.__pwd_edit_toggles_visible_state(edit_list[1])
-        self.__ssfn_edit_completer(edit_list[2])
+        self.__pwd_edit_toggles_visible_state(password_edit)
+        self.__ssfn_edit_completer(ssfn_edit)
 
         # 循环设置对象名称
         for edit, name in zip(edit_list, edit_obj_name_list):
@@ -140,17 +141,33 @@ class LoginWidget:
             btn.setFixedSize(80, 35)
             btn.setFont(QFont(self.font, 11))
 
-        # 绑定按钮信号
-        save_button.clicked.connect(lambda:
-                                    (
-                                        self.__account_save_file(
-                                            user_edit.text(),
-                                            password_edit.text(),
-                                            ssfn_edit.text()
-                                        ),
-                                        self.__refresh_widget()
-                                    )
-                                    )
+        """绑定按钮信号"""
+        # 保存按钮
+        save_button.clicked.connect(lambda: (
+            self.__account_save_file(user_edit.text(), password_edit.text(), ssfn_edit.text()),
+            self.__refresh_widget(),
+            user_edit.clear(),
+            password_edit.clear(),
+            ssfn_edit.clear()
+        ) if user_edit.text() and password_edit.text() != '' else None)
+
+        # 登录按钮
+        login_button.clicked.connect(lambda: (
+            SteamLoginThread(
+                {
+                    "cammy_user": user_edit.text(),
+                    "cammy_pwd": password_edit.text(),
+                    "cammy_ssfn": ssfn_edit.text(),
+                    "steam64_id": "",
+                    "skip_email": True,
+                    "WantsOfflineMode": False
+                },
+                self.parent
+            ).start(),
+            user_edit.clear(),
+            password_edit.clear(),
+            ssfn_edit.clear()
+        ) if user_edit.text() and password_edit.text() != '' else None)
 
         # 添加到布局
         layout.setContentsMargins(0, 30, 0, 20)
@@ -438,13 +455,12 @@ class LoginWidget:
         other_btn = self.__scroll_widget_card_other_btn(account)
 
         # 判断控件是否可见
-        self.__determine_account_attributes(account, recently_logged, offline_logged)
+        self.__determine_account_attributes(account, layout, recently_logged, offline_logged)
 
         # 添加到控件
         layout.addWidget(avatar_img, 0, 0, 4, 1)
         layout.addWidget(avatar_name, 0, 1, 1, 1)
-        layout.addWidget(recently_logged, 1, 1, 1, 1)
-        layout.addWidget(offline_logged, 1, 2, 1, 1)
+
         layout.addWidget(time, 3, 1, 1, 1, Qt.AlignTop | Qt.AlignLeft)
         layout.addWidget(other_btn, 0, 5, 1, 1)
 
@@ -467,8 +483,12 @@ class LoginWidget:
         :param account_info:
         :return:
         """
+        img_path = Path(account_info['img_path'])
+        pixmap = QPixmap(75, 75)
+        pixmap.load(str(img_path.resolve()))
+
         img = QLabel()
-        img.setPixmap(QPixmap(account_info['img_path']))
+        img.setPixmap(pixmap)
         img.setFixedSize(75, 75)
         img.setObjectName('avatar_img')
         img.setScaledContents(True)
@@ -513,7 +533,7 @@ class LoginWidget:
         :param account_info:
         :return:
         """
-        widget = QWidget()  # 承载窗体
+        widget = QWidget(self.parent)  # 承载窗体
         layout = QGridLayout(widget)  # 创建布局
 
         # 创建控件
@@ -550,7 +570,7 @@ class LoginWidget:
         :param account_info:
         :return:
         """
-        widget = QWidget()  # 承载窗体
+        widget = QWidget(self.parent)  # 承载窗体
         layout = QGridLayout(widget)  # 创建布局
 
         # 创建控件
@@ -641,17 +661,16 @@ class LoginWidget:
 
         # 创建菜单项
         menu_login_btn = QAction(QIcon('./img/icon/account_info/action_login_btn.svg'), "登录账号", menu)
-        menu_edit_btn = QAction(QIcon('./img/icon/account_info/action_edit_btn.svg'), "修改账号", menu)
         menu_delete_btn = QAction(QIcon('./img/icon/account_info/action_delete_btn.svg'), "删除账号", menu)
-        menu_offline_login_btn = QAction(QIcon('./img/icon/account_info/other_btn_menu_offline_false.svg'), '离线登录',
-                                         menu)
+        menu_offline_login_btn = QAction(QIcon('./img/icon/account_info/unchecked.svg'), '离线登录', menu)
+        menu_skip_email_btn = QAction(QIcon('./img/icon/account_info/unchecked.svg'), "跳过验证", menu)
 
         # 菜单项列表
         menu_list = [
             menu_login_btn,
-            menu_edit_btn,
             menu_delete_btn,
             menu_offline_login_btn,
+            menu_skip_email_btn
         ]
 
         # 设置菜单
@@ -659,11 +678,18 @@ class LoginWidget:
         menu.setAttribute(Qt.WA_TranslucentBackground)
         # 设置菜单项可选
         menu_offline_login_btn.setCheckable(True)
+        menu_skip_email_btn.setCheckable(True)
 
         # 循环设置控件
         for i in menu_list:
             i.setFont(QFont(self.font, 12))  # 设置字体
             menu.addAction(i)  # 添加到菜单
+
+        # 读取配置
+        self.__read_menu_config(
+            [menu_offline_login_btn, menu_skip_email_btn],
+            account_info
+        )
 
         # 菜单项槽函数绑定
         menu_offline_login_btn.triggered.connect(
@@ -671,11 +697,11 @@ class LoginWidget:
         menu_login_btn.triggered.connect(
             lambda: self.__other_btn_menu_login_action(menu_login_btn, account_info)
         )
-        menu_edit_btn.triggered.connect(
-            lambda: self.__other_btn_menu_revise_action(account_info)
-        )
         menu_delete_btn.triggered.connect(
             lambda: self.__other_btn_menu_remove_action(account_info)
+        )
+        menu_skip_email_btn.triggered.connect(
+            lambda: self.__other_btn_menu_skip_action(menu_skip_email_btn, account_info)
         )
 
         # 设置控件对象名称
@@ -695,6 +721,7 @@ class LoginWidget:
     @staticmethod
     def __determine_account_attributes(
             account_info: dict,
+            layout: QGridLayout,
             recently_logged: QWidget,
             offline_logged: QWidget
     ):
@@ -703,12 +730,25 @@ class LoginWidget:
         :param account_info:
         :return:
         """
-        if account_info['MostRecent'] != '1':
-            # 判断是否为最近登录
-            recently_logged.setHidden(True)
-        if account_info['WantsOfflineMode'] != '1':
-            # 判断是否为离线模式
-            offline_logged.setHidden(True)
+
+        # 判断是否为最近登录
+        if account_info['MostRecent']:
+            layout.addWidget(recently_logged, 1, 1, 1, 1)
+            recently_logged.setVisible(True)
+        else:
+            layout.removeWidget(recently_logged)
+            recently_logged.setVisible(False)
+
+        # 判断是否为离线模式
+        if account_info['WantsOfflineMode']:
+            if account_info['MostRecent']:
+                layout.addWidget(offline_logged, 1, 2, 1, 1)
+            else:
+                layout.addWidget(offline_logged, 1, 1, 1, 1)
+            offline_logged.setVisible(True)
+        else:
+            layout.removeWidget(offline_logged)
+            offline_logged.setVisible(False)
 
     @staticmethod
     def shadow_setup(target: QWidget):
@@ -770,24 +810,46 @@ class LoginWidget:
         # 将 QCompleter 对象设置为 QLineEdit 的自动补全器
         ssfn_edit.setCompleter(completer)
 
-    @staticmethod
-    def __other_btn_menu_offline_action(action: QAction, account_info: dict):
+    def __other_btn_menu_offline_action(self, action: QAction, account_info: dict):
         """其他按钮的菜单离线登录选项行为槽函数"""
         """
         其他按钮中离线登录复选框的槽函数
         :param action:
         :return:
         """
+        cammy = self.__file_operation.read_json()
         if action.isChecked():
-            action.setIcon(QIcon('./img/icon/account_info/other_btn_menu_offline_true.svg'))
+            action.setIcon(QIcon('./img/icon/account_info/check.svg'))
+            for cammy_item in cammy:
+                if cammy_item['cammy_user'] == account_info['cammy_user']:
+                    cammy_item['WantsOfflineMode'] = True
+                    break
         else:
-            action.setIcon(QIcon('./img/icon/account_info/other_btn_menu_offline_false.svg'))
+            action.setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
+            for cammy_item in cammy:
+                if cammy_item['cammy_user'] == account_info['cammy_user']:
+                    cammy_item['WantsOfflineMode'] = False
+                    break
+        self.__file_operation.write_json(cammy)
+        self.__refresh_widget()
 
-    @staticmethod
-    def __other_btn_menu_login_action(action: QAction, account_info: dict):
+    def __other_btn_menu_login_action(self, action: QAction, account_info: dict):
         """其他按钮的菜单登录账号选项行为槽函数"""
-        login = SteamLoginThread(account_info, action)
-        login.start()
+        # 登录线程
+        self.login = SteamLoginThread(account_info, self.parent)
+        self.login.start()
+        # 刷新卡密信息
+        cammy = self.__file_operation.read_json()
+        for cammy_item in cammy:
+            cammy_item['MostRecent'] = False  # 设置为最近登录为False
+            if cammy_item['cammy_user'] == account_info['cammy_user']:
+                cammy_item['MostRecent'] = True
+        self.__file_operation.write_json(cammy)
+        # 创建监测线程
+        d_vdf = DetectVdfThread(self.parent)
+        d_vdf.signal.connect(self.__refresh_widget)
+        d_vdf.start()
+        self.__refresh_widget()
 
     def __other_btn_menu_remove_action(self, account_info: dict):
         """其他按钮的菜单删除账号选项行为槽函数"""
@@ -803,10 +865,40 @@ class LoginWidget:
         # 刷新窗体
         self.__refresh_widget()
 
-    def __other_btn_menu_revise_action(self, account_info: dict):
-        """其他按钮的菜单修改账号选项行为槽函数"""
-        self.revise_dialog = ReviseDialog(self.parent, account_info)
-        self.revise_dialog.show()
+    def __other_btn_menu_skip_action(self, action: QAction, account_info: dict):
+        """其他按钮的菜单跳过验证选项行为槽函数"""
+        cammy = self.__file_operation.read_json()
+        if action.isChecked():
+            action.setIcon(QIcon('./img/icon/account_info/check.svg'))
+            for cammy_item in cammy:
+                if cammy_item['cammy_user'] == account_info['cammy_user']:
+                    cammy_item['skip_email'] = True
+                    break
+        else:
+            action.setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
+            for cammy_item in cammy:
+                if cammy_item['cammy_user'] == account_info['cammy_user']:
+                    cammy_item['skip_email'] = False
+                    break
+        self.__file_operation.write_json(cammy)
+
+    def __read_menu_config(self, action_list: List[QAction], account_info: dict):
+        """读取卡密设置"""
+        cammy_list = self.__file_operation.read_json()
+        for cammy in cammy_list:
+            if cammy['cammy_user'] == account_info['cammy_user']:
+                if cammy['WantsOfflineMode']:
+                    action_list[0].setChecked(True)
+                    action_list[0].setIcon(QIcon('./img/icon/account_info/check.svg'))
+                else:
+                    action_list[0].setChecked(False)
+                    action_list[0].setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
+                if cammy['skip_email']:
+                    action_list[1].setChecked(True)
+                    action_list[1].setIcon(QIcon('./img/icon/account_info/check.svg'))
+                else:
+                    action_list[1].setChecked(False)
+                    action_list[1].setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
 
     def __refresh_widget(self):
         """
@@ -817,98 +909,3 @@ class LoginWidget:
         self.scroll_widget_content.setObjectName('scroll_widget_content')
         self.scroll_widget_content.resize(540, 220)
         self.scroll_widget.setWidget(self.scroll_widget_content)
-
-
-class ReviseDialog(QMainWindow):
-    """修改账号信息弹窗"""
-
-    def __init__(self, parent: QMainWindow | None, account_info: dict):
-        super(ReviseDialog, self).__init__()
-        self.parent = parent
-        self.account_info = account_info
-        self.setup_form()
-        self.setup_window()
-        self.read_qss_file()
-
-    def setup_window(self) -> None:
-        """设定窗体各类参数
-
-        :return: None
-        """
-        self.setFixedSize(500, 300)  # 设定窗体大小
-        self.setWindowTitle("Steam上号器- 修改账号 - 开发版 - Qiao")  # 设定窗口名
-        self.setWindowIcon(QIcon("./img/icon/icon.ico"))  # 设定窗体图标
-        self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗体属性为透明
-        self.setWindowFlags(Qt.FramelessWindowHint)  # 隐藏框架,并且设置为主窗体
-
-    def read_qss_file(self) -> None:
-        """读取QSS文件
-
-        :return: None
-        """
-        with open('./QSS/ui.qss', 'r', encoding='utf-8') as file:
-            self.setStyleSheet(file.read())
-
-    def setup_form(self) -> None:
-        """窗体设定
-
-        :return: None
-        """
-        # 透明窗体
-        self.base_widget = QWidget()  # 创建透明窗口
-        self.base_widget.setObjectName("base_widget")  # 设置对象名称
-        self.base_layout = QGridLayout()  # 创建透明窗口布局
-        self.base_widget.setLayout(self.base_layout)  # 设置布局
-        self.base_widget.setAttribute(Qt.WA_TranslucentBackground)  # 隐藏背景
-
-        # 主窗体
-        self.main_widget = QWidget()  # 创建主窗体
-        self.main_widget.setObjectName("main_widget")  # 设置主窗体对象名称
-        self.base_layout.addWidget(self.main_widget)  # 添加到布局
-
-        self.setCentralWidget(self.base_widget)  # 设置窗口主部件
-
-        # 添加阴影
-        effect_shadow = QGraphicsDropShadowEffect(self)
-        effect_shadow.setOffset(0, 1)  # 偏移
-        effect_shadow.setBlurRadius(12)  # 阴影半径
-        effect_shadow.setColor(QColor("#1DBEF5"))  # 阴影颜色
-        self.main_widget.setGraphicsEffect(effect_shadow)  # 将设置套用到widget窗口中
-
-    def mousePressEvent(self, event: QMouseEvent) -> None:
-        """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置
-
-        :param event:
-        :return: None
-        """
-        if event.button() == Qt.LeftButton:
-            # 如果按下按钮为左键
-            self._mouse_flag = True  # 设置鼠标跟踪开关为True
-            self.m_pos = event.globalPos() - self.pos()  # 获取鼠标相对窗口的位置
-            event.accept()
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        """重构鼠标移动事件函数,进行监控鼠标移动并且判断是否拖动窗口
-
-        :param event:
-        :return: None
-        """
-        if Qt.LeftButton and self._mouse_flag:
-            # 如果是左键按下且鼠标跟踪打卡
-            self.move(event.globalPos() - self.m_pos)  # 更改窗口位置
-            event.accept()
-
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        """重构鼠标松开事件函数,进行监控鼠标状态
-
-        :param event:
-        :return: None
-        """
-        self._mouse_flag = False  # 设置鼠标跟踪为关
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    widget = LoginWidget()
-    widget.show()
-    sys.exit(app.exec_())

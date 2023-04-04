@@ -12,6 +12,7 @@ import winreg
 import vdf
 from pathlib import Path
 from json.decoder import JSONDecodeError
+from PyQt5.QtCore import QThread, pyqtSignal
 
 
 class FileOperation:
@@ -25,12 +26,11 @@ class FileOperation:
         'cammy_ssfn': '',
         'steam64_id': '',
         'AccountName': '',
-        'WantsOfflineMode': '',
-        'MostRecent': '',
         'Timestamp': '',
-        'first_login': True,
+        'WantsOfflineMode': False,
+        'MostRecent': False,
+        'skip_email': False,
         'img_path': './img/icon/icon.ico',
-        'login_method': 1
     }
 
     def __init__(self):
@@ -70,7 +70,7 @@ class FileOperation:
             self.steam_user_path = self.__steam_config_path / 'loginusers.vdf'
             self.steam64id_path = self.__steam_config_path / 'config.vdf'
             # Steam图片目录
-            self.steam_avatarcache_path = self.steam_path / 'avatarcache'
+            self.steam_avatarcache_path = self.__steam_config_path / 'avatarcache'
 
             # 设置安装状态
             self.steam_install_state = True
@@ -180,12 +180,12 @@ class VdfOperation:
         with open(file_path, 'r', encoding='utf-8') as f:
             config = vdf.load(f)
 
-        if config['users'][steam64id]['WantsOfflineMode'] == 0:
+        if config['users'][steam64id]['WantsOfflineMode'] == "0":
             # 判断是否需要更改
             return
         else:
-            config['users'][steam64id]['WantsOfflineMode'] = 1
-            config['users'][steam64id]['SkipOfflineModeWarning'] = 1
+            config['users'][steam64id]['WantsOfflineMode'] = "1"
+            config['users'][steam64id]['SkipOfflineModeWarning'] = "1"
             with open(file_path, 'w', encoding='utf-8') as f:
                 vdf.dump(config, f, pretty=True)
 
@@ -201,16 +201,43 @@ class VdfOperation:
         with open(file_path, 'r', encoding='utf-8') as f:
             config = vdf.load(f)
 
-        if config['users'][steam64id]['WantsOfflineMode'] == 0:
+        if config['users'][steam64id]['WantsOfflineMode'] == "0":
             # 判断是否需要更改
             return
         else:
-            config['users'][steam64id]['WantsOfflineMode'] = 0
-            config['users'][steam64id]['SkipOfflineModeWarning'] = 0
+            config['users'][steam64id]['WantsOfflineMode'] = "0"
+            config['users'][steam64id]['SkipOfflineModeWarning'] = "0"
             with open(file_path, 'w', encoding='utf-8') as f:
                 vdf.dump(config, f, pretty=True)
 
 
+class DetectVdfThread(QThread, FileOperation, VdfOperation):
+    """监测登录信息的线程"""
+    signal = pyqtSignal()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def run(self):
+        while True:
+            self.detect_vdf()
+            self.signal.emit()
+            self.sleep(3)
+
+    def detect_vdf(self):
+        """监测vdf"""
+        cammy: list = self.read_json()
+        self.vdf: dict = self.read_vdf(self.steam_user_path)
+        for vdf_key, vdf_value in self.vdf.items():
+            for item in cammy:
+                if vdf_value['AccountName'] in item['cammy_user']:
+                    item['steam64_id'] = vdf_key
+                    item['AccountName'] = vdf_value['AccountName']
+                    item['Timestamp'] = vdf_value['Timestamp']
+                    item['img_path'] = str(self.steam_avatarcache_path / f"{vdf_key}.png")
+        self.write_json(cammy)
+
+
 if __name__ == '__main__':
-    f = FileOperation()
-    f.remove_ssfn()
+    f = DetectVdfThread()
+    f.detect_vdf()

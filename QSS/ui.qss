@@ -266,7 +266,7 @@ QLabel#avatar_img {
     /*设置边框*/
     border: 2px solid #4530B3;
     /*设置边距*/
-    padding: 0 0 0 0;
+    padding: 0;
 }
 
 QLabel#account_img_label, QLabel#account_name_label {
