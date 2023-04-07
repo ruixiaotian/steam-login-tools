@@ -18,9 +18,8 @@
 import json
 import sys
 import datetime
-from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, \
-    QGridLayout, QCheckBox, QAction, QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, \
-    QSpacerItem, QDialog
+from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QCheckBox, QAction, \
+    QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem, QDialog
 from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
 from PyQt5.QtCore import Qt, QPropertyAnimation
 from typing import List

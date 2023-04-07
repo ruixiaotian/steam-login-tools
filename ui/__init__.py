@@ -16,6 +16,7 @@ from PyQt5.QtCore import Qt, QPropertyAnimation
 
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import LoginWidget
+from ui.net_widget import NetWidget
 
 
 class SteamLoginUI(QMainWindow):
@@ -87,8 +88,8 @@ class SteamLoginUI(QMainWindow):
     def setup_layout(self) -> None:
         """设定窗体内布局"""
         layout = QGridLayout()  # 创建网格布局
-        layout.addWidget(self.left_widget_setup(), 0, 0, 1, 1)
         layout.addWidget(self.page_widget_setup(), 0, 1, 1, 1)
+        layout.addWidget(self.left_widget_setup(), 0, 0, 1, 1)
         layout.setContentsMargins(0, 0, 0, 0)
         self.main_widget.setLayout(layout)  # 设置窗体内布局
 
@@ -104,7 +105,7 @@ class SteamLoginUI(QMainWindow):
         # 添加到布局中
         layout.addWidget(top_icon_setup(QFont(self.font_name, 12)), 0, 0, 1, 1, Qt.AlignTop)
         layout.addItem(QSpacerItem(10, 50, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 0, 1, 1)
-        layout.addWidget(left_button_setup(QFont(self.font_name, 13)), 2, 0, 1, 1, Qt.AlignTop)
+        layout.addWidget(left_button_setup(QFont(self.font_name, 13), self.page_widget), 2, 0, 1, 1, Qt.AlignTop)
         layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Minimum), 3, 0, 1, 1)
         layout.addWidget(left_label_setup(self.font_name, self), 4, 0, 1, 1, Qt.AlignBottom)
 
@@ -112,19 +113,24 @@ class SteamLoginUI(QMainWindow):
 
     def page_widget_setup(self) -> QStackedWidget:
         """页面窗体设置"""
-        widget = QStackedWidget()
-        widget.setObjectName("page_widget")
+        self.page_widget = QStackedWidget()
 
-        # 接收控件和线程列队
+        """页面设置"""
+        # 登录页面
         login = LoginWidget(self, self.font_name)
         login_widget = login.login_widget_setup(self)
         self.pings = login.pings
 
-        widget.addWidget(login_widget)
+        # 网络加速页面
+        net = NetWidget(self, self.font_name)
+        net_widget = net.net_widget_setup(self)
 
-        widget.resize(500, 400)
+        for i in [login_widget, net_widget]:
+            self.page_widget.addWidget(i)
 
-        return widget
+        self.page_widget.resize(500, 400)
+
+        return self.page_widget
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置

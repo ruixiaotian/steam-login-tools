@@ -25,6 +25,7 @@ LOGO = r"""
 
 """
 
+
 def main():
     # 打印一个华丽LOGO
     logger.opt(colors=True).info(f"<blue>{LOGO}</>")

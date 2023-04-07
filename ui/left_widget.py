@@ -57,12 +57,12 @@ def top_icon_setup(font: QFont) -> QWidget:
     return widget
 
 
-def left_button_setup(font: str) -> QWidget:
+def left_button_setup(font: str, page_widget: QWidget) -> QWidget:
     """
     page_widget: QStackedWidget
     设置左方窗体的切换按钮等设置
     :param font: 设置QLabel字体
-    # :param page_widget: 右方切换窗体用于绑定按钮事件
+    :param page_widget: 右方切换窗体用于绑定按钮事件
     :return: QWidget
     """
     widget = QWidget()  # 创建承载控件
@@ -95,8 +95,10 @@ def left_button_setup(font: str) -> QWidget:
 
     # 设置单独属性
     widget_list.setIconSize(QSize(24, 24))
-    widget_list.currentItemChanged.connect(list_widget_icon_color)  # 绑定事件
     widget_list.setCurrentRow(0)
+    # 绑定事件
+    widget_list.currentItemChanged.connect(list_widget_icon_color)  # 绑定颜色切换事件
+    widget_list.currentItemChanged.connect(lambda: page_widget.setCurrentIndex(widget_list.currentRow()))
 
     # 添加到布局
     layout.addWidget(widget_list, 0, 0, 1, 2)

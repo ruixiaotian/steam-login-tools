@@ -331,3 +331,8 @@ QMenu#other_btn_menu::item:selected {
     /*设置圆角*/
     border-radius: 3px;
 }
+
+QWidget#net_widget {
+    /*设置背景颜色*/
+    background-color: transparent;
+}
