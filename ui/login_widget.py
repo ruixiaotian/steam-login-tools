@@ -654,7 +654,7 @@ class LoginWidget:
         # 创建菜单项
         menu_login_btn = QAction(QIcon('./img/icon/login_widget/account_info/action_login_btn.svg'), "登录账号", menu)
         menu_delete_btn = QAction(QIcon('./img/icon/login_widget/account_info/action_delete_btn.svg'), "删除账号", menu)
-        menu_offline_login_btn = QAction(QIcon('./img/login_widget/icon/account_info/unchecked.svg'), '离线登录', menu)
+        menu_offline_login_btn = QAction(QIcon('./img/icon/login_widget/account_info/unchecked.svg'), '离线登录', menu)
         menu_skip_email_btn = QAction(QIcon('./img/icon/login_widget/account_info/unchecked.svg'), "跳过验证", menu)
 
         # 菜单项列表

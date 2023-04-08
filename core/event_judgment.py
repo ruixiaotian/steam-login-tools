@@ -31,10 +31,16 @@ def list_widget_icon_color(current: QListWidgetItem, previous: QListWidgetItem) 
     :return:
     """
     # 图标的路径
-    icon_path_list = ["./img/icon/item_icon/user.svg", "./img/icon/item_icon/net_acceleration.svg",
-                      "./img/icon/item_icon/fun_setting.svg"]
-    icon_select_list = ["./img/icon/item_icon/user_select.svg", "./img/icon/item_icon/net_acceleration_select.svg",
-                        "./img/icon/item_icon/fun_setting_select.svg"]
+    icon_path_list = [
+        "./img/icon/login_widget/item_icon/user.svg",
+        "./img/icon/login_widget/item_icon/net_acceleration.svg",
+        "./img/icon/login_widget/item_icon/fun_setting.svg"
+]
+    icon_select_list = [
+        "./img/icon/login_widget/item_icon/user_select.svg",
+        "./img/icon/login_widget/item_icon/net_acceleration_select.svg",
+        "./img/icon/login_widget/item_icon/fun_setting_select.svg"
+    ]
 
     try:
         # 判断现在

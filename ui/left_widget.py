@@ -69,8 +69,11 @@ def left_button_setup(font: str, page_widget: QWidget) -> QWidget:
     layout = QGridLayout(widget)
 
     # 创建svg文件指向
-    file_name_list = ["./img/icon/item_icon/user.svg", "./img/icon/item_icon/net_acceleration.svg",
-                      "./img/icon/item_icon/fun_setting.svg"]
+    file_name_list = [
+        "./img/icon/login_widget/item_icon/user.svg",
+        "./img/icon/login_widget/item_icon/net_acceleration.svg",
+        "./img/icon/login_widget/item_icon/fun_setting.svg"
+    ]
 
     # 窗体设置
     widget.resize(140, 200)
@@ -117,13 +120,13 @@ def left_label_setup(font: str, ui: QMainWindow) -> QWidget:
 
     # 创建控件
     button = QPushButton("退出软件")
-    label = QLabel("V.3.0.0")
+    label = QLabel("3.0.0_Beta")
     # 设置属性
     button.setFont(QFont(font, 8))
     label.setFont(QFont(font, 6))
 
     # 设置图标和对象名称
-    button.setIcon(QIcon("./img/icon/item_icon/exit.svg"))
+    button.setIcon(QIcon("./img/icon/login_widget/item_icon/exit.svg"))
     button.setObjectName("exit_button")
     label.setObjectName("version_label")
 

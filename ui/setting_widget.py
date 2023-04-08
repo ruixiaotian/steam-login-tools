@@ -127,7 +127,8 @@ class SettingWidget:
         right_widget = self.__right_widget()
 
         """添加到控件"""
-        layout.addLayout(right_widget, 0, 0, 1, 1, Qt.AlignRight)
+        layout.addLayout(right_widget, 0, 1, 1, 1)
+        layout.addWidget(self.net_widget_setup(), 0, 0, 1, 1)
 
         # 添加阴影
         self.shadow_setup(self.soft_setting_widget)
@@ -177,6 +178,36 @@ class SettingWidget:
         # 授权服务器1
         item1 = QListWidgetItem("授权服务器 1 号")
         item1_widget = QWidget()
+
+    def net_widget_setup(self):
+        """
+        网络界面
+        :return:
+        """
+        widget = QWidget()
+        layout = QGridLayout(widget)
+
+        # 设置属性
+        widget.setObjectName('net_widget')
+
+        # 获取控件
+        img_path = Path("./img/setting_widget/settings.svg")
+        pixmap = QPixmap(128, 128)
+        pixmap.load(str(img_path))
+
+        img = QLabel()
+        img.setPixmap(pixmap)
+        img.setFixedSize(260, 260)
+        img.setScaledContents(True)
+
+        label = QLabel("这里的内容,以后再来探索吧")
+        label.setFont(QFont(self.font, 13))
+
+        # 添加控件
+        layout.addWidget(img, 0, 0, 1, 1, Qt.AlignCenter)
+        layout.addWidget(label, 1, 0, 1, 1, Qt.AlignCenter)
+
+        return widget
 
     @staticmethod
     def shadow_setup(target: QWidget):
