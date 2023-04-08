@@ -26,7 +26,7 @@ from typing import List
 from pathlib import Path
 from core.file_operation import FileOperation, DetectVdfThread
 from core.network_threads import PingServerThread, SteamLoginThread
-from core.event_judgment import size_button_checked_event
+from core.event_judgment import login_widget_size_button_checked_event
 
 
 class LoginWidget:
@@ -108,8 +108,8 @@ class LoginWidget:
         edit_obj_name_list = ['user_edit', 'password_edit', 'ssfn_edit']
         btn_obj_name_list = ['login_button', 'save_button']
         place_text_list = ['USER-账号', 'PASSWORD-密码', 'SSFN(如果有)']
-        icon_path_list = ['./img/icon/add_account/user.svg', './img/icon/add_account/pwd.svg',
-                          './img/icon/add_account/ssfn.svg']
+        icon_path_list = ['./img/icon/login_widget/add_account/user.svg', './img/icon/login_widget/add_account/pwd.svg',
+                          './img/icon/login_widget/add_account/ssfn.svg']
 
         # 单独设置属性
         widget.setObjectName('add_account_widget')  # 设置控件的名字
@@ -197,12 +197,12 @@ class LoginWidget:
 
         # 图标路径
         online_icon = [
-            './img/icon/server_status/server_normal.svg',  # 服务器在线图标
-            './img/icon/server_status/online.png'  # 在线状态图标
+            './img/icon/login_widget/server_status/server_normal.svg',  # 服务器在线图标
+            './img/icon/login_widget/server_status/online.png'  # 在线状态图标
         ]
         offline_icon = [
-            './img/icon/server_status/server_error.svg',  # 服务器离线图标
-            './img/icon/server_status/offline.png'  # 离线状态图标
+            './img/icon/login_widget/server_status/server_error.svg',  # 服务器离线图标
+            './img/icon/login_widget/server_status/offline.png'  # 离线状态图标
         ]
         online_server_icon = [
             online_icon[0],
@@ -340,8 +340,8 @@ class LoginWidget:
 
         # 图标路径
         icon_list = [
-            './img/icon/account_info/size_button_unchecked.svg',
-            './img/icon/account_info/size_button_checked.svg'
+            './img/icon/login_widget/account_info/size_button_unchecked.svg',
+            './img/icon/login_widget/account_info/size_button_checked.svg'
         ]
 
         # 右侧
@@ -382,14 +382,7 @@ class LoginWidget:
         # int类型 当选中时为2,未选中时为0
         size_button.stateChanged.connect(
             lambda state:
-            size_button_checked_event(
-                size_button,
-                icon_list,
-                state,
-                widget,
-                add_account_widget,
-                server_status_widget
-            )
+            login_widget_size_button_checked_event(state, widget, add_account_widget, server_status_widget)
         )
 
         return size_button
@@ -509,7 +502,7 @@ class LoginWidget:
         # 设置图标属性
         label.setFixedSize(16, 16)
         label.setObjectName('account_img_label')
-        label.setPixmap(QPixmap("./img/icon/account_info/account_name_icon.svg"))
+        label.setPixmap(QPixmap("./img/icon/login_widget/account_info/account_name_icon.svg"))
         label.setScaledContents(True)
 
         # 设置名字属性
@@ -546,7 +539,7 @@ class LoginWidget:
         # 设置图标属性
         img.setFixedSize(16, 16)
         img.setObjectName('recently_logged')
-        img.setPixmap(QPixmap("./img/icon/account_info/recently_logged_icon.svg"))
+        img.setPixmap(QPixmap("./img/icon/login_widget/account_info/recently_logged_icon.svg"))
         img.setScaledContents(True)
 
         # 设置名字属性
@@ -583,7 +576,7 @@ class LoginWidget:
         # 设置图标属性
         img.setFixedSize(16, 16)
         img.setObjectName('offline_logged')
-        img.setPixmap(QPixmap("./img/icon/account_info/offline_logged_icon.svg"))
+        img.setPixmap(QPixmap("./img/icon/login_widget/account_info/offline_logged_icon.svg"))
         img.setScaledContents(True)
 
         # 设置名字属性
@@ -625,7 +618,7 @@ class LoginWidget:
         # 设置图标属性
         img.setFixedSize(14, 14)
         img.setObjectName('logged_time')
-        img.setPixmap(QPixmap("./img/icon/account_info/time_icon.svg"))
+        img.setPixmap(QPixmap("./img/icon/login_widget/account_info/time_icon.svg"))
         img.setScaledContents(True)
 
         # 设置名字属性
@@ -650,7 +643,7 @@ class LoginWidget:
         """
         # 创建控件
         btn = QPushButton()
-        btn.setIcon(QIcon("./img/icon/account_info/other_btn_icon.svg"))
+        btn.setIcon(QIcon("./img/icon/login_widget/account_info/other_btn_icon.svg"))
         btn.setFixedSize(24, 24)
         btn.setObjectName('other_btn')
 
@@ -659,10 +652,10 @@ class LoginWidget:
         menu.setFixedSize(115, 135)
 
         # 创建菜单项
-        menu_login_btn = QAction(QIcon('./img/icon/account_info/action_login_btn.svg'), "登录账号", menu)
-        menu_delete_btn = QAction(QIcon('./img/icon/account_info/action_delete_btn.svg'), "删除账号", menu)
-        menu_offline_login_btn = QAction(QIcon('./img/icon/account_info/unchecked.svg'), '离线登录', menu)
-        menu_skip_email_btn = QAction(QIcon('./img/icon/account_info/unchecked.svg'), "跳过验证", menu)
+        menu_login_btn = QAction(QIcon('./img/icon/login_widget/account_info/action_login_btn.svg'), "登录账号", menu)
+        menu_delete_btn = QAction(QIcon('./img/icon/login_widget/account_info/action_delete_btn.svg'), "删除账号", menu)
+        menu_offline_login_btn = QAction(QIcon('./img/login_widget/icon/account_info/unchecked.svg'), '离线登录', menu)
+        menu_skip_email_btn = QAction(QIcon('./img/icon/login_widget/account_info/unchecked.svg'), "跳过验证", menu)
 
         # 菜单项列表
         menu_list = [
@@ -782,15 +775,15 @@ class LoginWidget:
             if pwd_edit.echoMode() == QLineEdit.PasswordEchoOnEdit:
                 # 如果是密码输入模式,则切换回普通模式
                 pwd_edit.setEchoMode(QLineEdit.Normal)  # 设置普通模式
-                action.setIcon(QIcon('./img/icon/add_account/invisible.svg'))
+                action.setIcon(QIcon('./img/icon/login_widget/add_account/invisible.svg'))
             else:
                 # 如果是普通输入模式,则切换回密码输入模式
                 pwd_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码模式
-                action.setIcon(QIcon('./img/icon/add_account/visible.svg'))
+                action.setIcon(QIcon('./img/icon/login_widget/add_account/visible.svg'))
 
         # 设置行为
         action = QAction(pwd_edit)
-        action.setIcon(QIcon('./img/icon/add_account/visible.svg'))
+        action.setIcon(QIcon('./img/icon/login_widget/add_account/visible.svg'))
         action.triggered.connect(judgement)
 
         # 添加到输入框
@@ -818,13 +811,13 @@ class LoginWidget:
         """
         cammy = self.__file_operation.read_json()
         if action.isChecked():
-            action.setIcon(QIcon('./img/icon/account_info/check.svg'))
+            action.setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
             for cammy_item in cammy:
                 if cammy_item['cammy_user'] == account_info['cammy_user']:
                     cammy_item['WantsOfflineMode'] = True
                     break
         else:
-            action.setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
+            action.setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
             for cammy_item in cammy:
                 if cammy_item['cammy_user'] == account_info['cammy_user']:
                     cammy_item['WantsOfflineMode'] = False
@@ -868,13 +861,13 @@ class LoginWidget:
         """其他按钮的菜单跳过验证选项行为槽函数"""
         cammy = self.__file_operation.read_json()
         if action.isChecked():
-            action.setIcon(QIcon('./img/icon/account_info/check.svg'))
+            action.setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
             for cammy_item in cammy:
                 if cammy_item['cammy_user'] == account_info['cammy_user']:
                     cammy_item['skip_email'] = True
                     break
         else:
-            action.setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
+            action.setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
             for cammy_item in cammy:
                 if cammy_item['cammy_user'] == account_info['cammy_user']:
                     cammy_item['skip_email'] = False
@@ -888,16 +881,16 @@ class LoginWidget:
             if cammy['cammy_user'] == account_info['cammy_user']:
                 if cammy['WantsOfflineMode']:
                     action_list[0].setChecked(True)
-                    action_list[0].setIcon(QIcon('./img/icon/account_info/check.svg'))
+                    action_list[0].setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
                 else:
                     action_list[0].setChecked(False)
-                    action_list[0].setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
+                    action_list[0].setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
                 if cammy['skip_email']:
                     action_list[1].setChecked(True)
-                    action_list[1].setIcon(QIcon('./img/icon/account_info/check.svg'))
+                    action_list[1].setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
                 else:
                     action_list[1].setChecked(False)
-                    action_list[1].setIcon(QIcon('./img/icon/account_info/unchecked.svg'))
+                    action_list[1].setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
 
     def __refresh_widget(self):
         """

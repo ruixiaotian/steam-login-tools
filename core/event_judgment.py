@@ -16,7 +16,11 @@
  *                   不见满街漂亮妹，哪个归得程序员？
 """
 from PyQt5.Qt import *
-from core.event_animation import account_animation_max, account_animation_min
+from core.event_animation import \
+    login_account_animation_max, \
+    login_account_animation_min, \
+    setting_account_animation_max, \
+    setting_account_animation_min
 
 
 def list_widget_icon_color(current: QListWidgetItem, previous: QListWidgetItem) -> None:
@@ -52,9 +56,7 @@ def list_widget_icon_color(current: QListWidgetItem, previous: QListWidgetItem) 
         return
 
 
-def size_button_checked_event(
-        button: QPushButton,
-        icon_path: list,
+def login_widget_size_button_checked_event(
         button_state: int,
         info_widget: QWidget,
         account_widget: QWidget,
@@ -63,8 +65,6 @@ def size_button_checked_event(
     """
     设置按钮图标,隐藏或显示其他控件
 
-    :param button: 按钮
-    :param icon_path: 图标路径(0为放大, 1为缩小)
     :param button_state: 按钮状态
     :param info_widget: 信息控件
     :param account_widget: 账号控件
@@ -73,7 +73,29 @@ def size_button_checked_event(
     """
     if button_state == 0:
         # 如果按钮处于未选中状态
-        account_animation_min(info_widget, account_widget, status_widget)
+        login_account_animation_min(info_widget, account_widget, status_widget)
     else:
         # 如果按钮处于选中状态
-        account_animation_max(info_widget, account_widget, status_widget)
+        login_account_animation_max(info_widget, account_widget, status_widget)
+
+
+def setting_widget_size_button_checked_event(
+        button_state: int,
+        info_widget: QWidget,
+        setting_widget: QWidget,
+) -> None:
+    """
+    设置按钮图标,隐藏或显示其他控件
+
+    :param button_state: 按钮状态
+    :param info_widget: 信息控件
+    :param setting_widget: 设置控件
+    :return:
+    """
+    print(button_state)
+    if button_state == 2:
+        # 如果按钮处于未选中状态
+        setting_account_animation_max(info_widget, setting_widget)
+    else:
+        # 如果按钮处于选中状态
+        setting_account_animation_min(info_widget, setting_widget)

@@ -23,7 +23,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 from core.file_operation import FileOperation, VdfOperation
-from tcping import Ping
+from core.tcping import Ping
 
 
 class PingServerThread(QThread):

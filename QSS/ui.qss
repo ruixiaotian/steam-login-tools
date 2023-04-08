@@ -188,7 +188,7 @@ QCheckBox#size_button::indicator:unchecked {
     width: 20px;
     height: 20px;
     /*设置背景图片*/
-    image: url('./img/icon/account_info/size_button_unchecked.svg')
+    image: url('./img/icon/login_widget/account_info/size_button_unchecked.svg')
 }
 
 QCheckBox#size_button::indicator:checked {
@@ -198,7 +198,7 @@ QCheckBox#size_button::indicator:checked {
     width: 20px;
     height: 20px;
     /*设置背景图片*/
-    image: url('./img/icon/account_info/size_button_checked.svg')
+    image: url('./img/icon/login_widget/account_info/size_button_checked.svg')
 }
 
 QScrollArea#scroll_widget {
@@ -335,4 +335,32 @@ QMenu#other_btn_menu::item:selected {
 QWidget#net_widget {
     /*设置背景颜色*/
     background-color: transparent;
+}
+
+QWidget#setting_widget {
+    /*设置背景颜色*/
+    background-color: transparent;
+}
+
+QWidget#author_info_widget, QWidget#software_setting_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 10px 0px 15px;
+    /*设置圆角*/
+    border-radius: 24px;
+}
+
+QLabel#software_info_img {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*超链接设置*/
+    text-decoration: none
+}
+
+QLabel#software_info_title, QLabel#software_info_msg {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*设置字体颜色*/
+    color: #53658B;
 }

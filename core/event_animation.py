@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QSize, QParallelAnimationGroup, QPropertyAnimation, QPoint, QEasingCurve
 
 
-def account_animation_max(
+def login_account_animation_max(
         info_widget: QWidget,
         account_widget: QWidget,
         status_widget: QWidget
@@ -53,7 +53,7 @@ def account_animation_max(
     info_widget_animation_resize.setEndValue(
         QSize(
             info_widget.width(),
-            info_widget.height() + 206
+            info_widget.height() + 200
         )
     )  # 结束位置
 
@@ -71,7 +71,7 @@ def account_animation_max(
     animation_sequent_group.start()
 
 
-def account_animation_min(
+def login_account_animation_min(
         info_widget: QWidget,
         account_widget: QWidget,
         status_widget: QWidget
@@ -117,6 +117,105 @@ def account_animation_min(
     # 输入账密控件,和状态信息控件隐藏
     animation_sequent_group.stateChanged.connect(
         lambda: (account_widget.setHidden(False), status_widget.setHidden(False)))
+
+    # 启动动画
+    animation_sequent_group.start()
+
+
+def setting_account_animation_max(
+        info_widget: QWidget,
+        setting_widget: QWidget,
+):
+    """
+    将账号信息控件最大化，其他控件隐藏
+
+    :param info_widget: 账号信息控件
+    :param setting_widget: 设置控件
+    :return:
+    """
+
+    # 移动
+    info_widget_animation_move = QPropertyAnimation(setting_widget, b"pos")  # 创建移动动画对象
+    info_widget_animation_move.setDuration(800)  # 设置动画持续时间
+    info_widget_animation_move.setStartValue(QPoint(setting_widget.x(), setting_widget.y()))  # 初始位置
+    info_widget_animation_move.setEasingCurve(QEasingCurve.OutBack)  # 设置动画曲线
+    info_widget_animation_move.setEndValue(
+        QPoint(
+            setting_widget.x(),
+            setting_widget.y() - 125
+        )
+    )  # 结束位置
+
+    # 放大
+    info_widget_animation_resize = QPropertyAnimation(setting_widget, b"size", setting_widget)  # 创建放大动画对象
+    info_widget_animation_resize.setDuration(600)  # 设置动画持续时间
+    info_widget_animation_resize.setStartValue(QSize(setting_widget.width(), setting_widget.height()))  # 初始位置
+    info_widget_animation_resize.setEasingCurve(QEasingCurve.OutBack)  # 设置动画曲线
+    info_widget_animation_resize.setEndValue(
+        QSize(
+            setting_widget.width(),
+            setting_widget.height() + 125
+        )
+    )  # 结束位置
+
+    # 添加到动画组
+    # 串行动画组
+    animation_sequent_group = QParallelAnimationGroup(setting_widget)
+    animation_sequent_group.addAnimation(info_widget_animation_move)
+    animation_sequent_group.addAnimation(info_widget_animation_resize)
+
+    # 输入账密控件,和状态信息控件隐藏
+    animation_sequent_group.finished.connect(
+        lambda: (info_widget.setHidden(True)))
+
+    # 启动动画
+    animation_sequent_group.start()
+
+
+def setting_account_animation_min(
+        info_widget: QWidget,
+        setting_widget: QWidget,
+):
+    """
+    将账号信息控件最小化，其他控件隐藏
+
+    :param info_widget: 账号信息控件
+    :param setting_widget: 设置控件
+    :return:
+    """
+
+    # 移动
+    info_widget_animation_move = QPropertyAnimation(setting_widget, b"pos")  # 创建移动动画对象
+    info_widget_animation_move.setDuration(800)  # 设置动画持续时间
+    info_widget_animation_move.setStartValue(QPoint(setting_widget.x(), setting_widget.y()))  # 初始位置
+    info_widget_animation_move.setEasingCurve(QEasingCurve.OutBack)  # 设置动画曲线
+    info_widget_animation_move.setEndValue(
+        QPoint(
+            setting_widget.x(),
+            setting_widget.y() + 125
+        )
+    )  # 结束位置
+
+    # 缩小
+    info_widget_animation_resize = QPropertyAnimation(setting_widget, b"size", setting_widget)  # 创建放大动画对象
+    info_widget_animation_resize.setDuration(600)  # 设置动画持续时间
+    info_widget_animation_resize.setStartValue(QSize(setting_widget.width(), setting_widget.height()))  # 初始位置
+    info_widget_animation_resize.setEasingCurve(QEasingCurve.OutBack)  # 设置动画曲线
+    info_widget_animation_resize.setEndValue(
+        QSize(
+            setting_widget.width(),
+            setting_widget.height() - 125
+        )
+    )  # 结束位置
+
+    # 添加到动画组
+    animation_sequent_group = QParallelAnimationGroup(setting_widget)
+    animation_sequent_group.addAnimation(info_widget_animation_resize)
+    animation_sequent_group.addAnimation(info_widget_animation_move)
+
+    # 输入账密控件,和状态信息控件隐藏
+    animation_sequent_group.stateChanged.connect(
+        lambda: (info_widget.setHidden(False)))
 
     # 启动动画
     animation_sequent_group.start()

@@ -17,6 +17,7 @@ from PyQt5.QtCore import Qt, QPropertyAnimation
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import LoginWidget
 from ui.net_widget import NetWidget
+from ui.setting_widget import SettingWidget
 
 
 class SteamLoginUI(QMainWindow):
@@ -123,9 +124,14 @@ class SteamLoginUI(QMainWindow):
 
         # 网络加速页面
         net = NetWidget(self, self.font_name)
-        net_widget = net.net_widget_setup(self)
+        net_widget = net.net_widget_setup()
 
-        for i in [login_widget, net_widget]:
+        # 设置页面
+        setting = SettingWidget(self, self.font_name)
+        setting_widget = setting.setting_widget_setup()
+
+        for i in [login_widget, net_widget, setting_widget]:
+            # 循环加入QStackedWidget
             self.page_widget.addWidget(i)
 
         self.page_widget.resize(500, 400)

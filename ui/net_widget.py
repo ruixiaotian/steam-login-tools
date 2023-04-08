@@ -14,10 +14,9 @@ class NetWidget:
         self.parent = parent
         self.font = font
 
-    def net_widget_setup(self, ui: QMainWindow):
+    def net_widget_setup(self):
         """
-        设置登录界面
-        :param ui:
+        网络界面
         :return:
         """
         widget = QWidget()
