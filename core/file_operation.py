@@ -10,6 +10,7 @@
 import json
 import winreg
 import vdf
+from loguru import logger
 from pathlib import Path
 from json.decoder import JSONDecodeError
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -97,10 +98,11 @@ class FileOperation:
 
             # 设置安装状态
             self.steam_install_state = True
+            logger.info(f"监测到Steam路径:{self.steam_path}")
         except Exception as e:
             # 设置安装状态
             self.steam_install_state = False
-            print(e)
+            logger.error(e)
 
     def __init_file(self):
         """判断文件是否存在,不存在则创建"""
@@ -256,6 +258,8 @@ class DetectVdfThread(QThread, FileOperation, VdfOperation):
 
     def detect_vdf(self):
         """监测vdf"""
+        if not self.steam_install_state:
+            return
         cammy: list = self.read_cammy_json()
         self.vdf: dict = self.read_vdf(self.steam_user_path)
         for vdf_key, vdf_value in self.vdf.items():
