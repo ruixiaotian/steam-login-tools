@@ -17,6 +17,8 @@ from six import print_
 from timeit import default_timer as timer
 from prettytable import PrettyTable
 
+from core.file_operation import FileOperation
+
 __version__ = "0.1.1rc1"
 
 Statistics = namedtuple('Statistics', [
@@ -31,6 +33,7 @@ Statistics = namedtuple('Statistics', [
 
 iprint = partial(print_, flush=True)
 
+file = FileOperation()
 
 def avg(x):
     return sum(x) / float(len(x))
@@ -172,7 +175,8 @@ class Ping(object):
                     ((self._host, self._port), None))
                 s_runtime = 1000 * (cost_time)
 
-                logger.info(f"连接到 {str(self._host).ljust(20)} 端口:{str(self._port).ljust(9)} 次数:{n} 耗时:{s_runtime:.2f} ms")
+                if file.config_data["server_set"]["ping_info"]:
+                    logger.info(f"连接到 {str(self._host).ljust(20)} 端口:{str(self._port).ljust(9)} 次数:{n} 耗时:{s_runtime:.2f} ms")
 
                 # iprint("Connected to %s[:%s]: seq=%d time=%.2f ms" % (
                 #     self._host, self._port, n, s_runtime))
@@ -182,7 +186,8 @@ class Ping(object):
                 # iprint("Connected to %s[:%s]: seq=%d time out!" % (
                 #     self._host, self._port, n))
 
-                logger.debug(f"连接到服务器{self._host}: 端口:{self._port} 失败")
+                if file.config_data["server_set"]["ping_info"]:
+                    logger.debug(f"连接到服务器{self._host}: 端口:{self._port} 失败")
 
                 self._failed += 1
 

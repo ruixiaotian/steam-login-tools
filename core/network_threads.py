@@ -17,8 +17,10 @@
 """
 import psutil
 import requests
+import winreg
 import subprocess
 from loguru import logger
+from pathlib import Path
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
@@ -131,20 +133,21 @@ class SteamLoginThread(QThread):
             # 如果没有安装steam,则提示
             self.msg.emit('请先安装steam')
         else:
-            try:
-                self.__kill_steam()
-                self.__determine_login_method()
-                self.__determine_login_offline()
-                self.__download_ssfn()
-                logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
-                self.__login()
-            except Exception as e:
-                logger.error(f"登录失败:\n {e}")
+            # try:
+            self.__kill_steam()
+            self.__determine_login_method()
+            self.__determine_login_offline()
+            self.__download_ssfn()
+            logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
+            logger.info(f"登录参数：{self.file_path.steam_exe_path} -login {self.user} {self.pwd}")
+            self.__login()
+            # except Exception as e:
+            #     logger.error(f"登录失败:\n {e}")
 
     def __login(self):
         """登录Steam"""
         subprocess.run(
-            self.skip_email,
+            f"{self.file_path.steam_exe_path} -login {self.user} {self.pwd}",
             cwd=self.file_path.steam_path
         )
 
@@ -172,20 +175,25 @@ class SteamLoginThread(QThread):
         """
         if self.ssfn:
             self.file_path.remove_ssfn()  # 删除SSFN
-            with open(self.file_path.steam_path / {self.ssfn}, 'wb') as f:
+            with open(Path(self.file_path.steam_path) / self.ssfn, 'wb') as f:
                 f.write(requests.get(f"http://1.15.97.14:8848/ssfn/{self}").content)
         else:
             pass
 
     def __determine_login_method(self):
-        # 设置steam路径
-        steam_path = self.file_path.steam_exe_path
+        # 定义要修改的键路径、键名
+        key_path = r'Software\Valve\Steam'
+        key_name = 'StartupMode'
         if self.skip_email:
             # 跳过令牌模式登录
-            self.skip_email = f"{steam_path} -tenfoot -login {self.user} {self.pwd}"
+            key_value = 4
         else:
             # 正常模式登录
-            self.skip_email = f"{steam_path} -login {self.user} {self.pwd}"
+            key_value = 0
+        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)  # 打开注册表键
+        winreg.SetValueEx(key, key_name, 0, winreg.REG_DWORD, key_value)  # 修改键值
+        winreg.CloseKey(key)  # 关闭注册表键
+        logger.info(f"已修改 StartupMode 为： {key_value}")
 
     def __determine_login_offline(self):
         """判断是否需要离线"""

@@ -361,6 +361,11 @@ class LoginWidget:
         # 设置阴影
         self.shadow_setup(widget)
 
+        # 创建监测线程
+        d_vdf = DetectVdfThread(self.parent)
+        d_vdf.signal.connect(self.__refresh_widget)
+        d_vdf.start()
+
         return widget
 
     @staticmethod
@@ -409,7 +414,7 @@ class LoginWidget:
         widget = QWidget()
         layout = QGridLayout(widget)
 
-        account: list = self.__file_operation.read_json()  # 读取账号信息
+        account: list = self.__file_operation.read_cammy_json()  # 读取账号信息
         for i, num in zip(account, range(len(account))):
             # 循环创建控件
             layout.addWidget(self.__scroll_widget_card_setup(i), num, 0, 1, 1, Qt.AlignTop)
@@ -809,7 +814,7 @@ class LoginWidget:
         :param action:
         :return:
         """
-        cammy = self.__file_operation.read_json()
+        cammy = self.__file_operation.read_cammy_json()
         if action.isChecked():
             action.setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
             for cammy_item in cammy:
@@ -831,22 +836,17 @@ class LoginWidget:
         self.login = SteamLoginThread(account_info, self.parent)
         self.login.start()
         # 刷新卡密信息
-        cammy = self.__file_operation.read_json()
+        cammy = self.__file_operation.read_cammy_json()
         for cammy_item in cammy:
             cammy_item['MostRecent'] = False  # 设置为最近登录为False
             if cammy_item['cammy_user'] == account_info['cammy_user']:
                 cammy_item['MostRecent'] = True
         self.__file_operation.write_json(cammy)
-        # 创建监测线程
-        d_vdf = DetectVdfThread(self.parent)
-        d_vdf.signal.connect(self.__refresh_widget)
-        d_vdf.start()
-        self.__refresh_widget()
 
     def __other_btn_menu_remove_action(self, account_info: dict):
         """其他按钮的菜单删除账号选项行为槽函数"""
         # 读取卡密
-        cammy_list = self.__file_operation.read_json()
+        cammy_list = self.__file_operation.read_cammy_json()
         # 遍历卡密列表删除卡密
         for cammy in cammy_list:
             if cammy['cammy_user'] == account_info['cammy_user']:
@@ -859,7 +859,7 @@ class LoginWidget:
 
     def __other_btn_menu_skip_action(self, action: QAction, account_info: dict):
         """其他按钮的菜单跳过验证选项行为槽函数"""
-        cammy = self.__file_operation.read_json()
+        cammy = self.__file_operation.read_cammy_json()
         if action.isChecked():
             action.setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
             for cammy_item in cammy:
@@ -873,10 +873,11 @@ class LoginWidget:
                     cammy_item['skip_email'] = False
                     break
         self.__file_operation.write_json(cammy)
+        self.__refresh_widget()
 
     def __read_menu_config(self, action_list: List[QAction], account_info: dict):
         """读取卡密设置"""
-        cammy_list = self.__file_operation.read_json()
+        cammy_list = self.__file_operation.read_cammy_json()
         for cammy in cammy_list:
             if cammy['cammy_user'] == account_info['cammy_user']:
                 if cammy['WantsOfflineMode']:

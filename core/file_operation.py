@@ -18,7 +18,26 @@ from PyQt5.QtCore import QThread, pyqtSignal
 class FileOperation:
     """文件各类文件操作"""
 
-    __config = []
+    __cammy = []  # 卡密模板
+
+    __config = {  # 通用设置
+        "common_set": {
+            "auto_update": True,
+            "boot_auto_start": False,
+            "minimize_on_startup": False,
+            "tray_icon": False,
+        },
+        "server_set": {  # 授权服务器设置
+            "server1": "",
+            "server1_port": "",
+            "server2": "",
+            "server2_port": "",
+            "server3": "",
+            "server3_port": "",
+            "ping_info": False,
+            "ping_time": 0.5
+        }
+    }
 
     template = {  # 文件模板
         'cammy_user': '',
@@ -30,7 +49,7 @@ class FileOperation:
         'WantsOfflineMode': False,
         'MostRecent': False,
         'skip_email': False,
-        'img_path': './img/icon/icon.ico',
+        'img_path': './img/icon/login_widget/account_info/null_img.png',
     }
 
     def __init__(self):
@@ -38,6 +57,9 @@ class FileOperation:
         self.__get_path()
         self.__get_steam_path()
         self.__init_file()
+
+        # 初始化配置文件
+        self.config_data = self.read_config_json()
 
     def __get_path(self):
         """
@@ -54,6 +76,7 @@ class FileOperation:
         self.ridge_club_path = self.document_path / 'Bridge Club'
         self.login_data_path = self.ridge_club_path / 'steam_login_data'
         self.cammy_data_path = self.login_data_path / 'cammy.json'
+        self.config_data_path = self.login_data_path / 'config.json'
 
     def __get_steam_path(self):
         try:
@@ -85,17 +108,25 @@ class FileOperation:
         self.ridge_club_path.mkdir(exist_ok=True)
         self.login_data_path.mkdir(exist_ok=True)
         # 卡密数据json创建
-        if not self.cammy_data_path.exists():
-            # 如果文件不存在就创建
+        if not self.cammy_data_path.exists():  # 如果卡密文件不存在就创建
             with open(self.cammy_data_path, 'w', encoding='utf-8') as f:
-                # 编码为utf-8, 否则会报错, 会导致json解析失败, 所以需要使用ensure_ascii=False
+                json.dump(self.__cammy, f, ensure_ascii=False, indent=4)
+        if not self.config_data_path.exists():  # 如果配置文件不存在，则创建配置文件
+            with open(self.config_data_path, 'w', encoding='utf-8') as f:
                 json.dump(self.__config, f, ensure_ascii=False, indent=4)
 
-    def read_json(self) -> list:
-        """读取json文件"""
+    def read_cammy_json(self) -> list:
+        """读取卡密json文件"""
         try:
             with open(self.cammy_data_path, 'r', encoding='utf-8') as f:
-                # 编码为utf-8, 否则会报错, 会导致json解析失败, 所以需要使用ensure_ascii=False
+                return json.load(f)
+        except JSONDecodeError as e:
+            return e
+
+    def read_config_json(self):
+        """读取配置文件,方便外部访问"""
+        try:
+            with open(self.config_data_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
         except JSONDecodeError as e:
             return e
@@ -125,15 +156,15 @@ class FileOperation:
         """
         if insert and type(data) == dict:
             # 如果是插入模式
-            config = self.read_json()  # 读取json文件
+            config = self.read_cammy_json()  # 读取json文件
             config.insert(data.keys()[0], data.values()[0])  # 插入数据
             self.write_json(config)  # 写入入json文件
         if add and type(data) == dict:
-            config = self.read_json()  # 读取json文件
+            config = self.read_cammy_json()  # 读取json文件
             config.append(data)  # 加入数据
             self.write_json(config)  # 写入入json文件
         if remove and type(data) == int:
-            config = self.read_json()  # 读取json文件
+            config = self.read_cammy_json()  # 读取json文件
             config.pop(data)  # 删除数据
             self.write_json(config)  # 写入入json文件
 
@@ -148,6 +179,7 @@ class FileOperation:
                     file_path.unlink()
         except Exception as e:
             print(e)
+
 
 
 class VdfOperation:
@@ -219,14 +251,12 @@ class DetectVdfThread(QThread, FileOperation, VdfOperation):
         super().__init__(*args, **kwargs)
 
     def run(self):
-        while True:
-            self.detect_vdf()
+        if self.detect_vdf():
             self.signal.emit()
-            self.sleep(3)
 
     def detect_vdf(self):
         """监测vdf"""
-        cammy: list = self.read_json()
+        cammy: list = self.read_cammy_json()
         self.vdf: dict = self.read_vdf(self.steam_user_path)
         for vdf_key, vdf_value in self.vdf.items():
             for item in cammy:
@@ -235,6 +265,8 @@ class DetectVdfThread(QThread, FileOperation, VdfOperation):
                     item['AccountName'] = vdf_value['AccountName']
                     item['Timestamp'] = vdf_value['Timestamp']
                     item['img_path'] = str(self.steam_avatarcache_path / f"{vdf_key}.png")
+                else:
+                    return False
         self.write_json(cammy)
 
 
