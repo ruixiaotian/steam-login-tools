@@ -9,15 +9,18 @@
 """
 
 import sys
+
 from PyQt5.QtWidgets import QWidget, QMainWindow, QStackedWidget, QApplication, QSizePolicy, QGridLayout, \
     QGraphicsDropShadowEffect, QSpacerItem
 from PyQt5.QtGui import QIcon, QFontDatabase, QMouseEvent, QCloseEvent, QColor, QFont
-from PyQt5.QtCore import Qt, QPropertyAnimation
+from PyQt5.QtCore import Qt, QPropertyAnimation, QThread
 
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import LoginWidget
 from ui.net_widget import NetWidget
 from ui.setting_widget import SettingWidget
+
+from loguru import logger
 
 
 class SteamLoginUI(QMainWindow):
@@ -138,6 +141,20 @@ class SteamLoginUI(QMainWindow):
 
         return self.page_widget
 
+    def the_thread_exits(self):
+        """退出线程函数,让子线程安全的退出"""
+        # 结束所有ping线程
+        logger.info(f"准备退出子线程 - 当前退出：Ping")
+        for ping in self.pings:
+            # 结束ping线程
+            ping.end_signal = False
+            logger.info(f"正在结束ping线程 {ping}")
+        for ping in self.pings:
+            # 等待线程安全退出
+            ping.quit()
+            ping.wait()
+            logger.info(f"{ping} 线程安全退出")
+
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置
 
@@ -156,8 +173,8 @@ class SteamLoginUI(QMainWindow):
         :param event:
         :return: None
         """
-        if Qt.LeftButton and self._mouse_flag:
-            # 如果是左键按下且鼠标跟踪打卡
+        if Qt.LeftButton and self._mouse_flag and self.close_state:
+            # 如果是左键按下鼠标且跟踪打开, 不处于关闭状态,则可以拖动窗口
             self.move(event.globalPos() - self.m_pos)  # 更改窗口位置
             event.accept()
 
@@ -172,25 +189,20 @@ class SteamLoginUI(QMainWindow):
     def closeEvent(self, event: QCloseEvent) -> None:
         if self.close_state:  # 判断是否关闭
             event.ignore()
-        self.close_state = False
+            self.close_state = False
         # 创建动画对象
         animation = QPropertyAnimation(self, b"windowOpacity", self)
         # 设置透明度
         animation.setDuration(2000)
         animation.setStartValue(1)
         animation.setEndValue(0)
-        # 等待动画结束
-        animation.finished.connect(lambda: sys.exit(0))  # 调用sys防止子窗体未推出
+
+        # 退出线程
+        self.the_thread_exits()
+
+        animation.finished.connect(lambda: sys.exit(0))  # 调用sys防止子窗体未退出
         # 启动动画
         animation.start()
-
-        # 结束所有ping线程并实现关闭动画
-        for ping in self.pings:
-            # 结束ping线程
-            ping.end_signal = False
-        for ping in self.pings:
-            # 等待线程安全退出
-            ping.quit()
 
 
 if __name__ == '__main__':

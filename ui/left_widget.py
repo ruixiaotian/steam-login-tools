@@ -131,7 +131,13 @@ def left_label_setup(font: str, ui: QMainWindow) -> QWidget:
     label.setObjectName("version_label")
 
     # 绑定按钮事件
-    button.clicked.connect(lambda: ui.close())
+    button.clicked.connect(
+        lambda: (
+            ui.close()
+            if ui.close_state else
+            not ui.close_state
+        )
+    )
 
     # 添加到布局
     layout.addWidget(button, 0, 0, 1, 1, Qt.AlignLeft)

@@ -102,7 +102,7 @@ class FileOperation:
         except Exception as e:
             # 设置安装状态
             self.steam_install_state = False
-            logger.error(e)
+            logger.error("未能获取到Steam安装路径\n")
 
     def __init_file(self):
         """判断文件是否存在,不存在则创建"""
@@ -183,7 +183,6 @@ class FileOperation:
             print(e)
 
 
-
 class VdfOperation:
     """Vdf文件操作"""
 
@@ -247,14 +246,12 @@ class VdfOperation:
 
 class DetectVdfThread(QThread, FileOperation, VdfOperation):
     """监测登录信息的线程"""
-    signal = pyqtSignal()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def run(self):
-        if self.detect_vdf():
-            self.signal.emit()
+        self.detect_vdf()
 
     def detect_vdf(self):
         """监测vdf"""

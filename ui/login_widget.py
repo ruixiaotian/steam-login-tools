@@ -363,7 +363,6 @@ class LoginWidget:
 
         # 创建监测线程
         d_vdf = DetectVdfThread(self.parent)
-        d_vdf.signal.connect(self.__refresh_widget)
         d_vdf.start()
 
         return widget

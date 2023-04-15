@@ -9,27 +9,21 @@
 """
 import sys
 from pathlib import Path
-# import cgitb
+import cgitb
 from loguru import logger
-from ui import SteamLoginUI, QApplication
-
 
 LOGO = r"""
-
 ███████╗████████╗███████╗ █████╗ ███╗   ███╗      ██╗      ██████╗  ██████╗ ██╗███╗   ██╗
 ██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗ ████║      ██║     ██╔═══██╗██╔════╝ ██║████╗  ██║
 ███████╗   ██║   █████╗  ███████║██╔████╔██║█████╗██║     ██║   ██║██║  ███╗██║██╔██╗ ██║
 ╚════██║   ██║   ██╔══╝  ██╔══██║██║╚██╔╝██║╚════╝██║     ██║   ██║██║   ██║██║██║╚██╗██║
 ███████║   ██║   ███████╗██║  ██║██║ ╚═╝ ██║      ███████╗╚██████╔╝╚██████╔╝██║██║ ╚████║
 ╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝      ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝
-
 """
 
 
 def main():
-    # 打印一个华丽的LOGO
-    logger.opt(colors=True).info(f"<blue>{LOGO}</>")
-    # rush_backtracking()
+    rush_backtracking()
     app = QApplication(sys.argv)
     win = SteamLoginUI()
     win.show()
@@ -48,4 +42,7 @@ def rush_backtracking():
 
 
 if __name__ == '__main__':
+    # 打印一个华丽的LOGO
+    logger.opt(colors=True).info(f"<blue>{LOGO}</>")
+    from ui import SteamLoginUI, QApplication
     main()
