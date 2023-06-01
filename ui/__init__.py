@@ -61,7 +61,7 @@ class SteamLoginUI(QMainWindow):
         :return: None
         """
         self.font_name = QFontDatabase.applicationFontFamilies(
-            QFontDatabase.addApplicationFont(r"./font/仓耳与墨W03.ttf"))[0]
+            QFontDatabase.addApplicationFont(r"./font/W03.ttf"))[0]
 
     def setup_form(self) -> None:
         """窗体设定

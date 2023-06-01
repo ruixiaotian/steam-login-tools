@@ -37,6 +37,6 @@ nuitka --mingw64 --windows-disable-console --enable-plugin=pyqt5 --standalone --
 ```
 
 ### LICENSE
-本项目基于 [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.zh-cn.htmll) 许可协议，详细信息请查看 LICENSE 文件。
+本项目基于 [GPL-3.0](https://www.gnu.org/licenses/quick-guide-gplv3.html) 许可协议，详细信息请查看 LICENSE 文件。
 
 GPL-3.0 许可证要求任何以此代码为基础的派生作品，必须使用同样的协议发布和授权。这保证了代码的自由和保护了贡献者的权利。如果您想将本项目的代码用于商业用途，请确保您的产品也符合 GPL-3.0 许可证的要求。
