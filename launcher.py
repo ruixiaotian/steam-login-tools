@@ -31,7 +31,7 @@ class Launcher(QMainWindow):
         self.setup_form()
         self.setup_layout()
         self.read_qss_file()
-
+        self.show()
         self.download_steam_login_tools()  # 下载steam登录工具
 
     def setup_window(self) -> None:
@@ -165,35 +165,59 @@ class Launcher(QMainWindow):
 
         if not self.steam_login_tools_path.exists():
             # 如果不存在steam_login_tools文件夹,则开始下载
+            self.download_run()
 
-            # 初始化下载对象
-            self.download_thread = Download(
-                self.bridge_club_path, self.tmp_path, self.label_widget
-            )
+        else:
+            # 如果存在steam_login_tools文件夹,则检查是否有更新
+            self.update_steam_login_data()
 
-            # 绑定信号
-            self.download_thread.bar_int_signal.connect(
-                lambda num: self.bar_widget.setValue(num)
-            )
-            self.download_thread.bar_switch_signal.connect(
-                lambda switch: self.bar_widget.setVisible(switch)
-            )
-            self.download_thread.bar_range_signal.connect(
-                lambda start, end: self.bar_widget.setRange(start, end)
-            )
-            # 运行线程
-            self.download_thread.start()
+    def update_steam_login_data(self) -> None:
+        """检测是否更新Steam Login Tools"""
+        with open(self.bridge_club_path / "steam_login_tools_data.json", "r", encoding="utf-8") as f:
+            json_data = json.load(f)
+        self.label_widget.setText("检测更新...")
 
-        self.start_steam_login_tools()
+        res = requests.get("https://wp.qiao.icu/onedrive/web/BridgeClub/SteamLoginTool/steam_login_tools.json").json()
+
+        if json_data["ver"] != res["ver"]:
+            self.label_widget.setText("检测到有新版本,开始下载...")
+            shutil.rmtree(self.steam_login_tools_path)
+            self.download_run()
+        else:
+            self.start_steam_login_tools()
 
     def start_steam_login_tools(self) -> None:
         """启动steam登录工具"""
         self.label_widget.setText("正在启动 Steam Login Tools")
-        subprocess.run(
+        self.setVisible(False)
+        process = subprocess.run(
             str(self.steam_login_tools_path / "Steam Login Tools.exe"),
             cwd=str(self.steam_login_tools_path),
         )
         exit(0)
+
+    def download_run(self):
+        """下载steam登录工具"""
+        # 初始化下载对象
+        self.download_thread = Download(
+            self.bridge_club_path, self.tmp_path, self.label_widget
+        )
+
+        # 绑定信号
+        self.download_thread.bar_int_signal.connect(
+            lambda num: self.bar_widget.setValue(num)
+        )
+        self.download_thread.bar_switch_signal.connect(
+            lambda switch: self.bar_widget.setVisible(switch)
+        )
+        self.download_thread.bar_range_signal.connect(
+            lambda start, end: self.bar_widget.setRange(start, end)
+        )
+        self.download_thread.download_state.connect(
+            lambda state: self.update_steam_login_data()
+        )
+        # 运行线程
+        self.download_thread.start()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置
@@ -233,6 +257,8 @@ class Download(QThread):
     bar_int_signal = pyqtSignal(int)
     bar_switch_signal = pyqtSignal(bool)
     bar_range_signal = pyqtSignal(int, int)
+
+    download_state = pyqtSignal(bool)
 
     def __init__(
             self, file_path: Path, tmp_path: Path, label: QLabel
@@ -401,6 +427,10 @@ class Download(QThread):
         # 哈希计算完成,校验是否一致
         if self.hash != hash_256.hexdigest():
             self.label.setText("哈希校验失败")
+            # 删除文件重新下载
+            self.contain_name_path.unlink()
+            self.get_download_url()
+            return
         else:
             self.label.setText("哈希校验成功")
 
@@ -415,6 +445,23 @@ class Download(QThread):
             zip_f.extractall(self.file_path)
         self.contain_name_path.unlink()
         self.label.setText("解压文件完成")
+
+        # 解压完成,拉起下一步
+        self.write_data()
+
+    def write_data(self):
+        """写入版本信息"""
+        with open(self.file_path / "steam_login_tools_data.json", "w", encoding="utf-8") as file:
+            json_data = {
+                "ver": self.ver,
+                "hash": self.hash,
+                "update_log": self.update_log
+            }
+            json.dump(json_data, file, ensure_ascii=False, indent=4)
+
+        # 完成所有操作,返回信号执行下一步函数
+
+        self.download_state.emit(True)
 
 
 class DownloadThread(Thread):
@@ -449,5 +496,4 @@ class DownloadThread(Thread):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Launcher()
-    window.show()
     sys.exit(app.exec_())
