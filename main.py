@@ -13,6 +13,7 @@ import cgitb
 from loguru import logger
 
 LOGO = r"""
+
 ███████╗████████╗███████╗ █████╗ ███╗   ███╗      ██╗      ██████╗  ██████╗ ██╗███╗   ██╗
 ██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗ ████║      ██║     ██╔═══██╗██╔════╝ ██║████╗  ██║
 ███████╗   ██║   █████╗  ███████║██╔████╔██║█████╗██║     ██║   ██║██║  ███╗██║██╔██╗ ██║
@@ -23,7 +24,7 @@ LOGO = r"""
 
 
 def main():
-    rush_backtracking()
+    # rush_backtracking()
     app = QApplication(sys.argv)
     win = SteamLoginUI()
     win.show()
@@ -39,6 +40,7 @@ def rush_backtracking():
     if not log_dir.exists():
         log_dir.mkdir()
     cgitb.enable(display=0, format='log', logdir=str(log_dir), context=10)
+
 
 
 if __name__ == '__main__':

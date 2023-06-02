@@ -10,10 +10,14 @@
 import json
 import winreg
 import vdf
+import asyncio
 from loguru import logger
 from pathlib import Path
 from json.decoder import JSONDecodeError
 from PyQt5.QtCore import QThread, pyqtSignal
+
+from creart import create, exists_module, add_creator
+from creart.creator import AbstractCreator, CreateTargetInfo
 
 
 class FileOperation:
@@ -244,32 +248,58 @@ class VdfOperation:
                 vdf.dump(config, f, pretty=True)
 
 
-class DetectVdfThread(QThread, FileOperation, VdfOperation):
-    """监测登录信息的线程"""
+def detect_vdf():
+    """监测vdf"""
+    if not create(FileOperation).steam_install_state:
+        return
+    cammy: list = create(FileOperation).read_cammy_json()
+    vdf: dict = create(VdfOperation).read_vdf(create(FileOperation).steam_user_path)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    for vdf_key, vdf_value in vdf.items():
+        # 读取所有vdf项
+        for item in cammy:
+            if vdf_value['AccountName'] in item['cammy_user']:
+                item['steam64_id'] = vdf_key
+                item['AccountName'] = vdf_value['AccountName']
+                item['Timestamp'] = vdf_value['Timestamp']
+                item['img_path'] = str(create(FileOperation).steam_avatarcache_path / f"{vdf_key}.png")
+    create(FileOperation).write_json(cammy)
 
-    def run(self):
-        self.detect_vdf()
 
-    def detect_vdf(self):
-        """监测vdf"""
-        if not self.steam_install_state:
-            return
-        cammy: list = self.read_cammy_json()
-        self.vdf: dict = self.read_vdf(self.steam_user_path)
-        for vdf_key, vdf_value in self.vdf.items():
-            for item in cammy:
-                if vdf_value['AccountName'] in item['cammy_user']:
-                    item['steam64_id'] = vdf_key
-                    item['AccountName'] = vdf_value['AccountName']
-                    item['Timestamp'] = vdf_value['Timestamp']
-                    item['img_path'] = str(self.steam_avatarcache_path / f"{vdf_key}.png")
-                else:
-                    return False
-        self.write_json(cammy)
+class FileOperationClassCreator(AbstractCreator):
+    # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
+    # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
+    targets = (CreateTargetInfo("core.file_operation", "FileOperation"),)
 
+    # 静态方法available()，用于检查模块"core"是否存在，返回值为布尔型。
+    @staticmethod
+    def available() -> bool:
+        return exists_module("core.file_operation")
+
+    # 静态方法create()，用于创建FileOperation类的实例，返回值为FileOperation对象。
+    @staticmethod
+    def create(create_type: [FileOperation]) -> FileOperation:
+        return FileOperation()
+
+
+class VdfOperationClassCreator(AbstractCreator):
+    # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
+    # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
+    targets = (CreateTargetInfo("core.file_operation", "VdfOperation"),)
+
+    # 静态方法available()，用于检查模块"core"是否存在，返回值为布尔型。
+    @staticmethod
+    def available() -> bool:
+        return exists_module("core.file_operation")
+
+    # 静态方法create()，用于创建VdfOperation类的实例，返回值为VdfOperation对象。
+    @staticmethod
+    def create(create_type: [VdfOperation]) -> VdfOperation:
+        return VdfOperation()
+
+
+add_creator(FileOperationClassCreator)
+add_creator(VdfOperationClassCreator)
 
 if __name__ == '__main__':
     f = DetectVdfThread()

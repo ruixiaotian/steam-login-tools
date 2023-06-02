@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "steam-login"
+version = "0.1.0"
+description = ""
+authors = ["Qiao <572381217@qq.com>"]
+readme = "README.md"
+packages = [{include = "steam_login"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyqt5 = "^5.15.9"
+requests = "^2.31.0"
+loguru = "^0.7.0"
+vdf = "^3.4"
+psutil = "^5.9.5"
+click = "^8.1.3"
+six = "^1.16.0"
+prettytable = "^3.7.0"
+creart = "^0.2.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

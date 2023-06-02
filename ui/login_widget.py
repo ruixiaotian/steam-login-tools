@@ -18,19 +18,22 @@
 import json
 import sys
 import datetime
+import asyncio
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QCheckBox, QAction, \
     QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem, QDialog
 from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
 from PyQt5.QtCore import Qt, QPropertyAnimation
 from typing import List
 from pathlib import Path
-from core.file_operation import FileOperation, DetectVdfThread
+from core.file_operation import FileOperation, detect_vdf
 from core.network_threads import PingServerThread, SteamLoginThread
 from core.event_judgment import login_widget_size_button_checked_event
 
+from creart import create
+
 
 class LoginWidget:
-    __file_operation = FileOperation()
+    __file_operation = create(FileOperation)
 
     def __init__(self, parent, font: str):
         self.parent = parent
@@ -361,9 +364,8 @@ class LoginWidget:
         # 设置阴影
         self.shadow_setup(widget)
 
-        # 创建监测线程
-        d_vdf = DetectVdfThread(self.parent)
-        d_vdf.start()
+        # 更新一次数据
+        detect_vdf()
 
         return widget
 

@@ -152,7 +152,6 @@ class SteamLoginUI(QMainWindow):
         for ping in self.pings:
             # 等待线程安全退出
             ping.quit()
-            ping.wait()
             logger.info(f"{ping} 线程安全退出")
 
     def mousePressEvent(self, event: QMouseEvent) -> None:

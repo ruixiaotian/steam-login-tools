@@ -27,6 +27,8 @@ from PyQt5.QtWidgets import QLabel
 from core.file_operation import FileOperation, VdfOperation
 from core.tcping import Ping
 
+from creart import create
+
 
 class PingServerThread(QThread):
     sever_signal = pyqtSignal(str)
@@ -120,7 +122,7 @@ class SteamLoginThread(QThread):
             cammy['skip_email'] - 登录模式
         """
         super(SteamLoginThread, self).__init__(*args, **kwargs)
-        self.file_path = FileOperation()  # 设置文件路径
+        self.file_path = create(FileOperation)  # 设置文件路径
         self.user: str = cammy['cammy_user']
         self.pwd: str = cammy['cammy_pwd']
         self.ssfn: str = cammy['cammy_ssfn']
@@ -199,7 +201,7 @@ class SteamLoginThread(QThread):
         """判断是否需要离线"""
         if not self.steam64id:
             return
-        vdf = VdfOperation()
+        vdf = create(VdfOperation)
         if self.offline:
             vdf.wants_offline_mode(
                 self.file_path.steam_user_path,

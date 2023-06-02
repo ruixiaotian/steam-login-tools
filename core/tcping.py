@@ -19,6 +19,8 @@ from prettytable import PrettyTable
 
 from core.file_operation import FileOperation
 
+from creart import create
+
 __version__ = "0.1.1rc1"
 
 Statistics = namedtuple('Statistics', [
@@ -33,7 +35,8 @@ Statistics = namedtuple('Statistics', [
 
 iprint = partial(print_, flush=True)
 
-file = FileOperation()
+file = create(FileOperation)
+
 
 def avg(x):
     return sum(x) / float(len(x))
@@ -176,7 +179,8 @@ class Ping(object):
                 s_runtime = 1000 * (cost_time)
 
                 if file.config_data["server_set"]["ping_info"]:
-                    logger.info(f"连接到 {str(self._host).ljust(20)} 端口:{str(self._port).ljust(9)} 次数:{n} 耗时:{s_runtime:.2f} ms")
+                    logger.info(
+                        f"连接到 {str(self._host).ljust(20)} 端口:{str(self._port).ljust(9)} 次数:{n} 耗时:{s_runtime:.2f} ms")
 
                 # iprint("Connected to %s[:%s]: seq=%d time=%.2f ms" % (
                 #     self._host, self._port, n, s_runtime))
@@ -225,4 +229,3 @@ def cli(host, port, count, timeout, report):
 
 if __name__ == '__main__':
     cli()
-

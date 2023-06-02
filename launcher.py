@@ -8,6 +8,7 @@ from PyQt5.QtGui import QIcon, QFont, QColor, QPalette, QPixmap, QBrush, QMouseE
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 
 # 导入其他库
+import cgitb
 import zipfile
 import hashlib
 import requests
@@ -161,7 +162,7 @@ class Launcher(QMainWindow):
 
         if not self.steam_login_data_path.exists():
             # 如果不存在steam_login_data_path文件夹,则创建
-            self.steam_login_data_path.mkdir(exist_ok=True)
+            self.steam_login_data_path.mkdir(parents=True, exist_ok=True)
 
         if not self.steam_login_tools_path.exists():
             # 如果不存在steam_login_tools文件夹,则开始下载
@@ -493,7 +494,19 @@ class DownloadThread(Thread):
                 f.write(response.content)
 
 
+def rush_backtracking():
+    """
+    奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志
+    :return:
+    """
+    log_dir = Path.home() / 'Desktop'
+    if not log_dir.exists():
+        log_dir.mkdir(parents=True, exist_ok=True)
+    cgitb.enable(display=0, format='log', logdir=str(log_dir), context=10)
+
+
 if __name__ == '__main__':
+    # rush_backtracking()
     app = QApplication(sys.argv)
     window = Launcher()
     sys.exit(app.exec_())
