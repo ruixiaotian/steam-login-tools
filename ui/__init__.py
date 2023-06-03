@@ -42,7 +42,7 @@ class SteamLoginUI(QMainWindow):
         :return: None
         """
         self.setFixedSize(750, 500)  # 设定窗体大小
-        self.setWindowTitle("Steam上号器 - 开发版 - Qiao")  # 设定窗口名
+        self.setWindowTitle("Steam上号器 - 测试版 - Qiao")  # 设定窗口名
         self.setWindowIcon(QIcon("./img/icon/icon.ico"))  # 设定窗体图标
         self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗体属性为透明
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)  # 隐藏框架,并且设置为主窗体

@@ -197,8 +197,30 @@ QCheckBox#size_button::indicator:checked {
     /*设置宽高*/
     width: 20px;
     height: 20px;
+    /*设置内边距*/
+    padding: 2px;
     /*设置背景图片*/
     image: url('./img/icon/login_widget/account_info/size_button_checked.svg')
+}
+
+QCheckBox#dw_button::indicator:unchecked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/login_widget/account_info/dw_button.svg')
+}
+
+QCheckBox#dw_button::indicator:checked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/login_widget/account_info/dw_button.svg')
 }
 
 QScrollArea#scroll_widget {

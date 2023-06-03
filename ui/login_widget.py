@@ -111,8 +111,11 @@ class LoginWidget:
         edit_obj_name_list = ['user_edit', 'password_edit', 'ssfn_edit']
         btn_obj_name_list = ['login_button', 'save_button']
         place_text_list = ['USER-账号', 'PASSWORD-密码', 'SSFN(如果有)']
-        icon_path_list = ['./img/icon/login_widget/add_account/user.svg', './img/icon/login_widget/add_account/pwd.svg',
-                          './img/icon/login_widget/add_account/ssfn.svg']
+        icon_path_list = [
+            './img/icon/login_widget/add_account/user.svg',
+            './img/icon/login_widget/add_account/pwd.svg',
+            './img/icon/login_widget/add_account/ssfn.svg'
+        ]
 
         # 单独设置属性
         widget.setObjectName('add_account_widget')  # 设置控件的名字
@@ -153,7 +156,7 @@ class LoginWidget:
             ssfn_edit.clear()
         ) if user_edit.text() and password_edit.text() != '' else None)
 
-        # 登录按钮
+        # 登录按钮槽函数链接
         login_button.clicked.connect(lambda: (
             SteamLoginThread(
                 {
@@ -207,43 +210,36 @@ class LoginWidget:
             './img/icon/login_widget/server_status/server_error.svg',  # 服务器离线图标
             './img/icon/login_widget/server_status/offline.png'  # 离线状态图标
         ]
-        online_server_icon = [
-            online_icon[0],
-            online_icon[0],
-            online_icon[0]
-        ]
-        online_icon_list = [
-            online_icon[1],
-            online_icon[1],
-            online_icon[1],
-        ]
-        offline_server_icon = [
-            offline_icon[0],
-            offline_icon[0],
-            offline_icon[0],
-        ]
-        offline_icon_list = [
-            offline_icon[1],
-            offline_icon[1],
-            offline_icon[1],
-        ]
+
+        # 创建列表
+        online_server_icon, online_icon_list, \
+            offline_server_icon, offline_icon_list = [], [], [], []
+
+        for i in range(3):
+            # 循环添加
+            online_server_icon.append(online_icon[0])
+            online_icon_list.append(online_icon[1])
+            offline_server_icon.append(offline_icon[0])
+            offline_icon_list.append(offline_icon[1])
+
         # 服务器IP列表
         server_ip_list = [
-            '1.15.97.14',
-            'wp.qiao.icu',
-            'wp.qiao.icu'
+            '1.15.97.14', 'wp.qiao.icu', 'wp.qiao.icu'
         ]
         port_list = [
-            8848,
-            80,
-            80
+            8848, 80, 80
         ]
 
-        # 创建控件
-        server_icon_label_list = [QLabel(), QLabel(), QLabel()]
-        server_num_label_list = [QLabel(), QLabel(), QLabel()]
-        server_status_icon_list = [QLabel(), QLabel(), QLabel()]
-        server_status_label_list = [QLabel(), QLabel(), QLabel()]
+        # 创建控件列表
+        server_icon_label_list, server_num_label_list, \
+            server_status_icon_list, server_status_label_list = [], [], [], []
+
+        for i in range(3):
+            # 循环添加控件
+            server_icon_label_list.append(QLabel())
+            server_num_label_list.append(QLabel())
+            server_status_icon_list.append(QLabel())
+            server_status_label_list.append(QLabel())
 
         # 循环设置控件
         for label, num in zip(server_icon_label_list, range(1, 4)):
@@ -277,28 +273,19 @@ class LoginWidget:
             label.setObjectName(f'server_status_label_{num}')
 
         self.pings = []  # 创建线程列队
-        for server_label_icon, server_state_label, state_label, online_state_icon, offline_state_icon, online_icon, offline_icon, ip, port in zip(
-                server_icon_label_list,
-                server_status_icon_list,
-                server_status_label_list,
-                online_server_icon,
-                offline_server_icon,
-                online_icon_list,
-                offline_icon_list,
-                server_ip_list,
-                port_list
-        ):
+        zip_list = zip(  # zip函数单独取出来增加可读性
+            server_icon_label_list, server_status_icon_list, server_status_label_list,
+            online_server_icon, offline_server_icon, online_icon_list, offline_icon_list,
+            server_ip_list, port_list
+        )
+
+        for server_label_icon, server_state_label, state_label, online_state_icon, \
+                offline_state_icon, online_icon, offline_icon, ip, port in zip_list:
+            # 循环启动Ping线程
             ping = PingServerThread(
-                server_label_icon,
-                server_state_label,
-                state_label,
-                online_state_icon,
-                offline_state_icon,
-                online_icon,
-                offline_icon,
-                ip,
-                port,
-                ui
+                server_label_icon, server_state_label, state_label,
+                online_state_icon, offline_state_icon, online_icon,
+                offline_icon, ip, port, ui
             )
             ping.start()
             self.pings.append(ping)
@@ -329,7 +316,9 @@ class LoginWidget:
 
         return widget
 
-    def __account_info_widget_setup(self, add_account_widget, server_status_widget):
+    def __account_info_widget_setup(
+            self, add_account_widget, server_status_widget
+    ):
         """
         设置账号信息的控件
 
@@ -341,25 +330,24 @@ class LoginWidget:
         widget = QLabel()
         layout = QGridLayout(widget)
 
-        # 图标路径
-        icon_list = [
-            './img/icon/login_widget/account_info/size_button_unchecked.svg',
-            './img/icon/login_widget/account_info/size_button_checked.svg'
-        ]
+        # 右侧
+        self.__account_info_widget_left()
 
         # 右侧
-        self.__account_info_widget_right()
-
-        # 左侧
-        size_button = self.__account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget)
+        size_button = self.__account_info_widget_right_size_btn(
+            widget, add_account_widget, server_status_widget
+        )
+        dw_button = self.__account_info_widget_right_dw_btn()
 
         # 设置控件属性
-        widget.resize(540, 220)
+        widget.resize(540, 230)
         widget.setObjectName('account_info_widget')
 
         # 添加控件
-        layout.addWidget(self.scroll_widget, 0, 0, 1, 1)
+        layout.addWidget(self.scroll_widget, 0, 0, 3, 1)
         layout.addWidget(size_button, 0, 1, 1, 1, Qt.AlignTop)
+        layout.addWidget(dw_button, 1, 1, 1, 1, Qt.AlignTop)
+        layout.addItem(QSpacerItem(1, 1000, QSizePolicy.Minimum, QSizePolicy.Minimum), 2, 1, 1, 1)
 
         # 设置阴影
         self.shadow_setup(widget)
@@ -370,10 +358,11 @@ class LoginWidget:
         return widget
 
     @staticmethod
-    def __account_info_widget_left(icon_list, widget, add_account_widget, server_status_widget) -> QCheckBox:
+    def __account_info_widget_right_size_btn(
+            widget, add_account_widget, server_status_widget
+    ) -> QCheckBox:
         """
         设置右侧的放大/缩小控件
-        :param icon_list:  图标列表
         :param widget:  承载窗体
         :param add_account_widget:  添加账号的控件
         :param server_status_widget:  服务器状态的控件
@@ -388,13 +377,30 @@ class LoginWidget:
         # int类型 当选中时为2,未选中时为0
         size_button.stateChanged.connect(
             lambda state:
-            login_widget_size_button_checked_event(state, widget, add_account_widget, server_status_widget)
+            login_widget_size_button_checked_event(
+                state, widget, add_account_widget, server_status_widget
+            )
         )
 
         return size_button
 
-    def __account_info_widget_right(self) -> QWidget:
-        """设置右侧的滚动窗体控件"""
+    @staticmethod
+    def __account_info_widget_right_dw_btn() -> QPushButton:
+        """
+        设置右侧下载旧版Steam文件按钮
+        :return:
+        """
+        # 创建按钮
+        dw_button = QCheckBox()
+
+        # 下载按钮属性设置
+        dw_button.setObjectName("dw_button")
+        dw_button.setFixedSize(32, 32)
+
+        return dw_button
+
+    def __account_info_widget_left(self) -> QWidget:
+        """设置左侧的滚动窗体控件"""
         # 创建滚动窗体
         self.scroll_widget = QScrollArea()
         self.scroll_widget.setObjectName('scroll_widget')

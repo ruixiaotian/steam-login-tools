@@ -141,7 +141,7 @@ class SteamLoginThread(QThread):
             self.__determine_login_offline()
             self.__download_ssfn()
             logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
-            logger.info(f"登录参数：{self.file_path.steam_exe_path} -login {self.user} {self.pwd}")
+            logger.info(f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}")
             self.__login()
             # except Exception as e:
             #     logger.error(f"登录失败:\n {e}")
@@ -149,7 +149,7 @@ class SteamLoginThread(QThread):
     def __login(self):
         """登录Steam"""
         subprocess.run(
-            f"{self.file_path.steam_exe_path} -login {self.user} {self.pwd}",
+            f"{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}",
             cwd=self.file_path.steam_path
         )
 
@@ -178,7 +178,7 @@ class SteamLoginThread(QThread):
         if self.ssfn:
             self.file_path.remove_ssfn()  # 删除SSFN
             with open(Path(self.file_path.steam_path) / self.ssfn, 'wb') as f:
-                f.write(requests.get(f"http://1.15.97.14:8848/ssfn/{self}").content)
+                f.write(requests.get(f"http://1.15.97.14:8848/ssfn/{self.ssfn}").content)
         else:
             pass
 
