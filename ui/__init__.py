@@ -98,6 +98,7 @@ class SteamLoginUI(QMainWindow):
         layout.addWidget(self.page_widget_setup(), 0, 1, 1, 1)
         layout.addWidget(self.left_widget_setup(), 0, 0, 1, 1)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setHorizontalSpacing(0)  # 移除间隙
         self.main_widget.setLayout(layout)  # 设置窗体内布局
 
     def left_widget_setup(self) -> QWidget:
