@@ -386,3 +386,32 @@ QLabel#software_info_title, QLabel#software_info_msg {
     /*设置字体颜色*/
     color: #53658B;
 }
+
+QWidget#dw_widget {
+    /*设置背景颜色*/
+    background-color: transparent;
+}
+
+QLineEdit#steam_path_edit {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*隐藏边框*/
+    border: none;
+    /*增加下边框*/
+    border-bottom: 1px solid #BEBEBE;
+}
+
+QPushButton#steam_path_button {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*隐藏边框*/
+    border: none;
+    padding: 2px;
+}
+
+QPushButton#steam_path_button:hover {
+    /*设置背景透明*/
+    background-color: rgba(190, 190, 190, 0.6);
+    /*设置圆角*/
+    border-radius: 2px;
+}

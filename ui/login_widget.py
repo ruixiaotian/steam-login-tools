@@ -4,30 +4,25 @@
 # @Author  : 桥话语权
 # @File    : login_widget.py
 # @Software: PyCharm
-"""
- *            佛曰:
- *                   写字楼里写字间，写字间里程序员；
- *                   程序人员写程序，又拿程序换酒钱。
- *                   酒醒只在网上坐，酒醉还来网下眠；
- *                   酒醉酒醒日复日，网上网下年复年。
- *                   但愿老死电脑间，不愿鞠躬老板前；
- *                   奔驰宝马贵者趣，公交自行程序员。
- *                   别人笑我忒疯癫，我笑自己命太贱；
- *                   不见满街漂亮妹，哪个归得程序员？
-"""
+
 import json
 import sys
 import datetime
 import asyncio
+
+import loguru
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QCheckBox, QAction, \
     QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem, QDialog
 from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
 from PyQt5.QtCore import Qt, QPropertyAnimation
 from typing import List
 from pathlib import Path
+
 from core.file_operation import FileOperation, detect_vdf
 from core.network_threads import PingServerThread, SteamLoginThread
 from core.event_judgment import login_widget_size_button_checked_event
+
+from ui.other_widget import DownloadWidget
 
 from creart import create
 
@@ -397,6 +392,12 @@ class LoginWidget:
         dw_button.setObjectName("dw_button")
         dw_button.setFixedSize(32, 32)
 
+        # 信号绑定
+        dw_button.stateChanged.connect(
+            lambda:
+            create(DownloadWidget).page.setCurrentIndex(3)
+        )
+
         return dw_button
 
     def __account_info_widget_left(self) -> QWidget:
@@ -487,6 +488,7 @@ class LoginWidget:
         :param account_info:
         :return:
         """
+
         img_path = Path(account_info['img_path'])
         pixmap = QPixmap(75, 75)
         pixmap.load(str(img_path.resolve()))
@@ -776,7 +778,7 @@ class LoginWidget:
         config['cammy_pwd'] = pwd
         config['cammy_ssfn'] = ssfn
 
-        self.__file_operation.modify_json(config, add=True)
+        self.__file_operation.modify_json(self.__file_operation.cammy_data_path, config, add=True)
 
     @staticmethod
     def __pwd_edit_toggles_visible_state(pwd_edit: QLineEdit):
@@ -834,7 +836,7 @@ class LoginWidget:
                 if cammy_item['cammy_user'] == account_info['cammy_user']:
                     cammy_item['WantsOfflineMode'] = False
                     break
-        self.__file_operation.write_json(cammy)
+        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
         self.__refresh_widget()
 
     def __other_btn_menu_login_action(self, action: QAction, account_info: dict):
@@ -848,7 +850,7 @@ class LoginWidget:
             cammy_item['MostRecent'] = False  # 设置为最近登录为False
             if cammy_item['cammy_user'] == account_info['cammy_user']:
                 cammy_item['MostRecent'] = True
-        self.__file_operation.write_json(cammy)
+        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
 
     def __other_btn_menu_remove_action(self, account_info: dict):
         """其他按钮的菜单删除账号选项行为槽函数"""
@@ -860,7 +862,7 @@ class LoginWidget:
                 cammy_list.remove(cammy)
                 break
         # 写入卡密文件
-        self.__file_operation.write_json(cammy_list)
+        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy_list)
         # 刷新窗体
         self.__refresh_widget()
 
@@ -879,7 +881,7 @@ class LoginWidget:
                 if cammy_item['cammy_user'] == account_info['cammy_user']:
                     cammy_item['skip_email'] = False
                     break
-        self.__file_operation.write_json(cammy)
+        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
         self.__refresh_widget()
 
     def __read_menu_config(self, action_list: List[QAction], account_info: dict):

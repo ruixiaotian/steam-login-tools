@@ -42,7 +42,6 @@ def rush_backtracking():
     cgitb.enable(display=0, format='log', logdir=str(log_dir), context=10)
 
 
-
 if __name__ == '__main__':
     # 打印一个华丽的LOGO
     logger.opt(colors=True).info(f"<blue>{LOGO}</>")

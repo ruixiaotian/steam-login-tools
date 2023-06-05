@@ -101,7 +101,9 @@ def left_button_setup(font: str, page_widget: QWidget) -> QWidget:
     widget_list.setCurrentRow(0)
     # 绑定事件
     widget_list.currentItemChanged.connect(list_widget_icon_color)  # 绑定颜色切换事件
-    widget_list.currentItemChanged.connect(lambda: page_widget.setCurrentIndex(widget_list.currentRow()))
+    widget_list.currentItemChanged.connect(
+        lambda: page_widget.setCurrentIndex(widget_list.currentRow())
+    )
 
     # 添加到布局
     layout.addWidget(widget_list, 0, 0, 1, 2)
