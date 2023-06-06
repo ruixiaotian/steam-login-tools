@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel, QCheckBox, QPushButton, \
-    QAction, QScrollArea, QSpacerItem, QMenu, QSizePolicy
+    QAction, QScrollArea, QSpacerItem, QMenu, QSizePolicy, QMessageBox
 from PyQt5.QtGui import QIcon, QFont, QColor, QPixmap
 from PyQt5.QtCore import Qt
 
@@ -61,10 +61,12 @@ def account_info_widget_right_dw_btn() -> QPushButton:
 
     return dw_button
 
+
 class CardWidget:
 
-    def __init__(self, font: str, refresh: callable):
+    def __init__(self, font: str, refresh: callable, parent: QWidget):
         self.font = font
+        self.parent = parent
         self.__file_operation = create(FileOperation)
         self.__refresh_widget = refresh
 
@@ -265,6 +267,11 @@ class CardWidget:
         """其他按钮的菜单登录账号选项行为槽函数"""
         # 登录线程
         self.login = SteamLoginThread(account_info, self.parent)
+        self.login.login_state.connect(
+            lambda state, msg:
+            QMessageBox.warning(self.parent, "登录失败", msg)
+            if not state else None
+        )
         self.login.start()
         # 刷新卡密信息
         cammy = self.__file_operation.read_cammy_json()
@@ -319,7 +326,7 @@ class CardWidget:
                     action_list.setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
 
 
-def scroll_widget_card_setup(account: dict, font: str, refresh: callable):
+def scroll_widget_card_setup(account: dict, font: str, refresh: callable, ui: QMainWindow):
     """卡片"""
-    card = CardWidget(font, refresh)
+    card = CardWidget(font, refresh, ui)
     return card.scroll_widget_card_setup(account)

@@ -149,7 +149,7 @@ class LoginWidget:
         account: list = self.__file_operation.read_cammy_json()  # 读取账号信息
         for i, num in zip(account, range(len(account))):
             # 循环创建控件
-            layout.addWidget(scroll_widget_card_setup(i, self.font, self.__refresh_widget), num, 0, 1, 1, Qt.AlignTop)
+            layout.addWidget(scroll_widget_card_setup(i, self.font, self.__refresh_widget, self.parent), num, 0, 1, 1, Qt.AlignTop)
 
         layout.addItem(
             QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding),

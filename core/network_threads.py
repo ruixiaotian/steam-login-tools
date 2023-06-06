@@ -15,6 +15,14 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
+
+from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow
+
+from core.file_operation import FileOperation
+from core.tcping import Ping
+
 import psutil
 import shutil
 import requests
@@ -22,12 +30,6 @@ import winreg
 import subprocess
 from loguru import logger
 from pathlib import Path
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel
-from core.file_operation import FileOperation
-from core.tcping import Ping
-
 from creart import create
 
 
@@ -105,9 +107,10 @@ class PingServerThread(QThread):
 class SteamLoginThread(QThread):
     """登录线程"""
     msg = pyqtSignal(str)
+    login_state = pyqtSignal(bool, str)
 
     def __init__(
-            self, cammy: dict, *args, **kwargs
+            self, cammy: dict, ui: QMainWindow, *args, **kwargs
     ):
         """
         登录线程,cammy参数文档:
@@ -124,6 +127,7 @@ class SteamLoginThread(QThread):
         self.pwd: str = cammy['cammy_pwd']
         self.ssfn: str = cammy['cammy_ssfn']
         self.skip_email: bool = cammy['skip_email']
+        self.parent: QMainWindow = ui
 
     def run(self):
         if not self.file_path.steam_install_state:
@@ -144,10 +148,17 @@ class SteamLoginThread(QThread):
 
     def __login(self):
         """登录Steam"""
-        subprocess.run(
-            f"{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}",
-            cwd=self.file_path.steam_path
-        )
+        try:
+            subprocess.run(
+                f"{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}",
+                cwd=self.file_path.steam_path
+            )
+        except FileNotFoundError as e:
+            self.login_state.emit(False, f"Steam路径错误,请检查\n当前启动路径:{self.file_path.steam_exe_path}")
+        except PermissionError:
+            self.login_state.emit(False, "上号器无权访问Steam\n请检查: \n - 杀软是否关闭\n - Steam.exe所在文件夹权限")
+        except Exception as e:
+            self.login_state.emit(False, f"{e}")
 
     @staticmethod
     def __del_config_file():
