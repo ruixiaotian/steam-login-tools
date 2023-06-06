@@ -59,8 +59,8 @@ class FileOperation:
     def __init__(self):
         """初始化对象"""
         self.__get_path()
-        self.__get_steam_path()
         self.__init_file()
+        self.__get_steam_path()
 
     def __get_path(self):
         """

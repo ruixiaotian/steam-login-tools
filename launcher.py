@@ -191,11 +191,11 @@ class Launcher(QMainWindow):
         """启动steam登录工具"""
         self.label_widget.setText("正在启动 Steam Login Tools")
         self.setVisible(False)
-        process = subprocess.run(
+        subprocess.run(
             str(self.steam_login_tools_path / "Steam Login Tools.exe"),
             cwd=str(self.steam_login_tools_path),
         )
-        exit(0)
+        sys.exit(0)
 
     def download_run(self):
         """下载steam登录工具"""

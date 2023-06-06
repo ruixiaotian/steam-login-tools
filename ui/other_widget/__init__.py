@@ -6,7 +6,7 @@ from creart import exists_module, add_creator
 from creart.creator import AbstractCreator, CreateTargetInfo
 from abc import ABC
 
-from .path_card import path_page
+from ui.other_widget.path_card import path_page
 
 
 class DownloadWidget:
