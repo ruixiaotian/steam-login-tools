@@ -9,18 +9,19 @@ import json
 import datetime
 
 import loguru
-from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QCheckBox, QAction, \
-    QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem, QDialog
-from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
+from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QGridLayout, QCheckBox, QAction, \
+    QSizePolicy, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem
+from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QMouseEvent, QCloseEvent
 from PyQt5.QtCore import Qt, QPropertyAnimation
 from pathlib import Path
 
-from core.file_operation import FileOperation, detect_vdf
+from core.file_operation import FileOperation
 from core.network_threads import PingServerThread, SteamLoginThread
 from core.event_judgment import login_widget_size_button_checked_event
 
 from ui.other_widget import DownloadWidget
 from ui.login_widget.add_act_wgt_set import add_account_widget_setup
+from ui.login_widget.server_status_wgt_set import server_status_widget_setup
 
 from creart import create
 
@@ -31,7 +32,7 @@ class LoginWidget:
     def __init__(self, parent, font: str):
         self.parent = parent
         self.font = font
-        self.pings = None
+        self.pings = list()
 
     def login_widget_setup(self, ui: QMainWindow):
         """
@@ -49,7 +50,7 @@ class LoginWidget:
         # 获取控件
         title_widget = self.__title_widget_setup()
         add_account_widget = add_account_widget_setup(self.font, self.__refresh_widget)
-        server_status_widget = self.__server_status_widget_setup(ui)
+        server_status_widget = server_status_widget_setup(self.font, ui, self.pings)
         account_info_widget = self.__account_info_widget_setup(add_account_widget, server_status_widget)
         # 添加控件
         layout.addWidget(title_widget, 0, 0, 1, 2)
@@ -79,134 +80,6 @@ class LoginWidget:
         label.setObjectName('title_label')
         layout.addWidget(label, 0, 0, 1, 1, Qt.AlignLeft)
         layout.setContentsMargins(0, 0, 0, 0)
-
-        return widget
-
-    def __server_status_widget_setup(self, ui: QMainWindow):
-        """
-        设置服务器状态的控件
-        :param ui:
-        :return:
-        """
-        widget = QWidget()
-        layout = QGridLayout(widget)
-
-        # 设置属性
-        widget.resize(400, 500)
-        widget.setObjectName('server_status_widget')
-
-        # 图标路径
-        online_icon = [
-            './img/icon/login_widget/server_status/server_normal.svg',  # 服务器在线图标
-            './img/icon/login_widget/server_status/online.png'  # 在线状态图标
-        ]
-        offline_icon = [
-            './img/icon/login_widget/server_status/server_error.svg',  # 服务器离线图标
-            './img/icon/login_widget/server_status/offline.png'  # 离线状态图标
-        ]
-
-        # 创建列表
-        online_server_icon, online_icon_list, \
-            offline_server_icon, offline_icon_list = [], [], [], []
-
-        for i in range(3):
-            # 循环添加
-            online_server_icon.append(online_icon[0])
-            online_icon_list.append(online_icon[1])
-            offline_server_icon.append(offline_icon[0])
-            offline_icon_list.append(offline_icon[1])
-
-        # 服务器IP列表
-        server_ip_list = [
-            '1.15.97.14', 'wp.qiao.icu', 'wp.qiao.icu'
-        ]
-        port_list = [
-            8848, 80, 80
-        ]
-
-        # 创建控件列表
-        server_icon_label_list, server_num_label_list, \
-            server_status_icon_list, server_status_label_list = [], [], [], []
-
-        for i in range(3):
-            # 循环添加控件
-            server_icon_label_list.append(QLabel())
-            server_num_label_list.append(QLabel())
-            server_status_icon_list.append(QLabel())
-            server_status_label_list.append(QLabel())
-
-        # 循环设置控件
-        for label, num in zip(server_icon_label_list, range(1, 4)):
-            # 设置图标
-            label.setPixmap(QPixmap(online_icon[0]))  # 服务器在线图标
-            # 设置对象名称
-            label.setObjectName(f'server_icon_label_{num}')
-
-        for label, num in zip(server_num_label_list, range(1, 4)):
-            # 设置服务器编号和字体
-            label.setText(f"授权服务器 {num}号")
-            label.setFont(QFont(self.font, 10))
-            # 设置对象名称
-            label.setObjectName(f'server_num_label_{num}')
-
-        for label, num in zip(server_status_icon_list, range(1, 4)):
-            # 设置大小
-            label.setFixedSize(14, 14)
-            # 设置图标
-            label.setPixmap(QPixmap(online_icon[1]))  # 在线图标
-            # 设置自动缩放
-            label.setScaledContents(True)
-            # 设置对象名称
-            label.setObjectName(f'server_status_icon_{num}')
-
-        for label, num in zip(server_status_label_list, range(1, 4)):
-            # 设置显示内容和字体
-            label.setText('在线')
-            label.setFont(QFont(self.font, 10))
-            # 设置对象名称
-            label.setObjectName(f'server_status_label_{num}')
-
-        self.pings = []  # 创建线程列队
-        zip_list = zip(  # zip函数单独取出来增加可读性
-            server_icon_label_list, server_status_icon_list, server_status_label_list,
-            online_server_icon, offline_server_icon, online_icon_list, offline_icon_list,
-            server_ip_list, port_list
-        )
-
-        for server_label_icon, server_state_label, state_label, online_state_icon, \
-                offline_state_icon, online_icon, offline_icon, ip, port in zip_list:
-            # 循环启动Ping线程
-            ping = PingServerThread(
-                server_label_icon, server_state_label, state_label,
-                online_state_icon, offline_state_icon, online_icon,
-                offline_icon, ip, port, ui
-            )
-            ping.start()
-            self.pings.append(ping)
-
-        # 添加到布局
-        for label, num in zip(server_icon_label_list, range(1, 4)):
-            # 将服务器状态图标添加到布局
-            layout.addWidget(label, num, 0, 1, 1)
-
-        for label, num in zip(server_num_label_list, range(1, 4)):
-            # 将服务器编号添加到布局
-            layout.addWidget(label, num, 1, 1, 1)
-
-        for label, num in zip(server_status_icon_list, range(1, 4)):
-            # 将状态图标添加到布局
-            layout.addWidget(label, num, 2, 1, 1)
-
-        for label, num in zip(server_status_label_list, range(1, 4)):
-            # 将服务器状态添加到布局
-            layout.addWidget(label, num, 3, 1, 1)
-
-        # 设置布局边距
-        layout.setContentsMargins(55, 0, 60, 0)
-        layout.setSpacing(5)
-
-        # 设置阴影
-        self.shadow_setup(widget)
 
         return widget
 
@@ -240,14 +113,11 @@ class LoginWidget:
         # 添加控件
         layout.addWidget(self.scroll_widget, 0, 0, 3, 1)
         layout.addWidget(size_button, 0, 1, 1, 1, Qt.AlignTop)
-        layout.addWidget(dw_button, 1, 1, 1, 1, Qt.AlignTop)
-        layout.addItem(QSpacerItem(1, 1000, QSizePolicy.Minimum, QSizePolicy.Minimum), 2, 1, 1, 1)
+        # layout.addWidget(dw_button, 1, 1, 1, 1, Qt.AlignTop)
+        layout.addItem(QSpacerItem(1, 1000, QSizePolicy.Minimum, QSizePolicy.Minimum),1, 1, 1, 1)
 
         # 设置阴影
         self.shadow_setup(widget)
-
-        # 更新一次数据
-        detect_vdf()
 
         return widget
 
@@ -326,9 +196,12 @@ class LoginWidget:
             # 循环创建控件
             layout.addWidget(self.__scroll_widget_card_setup(i), num, 0, 1, 1, Qt.AlignTop)
 
-        layout.addItem(QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding), len(account) + 1, 0, 1, 1)
+        layout.addItem(
+            QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding),
+            len(account) + 1, 0, 1, 1
+        )
 
-        layout.setContentsMargins(10, 2, 0, 0)
+        layout.setContentsMargins(10, 0, 0, 0)
         layout.setSpacing(0)
 
         return widget
@@ -344,61 +217,24 @@ class LoginWidget:
         layout = QGridLayout(widget)
         # 设置控件属性
         widget.setObjectName("scroll_widget_card")
-        widget.setFixedSize(435, 85)
+        widget.setFixedSize(435, 55)
 
-        # 设置头像
-        avatar_img = self.__scroll_widget_card_avatar_img(account)
         # 设置显示名称
         avatar_name = self.__scroll_widget_card_avatar_name(account)
-        # 账号属性: 最近登录, 离线模式
-        recently_logged = self.__scroll_widget_card_recently_logged()
-        offline_logged = self.__scroll_widget_card_offline()
         # 登录时间
         time = self.__scroll_widget_card_time(account)
         # 更多按钮
         other_btn = self.__scroll_widget_card_other_btn(account)
 
-        # 判断控件是否可见
-        self.__determine_account_attributes(account, layout, recently_logged, offline_logged)
-
         # 添加到控件
-        layout.addWidget(avatar_img, 0, 0, 4, 1)
-        layout.addWidget(avatar_name, 0, 1, 1, 1)
+        layout.addWidget(avatar_name, 0, 0, 1, 1)
 
-        layout.addWidget(time, 3, 1, 1, 1, Qt.AlignTop | Qt.AlignLeft)
-        layout.addWidget(other_btn, 0, 5, 1, 1)
+        layout.addWidget(time, 1, 0, 1, 1, Qt.AlignTop | Qt.AlignLeft)
+        layout.addWidget(other_btn, 0, 2, 1, 1, Qt.AlignRight)
 
-        # 添加弹簧
-        layout.addItem(QSpacerItem(1000, 1, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 3, 1, 1)
-        layout.addItem(QSpacerItem(1000, 1, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 4, 1, 1)
-        layout.addItem(QSpacerItem(25, 1, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 5, 1, 1)
-        layout.addItem(QSpacerItem(1, 2, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding), 2, 1, 1, 1)
-
-        # 设置弹簧
-        layout.setContentsMargins(0, 6, 0, 6)
-
-        layout.setVerticalSpacing(7)
+        layout.setVerticalSpacing(10)
 
         return widget
-
-    @staticmethod
-    def __scroll_widget_card_avatar_img(account_info: dict) -> QLabel:
-        """设置账号头像的控件
-        :param account_info:
-        :return:
-        """
-
-        img_path = Path(account_info['img_path'])
-        pixmap = QPixmap(75, 75)
-        pixmap.load(str(img_path.resolve()))
-
-        img = QLabel()
-        img.setPixmap(pixmap)
-        img.setFixedSize(75, 75)
-        img.setObjectName('avatar_img')
-        img.setScaledContents(True)
-
-        return img
 
     def __scroll_widget_card_avatar_name(self, account_info: dict) -> QWidget:
         """设置账号名称的控件"""
@@ -432,80 +268,6 @@ class LoginWidget:
 
         return widget
 
-    def __scroll_widget_card_recently_logged(self) -> QWidget:
-        """
-        设置卡片显示的最近登录
-        :param account_info:
-        :return:
-        """
-        widget = QWidget(self.parent)  # 承载窗体
-        layout = QGridLayout(widget)  # 创建布局
-
-        # 创建控件
-        img = QLabel()
-        label = QLabel("最近登录")
-
-        # 设置窗体属性
-        widget.setObjectName("account_attributes")
-        widget.setFixedSize(80, 25)
-
-        # 设置图标属性
-        img.setFixedSize(16, 16)
-        img.setObjectName('recently_logged')
-        img.setPixmap(QPixmap("./img/icon/login_widget/account_info/recently_logged_icon.svg"))
-        img.setScaledContents(True)
-
-        # 设置名字属性
-        label.setFixedSize(55, 24)
-        label.setObjectName('recently_logged')
-        label.setFont(QFont(self.font, 9))
-
-        # 添加到控件
-        layout.addWidget(img, 0, 0, 1, 1)
-        layout.addWidget(label, 0, 1, 1, 1)
-        layout.setContentsMargins(5, 0, 0, 0)
-        layout.setSpacing(0)
-        layout.setHorizontalSpacing(5)
-
-        return widget
-
-    def __scroll_widget_card_offline(self) -> QWidget:
-        """
-        设置卡片显示的最近登录
-        :param account_info:
-        :return:
-        """
-        widget = QWidget(self.parent)  # 承载窗体
-        layout = QGridLayout(widget)  # 创建布局
-
-        # 创建控件
-        img = QLabel()
-        label = QLabel("离线模式")
-
-        # 设置窗体属性
-        widget.setObjectName("account_attributes")
-        widget.setFixedSize(80, 25)
-
-        # 设置图标属性
-        img.setFixedSize(16, 16)
-        img.setObjectName('offline_logged')
-        img.setPixmap(QPixmap("./img/icon/login_widget/account_info/offline_logged_icon.svg"))
-        img.setScaledContents(True)
-
-        # 设置名字属性
-        label.setFixedSize(55, 24)
-        label.setObjectName('offline_logged')
-        label.setFont(QFont(self.font, 9))
-
-        # 添加到控件
-        layout.addWidget(img, 0, 0, 1, 1)
-        layout.addWidget(label, 0, 1, 1, 1)
-        layout.setContentsMargins(5, 0, 0, 0)
-        layout.setSpacing(0)
-        layout.setHorizontalSpacing(5)
-
-        return widget
-
     def __scroll_widget_card_time(self, account_info: dict) -> QWidget:
         """
         设置登录时间的控件
@@ -518,7 +280,7 @@ class LoginWidget:
             time = "暂未登录"
         else:
             # 时间戳转换
-            time = datetime.datetime.fromtimestamp(int(account_info['Timestamp'])).strftime("%Y-%m-%d %H:%M:%S")
+            time = datetime.datetime.fromtimestamp(float(account_info['Timestamp'])).strftime("%Y-%m-%d %H:%M:%S")
 
         # 创建控件
         img = QLabel()
@@ -562,19 +324,18 @@ class LoginWidget:
 
         # 创建菜单
         menu = QMenu(btn)
-        menu.setFixedSize(115, 135)
+        # menu.setFixedSize(115, 135)
+        menu.setFixedSize(115, 105)
 
         # 创建菜单项
         menu_login_btn = QAction(QIcon('./img/icon/login_widget/account_info/action_login_btn.svg'), "登录账号", menu)
         menu_delete_btn = QAction(QIcon('./img/icon/login_widget/account_info/action_delete_btn.svg'), "删除账号", menu)
-        menu_offline_login_btn = QAction(QIcon('./img/icon/login_widget/account_info/unchecked.svg'), '离线登录', menu)
         menu_skip_email_btn = QAction(QIcon('./img/icon/login_widget/account_info/unchecked.svg'), "跳过验证", menu)
 
         # 菜单项列表
         menu_list = [
             menu_login_btn,
             menu_delete_btn,
-            menu_offline_login_btn,
             menu_skip_email_btn
         ]
 
@@ -582,7 +343,6 @@ class LoginWidget:
         menu.setWindowFlags(menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
         menu.setAttribute(Qt.WA_TranslucentBackground)
         # 设置菜单项可选
-        menu_offline_login_btn.setCheckable(True)
         menu_skip_email_btn.setCheckable(True)
 
         # 循环设置控件
@@ -591,14 +351,9 @@ class LoginWidget:
             menu.addAction(i)  # 添加到菜单
 
         # 读取配置
-        self.__read_menu_config(
-            [menu_offline_login_btn, menu_skip_email_btn],
-            account_info
-        )
+        self.__read_menu_config(menu_skip_email_btn, account_info)
 
         # 菜单项槽函数绑定
-        menu_offline_login_btn.triggered.connect(
-            lambda: self.__other_btn_menu_offline_action(menu_offline_login_btn, account_info))
         menu_login_btn.triggered.connect(
             lambda: self.__other_btn_menu_login_action(menu_login_btn, account_info)
         )
@@ -624,38 +379,6 @@ class LoginWidget:
         return btn
 
     @staticmethod
-    def __determine_account_attributes(
-            account_info: dict,
-            layout: QGridLayout,
-            recently_logged: QWidget,
-            offline_logged: QWidget
-    ):
-        """
-        判断属性是否要显示
-        :param account_info:
-        :return:
-        """
-
-        # 判断是否为最近登录
-        if account_info['MostRecent']:
-            layout.addWidget(recently_logged, 1, 1, 1, 1)
-            recently_logged.setVisible(True)
-        else:
-            layout.removeWidget(recently_logged)
-            recently_logged.setVisible(False)
-
-        # 判断是否为离线模式
-        if account_info['WantsOfflineMode']:
-            if account_info['MostRecent']:
-                layout.addWidget(offline_logged, 1, 2, 1, 1)
-            else:
-                layout.addWidget(offline_logged, 1, 1, 1, 1)
-            offline_logged.setVisible(True)
-        else:
-            layout.removeWidget(offline_logged)
-            offline_logged.setVisible(False)
-
-    @staticmethod
     def shadow_setup(target: QWidget):
         # 设置阴影
         effect_shadow = QGraphicsDropShadowEffect(target)  # 创建阴影效果对象
@@ -663,29 +386,6 @@ class LoginWidget:
         effect_shadow.setBlurRadius(25)  # 阴影的模糊程度
         effect_shadow.setColor(QColor(29, 190, 245, 80))  # 阴影的颜色
         target.setGraphicsEffect(effect_shadow)  # 设置阴影效果
-
-    def __other_btn_menu_offline_action(self, action: QAction, account_info: dict):
-        """其他按钮的菜单离线登录选项行为槽函数"""
-        """
-        其他按钮中离线登录复选框的槽函数
-        :param action:
-        :return:
-        """
-        cammy = self.__file_operation.read_cammy_json()
-        if action.isChecked():
-            action.setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
-            for cammy_item in cammy:
-                if cammy_item['cammy_user'] == account_info['cammy_user']:
-                    cammy_item['WantsOfflineMode'] = True
-                    break
-        else:
-            action.setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
-            for cammy_item in cammy:
-                if cammy_item['cammy_user'] == account_info['cammy_user']:
-                    cammy_item['WantsOfflineMode'] = False
-                    break
-        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
-        self.__refresh_widget()
 
     def __other_btn_menu_login_action(self, action: QAction, account_info: dict):
         """其他按钮的菜单登录账号选项行为槽函数"""
@@ -695,10 +395,10 @@ class LoginWidget:
         # 刷新卡密信息
         cammy = self.__file_operation.read_cammy_json()
         for cammy_item in cammy:
-            cammy_item['MostRecent'] = False  # 设置为最近登录为False
             if cammy_item['cammy_user'] == account_info['cammy_user']:
-                cammy_item['MostRecent'] = True
+                cammy_item['Timestamp'] = str(datetime.datetime.now().timestamp())
         self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
+        self.__refresh_widget()
 
     def __other_btn_menu_remove_action(self, account_info: dict):
         """其他按钮的菜单删除账号选项行为槽函数"""
@@ -737,18 +437,12 @@ class LoginWidget:
         cammy_list = self.__file_operation.read_cammy_json()
         for cammy in cammy_list:
             if cammy['cammy_user'] == account_info['cammy_user']:
-                if cammy['WantsOfflineMode']:
-                    action_list[0].setChecked(True)
-                    action_list[0].setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
-                else:
-                    action_list[0].setChecked(False)
-                    action_list[0].setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
                 if cammy['skip_email']:
-                    action_list[1].setChecked(True)
-                    action_list[1].setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
+                    action_list.setChecked(True)
+                    action_list.setIcon(QIcon('./img/icon/login_widget/account_info/check.svg'))
                 else:
-                    action_list[1].setChecked(False)
-                    action_list[1].setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
+                    action_list.setChecked(False)
+                    action_list.setIcon(QIcon('./img/icon/login_widget/account_info/unchecked.svg'))
 
     def __refresh_widget(self):
         """

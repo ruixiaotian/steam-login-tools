@@ -44,25 +44,16 @@ class FileOperation:
             "ping_time": 0.5
         },
         "steam_set": {
-            "path": {
-                "old": None,
-                "new": None
-            },
-            "version": ""
+            "path": None
         }
     }
 
-    template = {  # 文件模板
+    cammy_template = {  # 文件模板
         'cammy_user': '',
         'cammy_pwd': '',
         'cammy_ssfn': '',
-        'steam64_id': '',
-        'AccountName': '',
         'Timestamp': '',
-        'WantsOfflineMode': False,
-        'MostRecent': False,
         'skip_email': False,
-        'img_path': './img/icon/login_widget/account_info/null_img.png',
     }
 
     def __init__(self):
@@ -92,8 +83,8 @@ class FileOperation:
         try:
             # 初始化配置文件
             self.config_data = self.read_config_json()
-            # 判断配置文件中是否存在steam路
-            if self.config_data["steam_set"]["path"]["new"] is None:
+            # 判断配置文件中是否存在steam路径，存在则直接使用
+            if self.config_data["steam_set"]["path"] is None:
                 # 打开Steam注册表键
                 key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "SOFTWARE\\Valve\\Steam")
                 # 读取Steam安装路径的值
@@ -101,23 +92,12 @@ class FileOperation:
                 # Steam根目录
                 self.steam_path = Path(value[0])
                 # 写入config文件夹
-                self.config_data["steam_set"]["path"]["new"] = str(self.steam_path)
-                self.config_data["steam_set"]["version"] = "new"
+                self.config_data["steam_set"]["path"] = self.steam_path.__str__()
                 self.write_json(self.config_data_path, self.config_data)
-
-            if self.config_data["steam_set"]["version"] == "new":
-                # 判断版本
-                self.steam_path = Path(self.config_data["steam_set"]["path"]["new"])
-            elif self.config_data["steam_set"]["version"] == "old":
-                self.steam_path = Path(self.config_data["steam_set"]["path"]["old"])
+            else:
+                self.steam_path = Path(self.config_data["steam_set"]["path"])
 
             self.steam_exe_path = self.steam_path / 'steam.exe'
-            # Steam用户文件目录
-            self.__steam_config_path = self.steam_path / 'config'
-            self.steam_user_path = self.__steam_config_path / 'loginusers.vdf'
-            self.steam64id_path = self.__steam_config_path / 'config.vdf'
-            # Steam图片目录
-            self.steam_avatarcache_path = self.__steam_config_path / 'avatarcache'
 
             # 设置安装状态
             self.steam_install_state = True
@@ -208,85 +188,6 @@ class FileOperation:
             print(e)
 
 
-class VdfOperation:
-    """Vdf文件操作"""
-
-    @staticmethod
-    def read_vdf(file_path: str) -> dict:
-        """读取Vdf文件"""
-        try:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                return vdf.load(f)['users']
-        except Exception as e:
-            return e
-
-    @staticmethod
-    def write_vdf(file_path: str, data: dict):
-        """写入Vdf文件"""
-        with open(file_path, 'w', encoding='utf-8') as f:
-            vdf.dump(data, f, pretty=True)
-
-    @staticmethod
-    def wants_offline_mode(file_path: str, steam64id: str):
-        """
-        修改离线模式为True
-        判断是否默认离线模式,不是则修改
-        :param file_path:
-        :param steam64id:
-        :return:
-        """
-        with open(file_path, 'r', encoding='utf-8') as f:
-            config = vdf.load(f)
-
-        if config['users'][steam64id]['WantsOfflineMode'] == "0":
-            # 判断是否需要更改
-            return
-        else:
-            config['users'][steam64id]['WantsOfflineMode'] = "1"
-            config['users'][steam64id]['SkipOfflineModeWarning'] = "1"
-            with open(file_path, 'w', encoding='utf-8') as f:
-                vdf.dump(config, f, pretty=True)
-
-    @staticmethod
-    def not_offline_mode(file_path: str, steam64id: str):
-        """
-        修改离线模式为False
-        判断是否默认不离线模式,不是则修改
-        :param file_path:
-        :param steam64id:
-        :return:
-        """
-        with open(file_path, 'r', encoding='utf-8') as f:
-            config = vdf.load(f)
-
-        if config['users'][steam64id]['WantsOfflineMode'] == "0":
-            # 判断是否需要更改
-            return
-        else:
-            config['users'][steam64id]['WantsOfflineMode'] = "0"
-            config['users'][steam64id]['SkipOfflineModeWarning'] = "0"
-            with open(file_path, 'w', encoding='utf-8') as f:
-                vdf.dump(config, f, pretty=True)
-
-
-def detect_vdf():
-    """监测vdf"""
-    if not create(FileOperation).steam_install_state:
-        return
-    cammy: list = create(FileOperation).read_cammy_json()
-    vdf: dict = create(VdfOperation).read_vdf(create(FileOperation).steam_user_path)
-
-    for vdf_key, vdf_value in vdf.items():
-        # 读取所有vdf项
-        for item in cammy:
-            if vdf_value['AccountName'] in item['cammy_user']:
-                item['steam64_id'] = vdf_key
-                item['AccountName'] = vdf_value['AccountName']
-                item['Timestamp'] = vdf_value['Timestamp']
-                item['img_path'] = str(create(FileOperation).steam_avatarcache_path / f"{vdf_key}.png")
-    create(FileOperation).write_json(create(FileOperation).cammy_data_path, cammy)
-
-
 class FileOperationClassCreator(AbstractCreator, ABC):
     # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
     # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
@@ -303,25 +204,4 @@ class FileOperationClassCreator(AbstractCreator, ABC):
         return FileOperation()
 
 
-class VdfOperationClassCreator(AbstractCreator, ABC):
-    # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
-    # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
-    targets = (CreateTargetInfo("core.file_operation", "VdfOperation"),)
-
-    # 静态方法available()，用于检查模块"core"是否存在，返回值为布尔型。
-    @staticmethod
-    def available() -> bool:
-        return exists_module("core.file_operation")
-
-    # 静态方法create()，用于创建VdfOperation类的实例，返回值为VdfOperation对象。
-    @staticmethod
-    def create(create_type: [VdfOperation]) -> VdfOperation:
-        return VdfOperation()
-
-
 add_creator(FileOperationClassCreator)
-add_creator(VdfOperationClassCreator)
-
-if __name__ == '__main__':
-    f = DetectVdfThread()
-    f.detect_vdf()

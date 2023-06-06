@@ -74,7 +74,7 @@ def add_account_widget_setup(font: str, refresh: callable):
     __add_layout(
         layout,
         [user_edit, password_edit, ssfn_edit, save_button],
-        [Qt.AlignHCenter for i in range(4)]
+        [Qt.AlignHCenter for _ in range(4)]
     )
 
     # 设置阴影
@@ -151,7 +151,7 @@ def __account_save_file(user: str, pwd: str, ssfn: str = str()):
     :param ssfn:
     :return:
     """
-    config = __file_operation.template
+    config = __file_operation.cammy_template
     config['cammy_user'] = user
     config['cammy_pwd'] = pwd
     config['cammy_ssfn'] = ssfn

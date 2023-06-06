@@ -16,6 +16,7 @@
  *                   不见满街漂亮妹，哪个归得程序员？
 """
 import psutil
+import shutil
 import requests
 import winreg
 import subprocess
@@ -24,7 +25,7 @@ from pathlib import Path
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
-from core.file_operation import FileOperation, VdfOperation
+from core.file_operation import FileOperation
 from core.tcping import Ping
 
 from creart import create
@@ -137,11 +138,12 @@ class SteamLoginThread(QThread):
         else:
             # try:
             self.__kill_steam()
+            self.__del_config_file()
             self.__determine_login_method()
-            self.__determine_login_offline()
             self.__download_ssfn()
             logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
-            logger.info(f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}")
+            logger.info(
+                f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}")
             self.__login()
             # except Exception as e:
             #     logger.error(f"登录失败:\n {e}")
@@ -152,6 +154,13 @@ class SteamLoginThread(QThread):
             f"{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}",
             cwd=self.file_path.steam_path
         )
+
+    @staticmethod
+    def __del_config_file():
+        """删除steam根目录下的config文件夹"""
+        config_path = Path(create(FileOperation).steam_path) / 'config'
+        if config_path.exists() and config_path.is_dir():
+            shutil.rmtree(config_path.__str__())
 
     @staticmethod
     def __kill_steam():
@@ -196,19 +205,3 @@ class SteamLoginThread(QThread):
         winreg.SetValueEx(key, key_name, 0, winreg.REG_DWORD, key_value)  # 修改键值
         winreg.CloseKey(key)  # 关闭注册表键
         logger.info(f"已修改 StartupMode 为： {key_value}")
-
-    def __determine_login_offline(self):
-        """判断是否需要离线"""
-        if not self.steam64id:
-            return
-        vdf = create(VdfOperation)
-        if self.offline:
-            vdf.wants_offline_mode(
-                self.file_path.steam_user_path,
-                self.steam64id
-            )
-        else:
-            vdf.not_offline_mode(
-                self.file_path.steam_user_path,
-                self.steam64id
-            )
