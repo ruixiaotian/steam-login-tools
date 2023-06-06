@@ -147,23 +147,6 @@ QLineEdit#ssfn_edit {
     color: rgba(89, 107, 143, 90);
 }
 
-QPushButton#login_button {
-    /*设置背景颜色*/
-    background-color: #4530B3;
-    /*设置字体颜色*/
-    color: #FFFFFF;
-    /*设置边框和圆角*/
-    border: 1px solid #4530B3;
-    border-radius: 16px;
-    /*设置边距*/
-    margin-left: 10px;
-}
-
-QPushButton#login_button:focus {
-    /*移除虚线框*/
-    outline: none;
-}
-
 QPushButton#save_button {
     /*设置背景颜色*/
     background-color: transparent;
@@ -171,7 +154,7 @@ QPushButton#save_button {
     color: #001447;
     /*设置边框和圆角*/
     border: 2px solid #D9D9D9;
-    border-radius: 16px;
+    border-radius: 14px;
     /*设置边距*/
     margin-right: 10px;
 }

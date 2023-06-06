@@ -140,21 +140,19 @@ class FileOperation:
             with open(self.config_data_path, 'w', encoding='utf-8') as f:
                 json.dump(self.__config, f, ensure_ascii=False, indent=4)
 
+    @staticmethod
+    def read_json_file(path: str | Path):
+        """读取json文件"""
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
     def read_cammy_json(self) -> list:
         """读取卡密json文件"""
-        try:
-            with open(self.cammy_data_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except JSONDecodeError as e:
-            return e
+        return self.read_json_file(self.cammy_data_path)
 
     def read_config_json(self):
         """读取配置文件,方便外部访问"""
-        try:
-            with open(self.config_data_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except JSONDecodeError as e:
-            return e
+        return self.read_json_file(self.config_data_path)
 
     @staticmethod
     def write_json(file_path, data):

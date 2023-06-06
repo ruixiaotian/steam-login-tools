@@ -1,20 +1,12 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QCheckBox, QAction, \
-    QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem, QDialog, QStackedWidget
-from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
-from PyQt5.QtCore import Qt, QPropertyAnimation, QSize
-from typing import List
-from pathlib import Path
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, QSizePolicy, QScrollArea, QStackedWidget
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt
 
-from core.file_operation import FileOperation
-
-from creart import create, exists_module, add_creator
+from creart import exists_module, add_creator
 from creart.creator import AbstractCreator, CreateTargetInfo
 from abc import ABC
 
-from .share import shadow_setup
 from .path_card import path_page
-
-import json
 
 
 class DownloadWidget:

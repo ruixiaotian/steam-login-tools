@@ -6,16 +6,13 @@
 # @Software: PyCharm
 
 import json
-import sys
 import datetime
-import asyncio
 
 import loguru
 from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QCheckBox, QAction, \
     QSizePolicy, QCompleter, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem, QDialog
 from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QPainter, QMouseEvent, QCloseEvent
 from PyQt5.QtCore import Qt, QPropertyAnimation
-from typing import List
 from pathlib import Path
 
 from core.file_operation import FileOperation, detect_vdf
@@ -23,6 +20,7 @@ from core.network_threads import PingServerThread, SteamLoginThread
 from core.event_judgment import login_widget_size_button_checked_event
 
 from ui.other_widget import DownloadWidget
+from ui.login_widget.add_act_wgt_set import add_account_widget_setup
 
 from creart import create
 
@@ -50,7 +48,7 @@ class LoginWidget:
 
         # 获取控件
         title_widget = self.__title_widget_setup()
-        add_account_widget = self.__add_account_widget_setup()
+        add_account_widget = add_account_widget_setup(self.font, self.__refresh_widget)
         server_status_widget = self.__server_status_widget_setup(ui)
         account_info_widget = self.__account_info_widget_setup(add_account_widget, server_status_widget)
         # 添加控件
@@ -81,105 +79,6 @@ class LoginWidget:
         label.setObjectName('title_label')
         layout.addWidget(label, 0, 0, 1, 1, Qt.AlignLeft)
         layout.setContentsMargins(0, 0, 0, 0)
-
-        return widget
-
-    def __add_account_widget_setup(self):
-        """
-        设置添加账号的控件
-
-        :return:
-        """
-        widget = QWidget()
-        layout = QGridLayout(widget)
-
-        # 创建控件
-        user_edit = QLineEdit()
-        password_edit = QLineEdit()
-        ssfn_edit = QLineEdit()
-        login_button = QPushButton('登录')
-        save_button = QPushButton('保存')
-        edit_list = [user_edit, password_edit, ssfn_edit]
-        btn_list = [login_button, save_button]
-
-        # 创建列表
-        edit_obj_name_list = ['user_edit', 'password_edit', 'ssfn_edit']
-        btn_obj_name_list = ['login_button', 'save_button']
-        place_text_list = ['USER-账号', 'PASSWORD-密码', 'SSFN(如果有)']
-        icon_path_list = [
-            './img/icon/login_widget/add_account/user.svg',
-            './img/icon/login_widget/add_account/pwd.svg',
-            './img/icon/login_widget/add_account/ssfn.svg'
-        ]
-
-        # 单独设置属性
-        widget.setObjectName('add_account_widget')  # 设置控件的名字
-        password_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码输入模式
-        # 设置可见与不可见切换和联想器
-        self.__pwd_edit_toggles_visible_state(password_edit)
-        self.__ssfn_edit_completer(ssfn_edit)
-
-        # 循环设置对象名称
-        for edit, name in zip(edit_list, edit_obj_name_list):
-            edit.setObjectName(name)  # 设置对象名称
-            edit.setClearButtonEnabled(True)  # 设置清除按钮
-        for btn, name in zip(btn_list, btn_obj_name_list):
-            btn.setObjectName(name)  # 设置对象名称
-
-        # 循环设置属性
-        for edit, text in zip(edit_list, place_text_list):
-            # 设置输入框通用属性
-            edit.setFixedSize(200, 30)
-            edit.setPlaceholderText(text)
-            edit.setFont(QFont(self.font, 8))
-        for edit, path in zip(edit_list, icon_path_list):
-            # 循环设置输入款图标
-            edit.addAction(QIcon(path), QLineEdit.LeadingPosition)
-
-        for btn in btn_list:
-            # 设置按钮通用属性
-            btn.setFixedSize(80, 35)
-            btn.setFont(QFont(self.font, 11))
-
-        """绑定按钮信号"""
-        # 保存按钮
-        save_button.clicked.connect(lambda: (
-            self.__account_save_file(user_edit.text(), password_edit.text(), ssfn_edit.text()),
-            self.__refresh_widget(),
-            user_edit.clear(),
-            password_edit.clear(),
-            ssfn_edit.clear()
-        ) if user_edit.text() and password_edit.text() != '' else None)
-
-        # 登录按钮槽函数链接
-        login_button.clicked.connect(lambda: (
-            SteamLoginThread(
-                {
-                    "cammy_user": user_edit.text(),
-                    "cammy_pwd": password_edit.text(),
-                    "cammy_ssfn": ssfn_edit.text(),
-                    "steam64_id": "",
-                    "skip_email": True,
-                    "WantsOfflineMode": False
-                },
-                self.parent
-            ).start(),
-            user_edit.clear(),
-            password_edit.clear(),
-            ssfn_edit.clear()
-        ) if user_edit.text() and password_edit.text() != '' else None)
-
-        # 添加到布局
-        layout.setContentsMargins(0, 30, 0, 20)
-
-        layout.addWidget(user_edit, 0, 0, 1, 2, Qt.AlignCenter)
-        layout.addWidget(password_edit, 1, 0, 1, 2, Qt.AlignCenter)
-        layout.addWidget(ssfn_edit, 2, 0, 1, 2, Qt.AlignCenter)
-        layout.addWidget(save_button, 3, 0, 1, 1, Qt.AlignRight)
-        layout.addWidget(login_button, 3, 1, 1, 1, Qt.AlignLeft)
-
-        # 设置阴影
-        self.shadow_setup(widget)
 
         return widget
 
@@ -765,57 +664,6 @@ class LoginWidget:
         effect_shadow.setColor(QColor(29, 190, 245, 80))  # 阴影的颜色
         target.setGraphicsEffect(effect_shadow)  # 设置阴影效果
 
-    def __account_save_file(self, user: str, pwd: str, ssfn: str = ''):
-        """
-        保存按钮槽函数
-        :param user:
-        :param pwd:
-        :param ssfn:
-        :return:
-        """
-        config = self.__file_operation.template
-        config['cammy_user'] = user
-        config['cammy_pwd'] = pwd
-        config['cammy_ssfn'] = ssfn
-
-        self.__file_operation.modify_json(self.__file_operation.cammy_data_path, config, add=True)
-
-    @staticmethod
-    def __pwd_edit_toggles_visible_state(pwd_edit: QLineEdit):
-        """密码编辑框模式切换槽函数"""
-
-        def judgement():
-            # 定义判断函数
-            if pwd_edit.echoMode() == QLineEdit.PasswordEchoOnEdit:
-                # 如果是密码输入模式,则切换回普通模式
-                pwd_edit.setEchoMode(QLineEdit.Normal)  # 设置普通模式
-                action.setIcon(QIcon('./img/icon/login_widget/add_account/invisible.svg'))
-            else:
-                # 如果是普通输入模式,则切换回密码输入模式
-                pwd_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码模式
-                action.setIcon(QIcon('./img/icon/login_widget/add_account/visible.svg'))
-
-        # 设置行为
-        action = QAction(pwd_edit)
-        action.setIcon(QIcon('./img/icon/login_widget/add_account/visible.svg'))
-        action.triggered.connect(judgement)
-
-        # 添加到输入框
-        pwd_edit.addAction(action, QLineEdit.TrailingPosition)
-
-    @staticmethod
-    def __ssfn_edit_completer(ssfn_edit: QLineEdit):
-        """ssfn自动补全槽函数"""
-        # 创建一个字符串列表作为 自动补全 的候选项
-        with open('./data/ssfn_list.json', 'r', encoding='utf-8') as f:
-            ssfn_list = json.load(f)
-        # 创建一个 QCompleter 对象，并将字符串列表设置为其自动补全的候选项
-        completer = QCompleter(ssfn_list, ssfn_edit)
-        completer.setObjectName("ssfn_edit_completer")
-        completer.setCompletionMode(QCompleter.InlineCompletion)  # 设置自动补全模式
-        # 将 QCompleter 对象设置为 QLineEdit 的自动补全器
-        ssfn_edit.setCompleter(completer)
-
     def __other_btn_menu_offline_action(self, action: QAction, account_info: dict):
         """其他按钮的菜单离线登录选项行为槽函数"""
         """
@@ -884,7 +732,7 @@ class LoginWidget:
         self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
         self.__refresh_widget()
 
-    def __read_menu_config(self, action_list: List[QAction], account_info: dict):
+    def __read_menu_config(self, action_list: QAction, account_info: dict):
         """读取卡密设置"""
         cammy_list = self.__file_operation.read_cammy_json()
         for cammy in cammy_list:
