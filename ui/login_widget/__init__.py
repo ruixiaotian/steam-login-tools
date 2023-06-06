@@ -23,7 +23,8 @@ from ui.share import shadow_setup
 from ui.other_widget import DownloadWidget
 from ui.login_widget.add_act_wgt_set import add_account_widget_setup
 from ui.login_widget.server_status_wgt_set import server_status_widget_setup
-from ui.login_widget.act_info_wgt_set import scroll_widget_card_setup
+from ui.login_widget.act_info_wgt_set import scroll_widget_card_setup, account_info_widget_right_size_btn, \
+    account_info_widget_right_dw_btn
 
 from creart import create
 
@@ -39,7 +40,7 @@ class LoginWidget:
     def login_widget_setup(self, ui: QMainWindow):
         """
         设置登录界面
-        :param ui:
+        :param ui: 总窗体
         :return:
         """
         widget = QWidget()
@@ -103,10 +104,10 @@ class LoginWidget:
         self.__account_info_widget_left()
 
         # 右侧
-        size_button = self.__account_info_widget_right_size_btn(
+        size_button = account_info_widget_right_size_btn(
             widget, add_account_widget, server_status_widget
         )
-        dw_button = self.__account_info_widget_right_dw_btn()
+        dw_button = account_info_widget_right_dw_btn()
 
         # 设置控件属性
         widget.resize(540, 230)
@@ -122,54 +123,6 @@ class LoginWidget:
         shadow_setup(widget, (2, 3), 25, QColor(29, 190, 245, 80))
 
         return widget
-
-    @staticmethod
-    def __account_info_widget_right_size_btn(
-            widget, add_account_widget, server_status_widget
-    ) -> QCheckBox:
-        """
-        设置右侧的放大/缩小控件
-        :param widget:  承载窗体
-        :param add_account_widget:  添加账号的控件
-        :param server_status_widget:  服务器状态的控件
-        :return:
-        """
-        size_button = QCheckBox()
-
-        # 单独设置属性
-        # 放大_缩小按钮设置, 绑定事件
-        size_button.setObjectName('size_button')
-        size_button.setFixedSize(32, 32)
-        # int类型 当选中时为2,未选中时为0
-        size_button.stateChanged.connect(
-            lambda state:
-            login_widget_size_button_checked_event(
-                state, widget, add_account_widget, server_status_widget
-            )
-        )
-
-        return size_button
-
-    @staticmethod
-    def __account_info_widget_right_dw_btn() -> QPushButton:
-        """
-        设置右侧下载旧版Steam文件按钮
-        :return:
-        """
-        # 创建按钮
-        dw_button = QCheckBox()
-
-        # 下载按钮属性设置
-        dw_button.setObjectName("dw_button")
-        dw_button.setFixedSize(32, 32)
-
-        # 信号绑定
-        dw_button.stateChanged.connect(
-            lambda:
-            create(DownloadWidget).page.setCurrentIndex(3)
-        )
-
-        return dw_button
 
     def __account_info_widget_left(self) -> QWidget:
         """设置左侧的滚动窗体控件"""

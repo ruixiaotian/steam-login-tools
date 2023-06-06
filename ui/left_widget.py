@@ -122,7 +122,7 @@ def left_label_setup(font: str, ui: QMainWindow) -> QWidget:
 
     # 创建控件
     button = QPushButton("退出软件")
-    label = QLabel("3.0.0.3_Beta")
+    label = QLabel("3.0.0.6_Beta")
     # 设置属性
     button.setFont(QFont(font, 8))
     label.setFont(QFont(font, 6))

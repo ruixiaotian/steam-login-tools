@@ -14,6 +14,53 @@ from core.event_judgment import login_widget_size_button_checked_event
 from core.network_threads import SteamLoginThread
 
 
+def account_info_widget_right_size_btn(
+        widget, add_account_widget, server_status_widget
+) -> QCheckBox:
+    """
+    设置右侧的放大/缩小控件
+    :param widget:  承载窗体
+    :param add_account_widget:  添加账号的控件
+    :param server_status_widget:  服务器状态的控件
+    :return:
+    """
+    size_button = QCheckBox()
+
+    # 单独设置属性
+    # 放大_缩小按钮设置, 绑定事件
+    size_button.setObjectName('size_button')
+    size_button.setFixedSize(32, 32)
+    # int类型 当选中时为2,未选中时为0
+    size_button.stateChanged.connect(
+        lambda state:
+        login_widget_size_button_checked_event(
+            state, widget, add_account_widget, server_status_widget
+        )
+    )
+
+    return size_button
+
+
+def account_info_widget_right_dw_btn() -> QPushButton:
+    """
+    设置右侧下载旧版Steam文件按钮
+    :return:
+    """
+    # 创建按钮
+    dw_button = QCheckBox()
+
+    # 下载按钮属性设置
+    dw_button.setObjectName("dw_button")
+    dw_button.setFixedSize(32, 32)
+
+    # 信号绑定
+    dw_button.stateChanged.connect(
+        lambda:
+        create(DownloadWidget).page.setCurrentIndex(3)
+    )
+
+    return dw_button
+
 class CardWidget:
 
     def __init__(self, font: str, refresh: callable):
