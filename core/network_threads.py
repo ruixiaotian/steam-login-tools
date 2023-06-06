@@ -86,8 +86,6 @@ class PingServerThread(QThread):
             self.server_state_label.setScaledContents(True)
             # 服务器状态标签
             self.state_label.setText('在线')
-            # 返回在线状态
-            self.sever_signal.emit(f"{self.state_label.objectName()} : 在线")
 
     def modify_to_offline(self):
         if self.state_label.text() == '离线':
@@ -102,8 +100,6 @@ class PingServerThread(QThread):
             self.server_state_label.setScaledContents(True)
             # 服务器状态标签
             self.state_label.setText('离线')
-            # 返回离线状态
-            self.sever_signal.emit(f"{self.state_label.objectName()} : 离线")
 
 
 class SteamLoginThread(QThread):
@@ -127,26 +123,24 @@ class SteamLoginThread(QThread):
         self.user: str = cammy['cammy_user']
         self.pwd: str = cammy['cammy_pwd']
         self.ssfn: str = cammy['cammy_ssfn']
-        self.steam64id: str = cammy['steam64_id']
         self.skip_email: bool = cammy['skip_email']
-        self.offline: bool = cammy['WantsOfflineMode']
 
     def run(self):
         if not self.file_path.steam_install_state:
             # 如果没有安装steam,则提示
             self.msg.emit('请先安装steam')
         else:
-            # try:
-            self.__kill_steam()
-            self.__del_config_file()
-            self.__determine_login_method()
-            self.__download_ssfn()
-            logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
-            logger.info(
-                f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}")
-            self.__login()
-            # except Exception as e:
-            #     logger.error(f"登录失败:\n {e}")
+            try:
+                self.__kill_steam()
+                self.__del_config_file()
+                self.__determine_login_method()
+                self.__download_ssfn()
+                logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
+                logger.info(
+                    f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}")
+                self.__login()
+            except Exception as e:
+                logger.error(f"登录失败:\n {e}")
 
     def __login(self):
         """登录Steam"""
