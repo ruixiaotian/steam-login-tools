@@ -1,0 +1,8 @@
+QWidget#server_status_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 15px 10px 15px;
+    /*设置圆角*/
+    border-radius: 24px;
+}

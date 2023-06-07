@@ -1,17 +1,15 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel, QCheckBox, QPushButton, \
-    QAction, QScrollArea, QSpacerItem, QMenu, QSizePolicy, QMessageBox
-from PyQt5.QtGui import QIcon, QFont, QColor, QPixmap
-from PyQt5.QtCore import Qt
-
 import datetime
-from typing import List
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QFont, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel, QCheckBox, QPushButton, \
+    QAction, QMenu, QMessageBox
 from creart import create
 
-from ui.share import shadow_setup
-from ui.other_widget import SteamSettingWidget, FixLoginWidget
-from core.file_operation import FileOperation
 from core.event_judgment import login_widget_size_button_checked_event
+from core.file_operation import FileOperation
 from core.network_threads import SteamLoginThread
+from ui.other_widget import SteamSettingWidget, FixLoginWidget
 
 
 def account_info_widget_right_size_btn(

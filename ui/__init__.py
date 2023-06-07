@@ -10,20 +10,19 @@
 
 import sys
 
+from PyQt5.QtCore import Qt, QPropertyAnimation
+from PyQt5.QtGui import QIcon, QFontDatabase, QMouseEvent, QCloseEvent, QColor, QFont
 from PyQt5.QtWidgets import QWidget, QMainWindow, QStackedWidget, QApplication, QSizePolicy, QGridLayout, \
     QGraphicsDropShadowEffect, QSpacerItem
-from PyQt5.QtGui import QIcon, QFontDatabase, QMouseEvent, QCloseEvent, QColor, QFont
-from PyQt5.QtCore import Qt, QPropertyAnimation, QThread
+from creart import create
+from loguru import logger
+from pathlib import Path
 
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import LoginWidget
 from ui.net_widget import NetWidget
-from ui.setting_widget import SettingWidget
 from ui.other_widget import SteamSettingWidget, FixLoginWidget
-
-from loguru import logger
-
-from creart import create
+from ui.setting_widget import SettingWidget
 
 
 class SteamLoginUI(QMainWindow):
@@ -55,8 +54,9 @@ class SteamLoginUI(QMainWindow):
 
         :return: None
         """
-        with open('./QSS/ui.qss', 'r', encoding='utf-8') as file:
-            self.setStyleSheet(file.read())
+        qss_path = Path("./QSS/ui_qss")
+        qss_content = "".join([f.read_text(encoding="utf-8") for f in qss_path.rglob("*") if f.is_file()])
+        self.setStyleSheet(qss_content)
 
     def setup_font(self) -> None:
         """窗体字体获取
@@ -156,7 +156,7 @@ class SteamLoginUI(QMainWindow):
 
         return self.page_widget
 
-    def the_thread_exits(self):
+    def thread_exits(self):
         """退出线程函数,让子线程安全的退出"""
         # 结束所有ping线程
         logger.info(f"准备退出子线程 - 当前退出：Ping")
@@ -212,7 +212,7 @@ class SteamLoginUI(QMainWindow):
         animation.setEndValue(0)
 
         # 退出线程
-        self.the_thread_exits()
+        self.thread_exits()
 
         animation.finished.connect(lambda: sys.exit(0))  # 调用sys防止子窗体未退出
         # 启动动画

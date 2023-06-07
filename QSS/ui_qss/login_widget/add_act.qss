@@ -1,0 +1,64 @@
+QWidget#add_account_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 15px 10px 15px;
+    /*设置圆角*/
+    border-radius: 24px;
+}
+
+QLineEdit#user_edit {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置内间距*/
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+    /*设置圆角*/
+    border-radius: 6px;
+    /*设置边框*/
+    border: 2px solid #1DBEF5;
+    color: rgba(89, 107, 143, 90);
+}
+
+QLineEdit#password_edit {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置内间距*/
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+    /*设置圆角*/
+    border-radius: 6px;
+    /*设置边框*/
+    border: 2px solid #1DBEF5;
+    color: rgba(89, 107, 143, 90);
+}
+
+QLineEdit#ssfn_edit {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置内间距*/
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+    /*设置圆角*/
+    border-radius: 6px;
+    /*设置边框*/
+    border: 2px solid #1DBEF5;
+    color: rgba(89, 107, 143, 90);
+}
+
+QPushButton#save_button {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置字体颜色*/
+    color: #001447;
+    /*设置边框和圆角*/
+    border: 2px solid #D9D9D9;
+    border-radius: 14px;
+    /*设置边距*/
+    margin-right: 10px;
+}
+
+QPushButton#save_button:focus {
+    /*移除虚线框*/
+    outline: none;
+}

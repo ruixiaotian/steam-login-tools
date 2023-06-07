@@ -8,6 +8,9 @@ from creart.creator import AbstractCreator, CreateTargetInfo
 from abc import ABC
 
 from core.file_operation import FileOperation
+from ui.other_widget.FixLoginWidget.info_page import (
+    info_page as info_page_widget
+)
 
 from creart import create
 
@@ -93,8 +96,10 @@ class FixLoginWidget:
         widget.setWidgetResizable(True)
 
         # 获取控件
+        info_page = info_page_widget(self.font)
 
         # 添加控件
+        layout.addWidget(info_page, 0, 0, 1, 1)
 
         # 设置边距
         layout.setContentsMargins(0, 10, 10, 10)

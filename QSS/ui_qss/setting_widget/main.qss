@@ -1,0 +1,33 @@
+QWidget#setting_widget {
+    /*设置背景颜色*/
+    background-color: transparent;
+}
+
+QWidget#author_info_widget, QWidget#software_setting_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 10px 0px 15px;
+    /*设置圆角*/
+    border-radius: 12px;
+}
+
+QLabel#set_title_label {
+    /*设置字体颜色*/
+    color: #53658B;
+    font-weight: lighter;
+}
+
+QLabel#software_info_img {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*超链接设置*/
+    text-decoration: none
+}
+
+QLabel#software_info_title, QLabel#software_info_msg {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*设置字体颜色*/
+    color: #53658B;
+}

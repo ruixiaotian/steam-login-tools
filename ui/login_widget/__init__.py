@@ -5,28 +5,17 @@
 # @File    : login_widget.py
 # @Software: PyCharm
 
-import json
-import datetime
-
-import loguru
-from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QGridLayout, QCheckBox, QAction, \
-    QSizePolicy, QGraphicsDropShadowEffect, QScrollArea, QMenu, QSpacerItem
-from PyQt5.QtGui import QIcon, QFont, QPixmap, QColor, QMouseEvent, QCloseEvent
-from PyQt5.QtCore import Qt, QPropertyAnimation
-from pathlib import Path
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, QSizePolicy, QScrollArea, QSpacerItem
+from creart import create
 
 from core.file_operation import FileOperation
-from core.network_threads import PingServerThread, SteamLoginThread
-from core.event_judgment import login_widget_size_button_checked_event
-
-from ui.share import shadow_setup
-from ui.other_widget import SteamSettingWidget
-from ui.login_widget.add_act_wgt_set import add_account_widget_setup
-from ui.login_widget.server_status_wgt_set import server_status_widget_setup
 from ui.login_widget.act_info_wgt_set import scroll_widget_card_setup, account_info_widget_right_size_btn, \
     account_info_widget_right_dw_btn, account_info_widget_right_repair_btn
-
-from creart import create
+from ui.login_widget.add_act_wgt_set import add_account_widget_setup
+from ui.login_widget.server_status_wgt_set import server_status_widget_setup
+from ui.share import shadow_setup
 
 
 class LoginWidget:

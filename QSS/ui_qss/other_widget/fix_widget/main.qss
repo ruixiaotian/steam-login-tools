@@ -1,0 +1,19 @@
+QWidget#fix_login_title_widget {
+    /*设置边框*/
+    border-bottom: 2px solid rgba(190, 190, 190, 0.3);
+}
+
+QScrollArea#fix_loop_widget {
+    /*设置边框*/
+    border: none;
+    /*设置背景颜色*/
+    background-color: transparent;
+}
+
+QTextEdit#fix_info_edit {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*设置边框*/
+    border: none;
+}
+
