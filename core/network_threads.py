@@ -117,8 +117,6 @@ class SteamLoginThread(QThread):
             cammy['cammy_user'] - 账号
             cammy['cammy_pwd'] - 密码
             cammy['cammy_ssfn'] - SSFN
-            cammy['steam64_id'] - 64id
-            cammy['WantsOfflineMode'] - 是否离线模式
             cammy['skip_email'] - 登录模式
         """
         super(SteamLoginThread, self).__init__(*args, **kwargs)

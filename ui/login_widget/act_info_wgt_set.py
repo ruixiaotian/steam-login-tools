@@ -8,7 +8,7 @@ from typing import List
 from creart import create
 
 from ui.share import shadow_setup
-from ui.other_widget import DownloadWidget
+from ui.other_widget import SteamSettingWidget, FixLoginWidget
 from core.file_operation import FileOperation
 from core.event_judgment import login_widget_size_button_checked_event
 from core.network_threads import SteamLoginThread
@@ -41,7 +41,7 @@ def account_info_widget_right_size_btn(
     return size_button
 
 
-def account_info_widget_right_dw_btn() -> QPushButton:
+def account_info_widget_right_dw_btn() -> QCheckBox:
     """
     设置右侧下载旧版Steam文件按钮
     :return:
@@ -56,10 +56,31 @@ def account_info_widget_right_dw_btn() -> QPushButton:
     # 信号绑定
     dw_button.stateChanged.connect(
         lambda:
-        create(DownloadWidget).page.setCurrentIndex(3)
+        create(SteamSettingWidget).page.setCurrentIndex(4)
     )
 
     return dw_button
+
+
+def account_info_widget_right_repair_btn() -> QCheckBox:
+    """
+    设置右侧修复登录按钮
+    :return:
+    """
+    # 创建按钮
+    repair_button = QCheckBox()
+
+    # 下载按钮属性设置
+    repair_button.setObjectName("repair_button")
+    repair_button.setFixedSize(32, 32)
+
+    # 信号绑定
+    repair_button.stateChanged.connect(
+        lambda:
+        create(FixLoginWidget).page.setCurrentIndex(3)
+    )
+
+    return repair_button
 
 
 class CardWidget:
@@ -108,7 +129,7 @@ class CardWidget:
         layout = QGridLayout(widget)
         # 设置控件属性
         widget.setObjectName("scroll_widget_card")
-        widget.setFixedSize(435, 55)
+        widget.setFixedSize(445, 55)
 
         # 设置显示名称
         avatar_name = self.__scroll_widget_card_avatar_name(account)
@@ -167,11 +188,12 @@ class CardWidget:
         widget = QWidget()  # 承载窗体
         layout = QGridLayout(widget)  # 创建布局
 
-        if account_info['Timestamp'] is None:
+        if not account_info['Timestamp']:
             time = "暂未登录"
         else:
             # 时间戳转换
-            time = datetime.datetime.fromtimestamp(float(account_info['Timestamp'])).strftime("%Y-%m-%d %H:%M:%S")
+            time = datetime.datetime.fromtimestamp(
+                float(account_info['Timestamp'])).strftime("%Y-%m-%d %H:%M:%S")
 
         # 创建控件
         img = QLabel()

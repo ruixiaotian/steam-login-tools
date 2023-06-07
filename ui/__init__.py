@@ -19,7 +19,7 @@ from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import LoginWidget
 from ui.net_widget import NetWidget
 from ui.setting_widget import SettingWidget
-from ui.other_widget import DownloadWidget
+from ui.other_widget import SteamSettingWidget, FixLoginWidget
 
 from loguru import logger
 
@@ -137,12 +137,18 @@ class SteamLoginUI(QMainWindow):
         setting = SettingWidget(self, self.font_name)
         setting_widget = setting.setting_widget_setup()
 
-        # 下载页面
-        dw = create(DownloadWidget)
-        dw.initialize(self, self.font_name, self.page_widget)
-        dw_widget = dw.dw_widget_setup()
+        # 修复登录页面
+        fix_wgt = create(FixLoginWidget)
+        fix_wgt.initialize(self, self.font_name, self.page_widget)
+        fix_widget = fix_wgt.fix_widget_setup()
 
-        for i in [login_widget, net_widget, setting_widget, dw_widget]:
+        # Steam设置页面
+        set_wgt = create(SteamSettingWidget)
+        set_wgt.initialize(self, self.font_name, self.page_widget)
+        dw_widget = set_wgt.dw_widget_setup()
+
+        wgt_list = [login_widget, net_widget, setting_widget, fix_widget, dw_widget]
+        for i in wgt_list:
             # 循环加入QStackedWidget
             self.page_widget.addWidget(i)
 

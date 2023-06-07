@@ -57,6 +57,7 @@ def login_account_animation_max(
         )
     )  # 结束位置
 
+
     # 添加到动画组
     # 串行动画组
     animation_sequent_group = QParallelAnimationGroup(info_widget)

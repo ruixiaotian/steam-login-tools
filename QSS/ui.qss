@@ -206,6 +206,26 @@ QCheckBox#dw_button::indicator:checked {
     image: url('./img/icon/login_widget/account_info/dw_button.svg')
 }
 
+QCheckBox#repair_button::indicator:unchecked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/login_widget/account_info/fix_btn.svg')
+}
+
+QCheckBox#repair_button::indicator:checked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/login_widget/account_info/fix_btn.svg')
+}
+
 QScrollArea#scroll_widget {
     /*设置边框*/
     border: none;
@@ -259,8 +279,6 @@ QWidget#scroll_widget_card {
     background-color: transparent;
     /*设置边框*/
     border-bottom: 1px solid #DCDCDC;
-    /*设置圆角*/
-    border-radius: 4px;
 }
 
 QLabel#avatar_img {
@@ -376,17 +394,18 @@ QLabel#software_info_title, QLabel#software_info_msg {
     color: #53658B;
 }
 
-QWidget#steam_set_title_widget {
+QWidget#steam_set_title_widget, QWidget#fix_login_title_widget {
     /*设置边框*/
     border-bottom: 2px solid rgba(190, 190, 190, 0.3);
 }
+
 
 QWidget#dw_widget {
     /*设置背景颜色*/
     background-color: transparent;
 }
 
-QScrollArea#dw_loop_widget {
+QScrollArea#dw_loop_widget, QScrollArea#fix_loop_widget {
     /*设置边框*/
     border: none;
     /*设置背景颜色*/
