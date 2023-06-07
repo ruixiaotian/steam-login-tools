@@ -66,5 +66,6 @@ def info_page(font: str) -> QWidget:
     """添加到控件"""
     layout.addWidget(title_wgt, 0, 0, 1, 1)
     layout.addWidget(fix_info_wgt, 1, 0, 1, 1)
+    layout.setVerticalSpacing(0)
 
     return widget

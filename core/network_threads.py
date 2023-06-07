@@ -134,7 +134,6 @@ class SteamLoginThread(QThread):
         else:
             try:
                 self.__kill_steam()
-                self.__del_config_file()
                 self.__determine_login_method()
                 self.__download_ssfn()
                 logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
@@ -157,13 +156,6 @@ class SteamLoginThread(QThread):
             self.login_state.emit(False, "上号器无权访问Steam\n请检查: \n - 杀软是否关闭\n - Steam.exe所在文件夹权限")
         except Exception as e:
             self.login_state.emit(False, f"{e}")
-
-    @staticmethod
-    def __del_config_file():
-        """删除steam根目录下的config文件夹"""
-        config_path = Path(create(FileOperation).steam_path) / 'config'
-        if config_path.exists() and config_path.is_dir():
-            shutil.rmtree(config_path.__str__())
 
     @staticmethod
     def __kill_steam():

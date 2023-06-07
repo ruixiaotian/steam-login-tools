@@ -1,0 +1,21 @@
+QLabel#fix_63_label {
+    /*设置背景透明*/
+    background-color: transparent;
+}
+
+QPushButton#fix_63_btn {
+    /*设置背景颜色*/
+    background-color: rgb(250, 247, 255);
+    /*设置圆角*/
+    border-radius: 6px;
+}
+
+QPushButton#fix_63_btn:hover {
+    /*设置背景颜色*/
+    background-color: rgba(250, 230, 240, 0.9);
+}
+
+QPushButton#fix_63_btn:pressed {
+    /*设置背景颜色*/
+    background-color: rgba(230, 230, 240, 0.9);
+}

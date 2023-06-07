@@ -17,3 +17,12 @@ QTextEdit#fix_info_edit {
     border: none;
 }
 
+QPushButton#fix_return_btn {
+    /*设置颜色*/
+    color: #596B8F;
+    /*设置背景透明*/
+    background-color: transparent;
+    /*设置边框*/
+    border: none;
+}
+

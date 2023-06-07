@@ -1,18 +1,14 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, \
-    QSizePolicy, QScrollArea, QStackedWidget
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QSize, Qt
-
-from creart import exists_module, add_creator
-from creart.creator import AbstractCreator, CreateTargetInfo
 from abc import ABC
 
-from core.file_operation import FileOperation
-from ui.other_widget.FixLoginWidget.info_page import (
-    info_page as info_page_widget
-)
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, \
+    QSizePolicy, QScrollArea, QStackedWidget, QSpacerItem, QPushButton
+from creart import exists_module, add_creator
+from creart.creator import AbstractCreator, CreateTargetInfo
 
-from creart import create
+from ui.other_widget.FixLoginWidget.fix_page import fix_page as fix_page_widget
+from ui.other_widget.FixLoginWidget.info_page import info_page as info_page_widget
 
 
 class FixLoginWidget:
@@ -40,7 +36,7 @@ class FixLoginWidget:
 
         # 添加到布局
         layout.addWidget(self.fix_title(), 1, 0, 1, 1, Qt.AlignLeft)
-        layout.addWidget(self.loop_widget(), 2, 0, 1, 1, Qt.AlignTop)
+        layout.addWidget(self.loop_widget(), 2, 0, 1, 1)
 
         layout.setContentsMargins(0, 10, 0, 0)
 
@@ -66,8 +62,15 @@ class FixLoginWidget:
         self.dw_title_label = QLabel('修复登录错误')
         self.dw_title_label.setFont(QFont(self.font, 16))
         self.dw_title_label.setObjectName('title_label')
+
+        self.return_btn = QPushButton()
+        self.return_btn.setIcon(QIcon("img/other_widget/fix/fix_return_btn.svg"))
+        self.return_btn.setObjectName("fix_return_btn")
+        self.return_btn.clicked.connect(lambda: self.page.setCurrentIndex(0))
+
         layout.addWidget(self.dw_title_label, 0, 0, 1, 1, Qt.AlignLeft)
-        layout.setContentsMargins(10, 0, 0, 0)
+        layout.addWidget(self.return_btn, 0, 1, 1, 1, Qt.AlignRight | Qt.AlignBottom)
+        layout.setContentsMargins(10, 5, 15, 10)
 
         return widget
 
@@ -97,12 +100,16 @@ class FixLoginWidget:
 
         # 获取控件
         info_page = info_page_widget(self.font)
+        fix_page = fix_page_widget(self.font, self.parent)
 
         # 添加控件
         layout.addWidget(info_page, 0, 0, 1, 1)
+        layout.addWidget(fix_page, 1, 0, 1, 1)
+        layout.addItem(QSpacerItem(1, 1000, QSizePolicy.Minimum, QSizePolicy.Maximum), 2, 0, 1, 1)
 
         # 设置边距
         layout.setContentsMargins(0, 10, 10, 10)
+        layout.setVerticalSpacing(0)
 
         return widget
 

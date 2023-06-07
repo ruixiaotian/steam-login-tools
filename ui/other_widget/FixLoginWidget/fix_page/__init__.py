@@ -1,13 +1,12 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout
-from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout
 
-from creart import create
-
+from ui.other_widget.FixLoginWidget.fix_page.fix_63 import fix_63_layout
 from ui.share import shadow_setup
 
 
-def fix_page(font: str) -> QWidget:
+def fix_page(font: str, ui: QMainWindow) -> QWidget:
     """
     修复错误介绍控件
     :return:
@@ -27,7 +26,7 @@ def fix_page(font: str) -> QWidget:
     title.setObjectName("set_title_label")
 
     # 添加到布局
-    title_layout.addWidget(title)
+    title_layout.addWidget(title, 0, 0, 1, 1, Qt.AlignLeft)
     title_layout.setContentsMargins(30, 0, 0, 0)
     title_layout.setVerticalSpacing(1)
 
@@ -37,16 +36,16 @@ def fix_page(font: str) -> QWidget:
     fix_layout = QGridLayout(fix_wgt)
 
     # 设置最大高度
-    fix_wgt.setFixedHeight(185)
+    fix_wgt.setFixedHeight(65)
 
     # 设置对象名称，用于QSS定位
     fix_wgt.setObjectName("author_info_widget")
 
-    # 创建子控件
-
+    # 子控件
+    fix_63 = fix_63_layout(font, ui)
 
     # 添加到控件
-    # fix_layout.addWidget(info_edit, 0, 0, 1, 1)
+    fix_layout.addLayout(fix_63, 0, 0, 1, 1)
     fix_layout.setContentsMargins(30, 20, 30, 5)
 
     # 添加阴影
@@ -57,5 +56,6 @@ def fix_page(font: str) -> QWidget:
     """添加到控件"""
     layout.addWidget(title_wgt, 0, 0, 1, 1)
     layout.addWidget(fix_wgt, 1, 0, 1, 1)
+    layout.setVerticalSpacing(0)
 
     return widget
