@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QWidget
 from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QWidget
 
 
 def shadow_setup(

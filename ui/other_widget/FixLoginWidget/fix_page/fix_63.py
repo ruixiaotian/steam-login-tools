@@ -1,13 +1,13 @@
-from PyQt5.QtWidgets import QMainWindow, QGridLayout, QMessageBox, QLabel, QPushButton
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor
-
 import shutil
-from creart import create
 from pathlib import Path
 
-from ui.share import shadow_setup
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtWidgets import QMainWindow, QGridLayout, QMessageBox, QLabel, QPushButton
+from creart import create
+
 from core.file_operation import FileOperation
+from ui.share import shadow_setup
 
 
 def fix_63_layout(font: str, ui: QMainWindow):

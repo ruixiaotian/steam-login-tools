@@ -1,11 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
-from PyQt5.QtGui import QIcon, QFont, QColor
 from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon, QFont, QColor
+from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
+from creart import create
 
 from core.file_operation import FileOperation
 from ui.share import shadow_setup
-
-from creart import create
 
 
 def path_page(font: str) -> QWidget:

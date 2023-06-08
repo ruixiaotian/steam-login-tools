@@ -1,17 +1,13 @@
-from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, \
-    QSizePolicy, QScrollArea, QStackedWidget
-from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtCore import QSize, Qt
-
-from creart import exists_module, add_creator
-from creart.creator import AbstractCreator, CreateTargetInfo
 from abc import ABC
 
-from core.file_operation import FileOperation
-from ui.share import shadow_setup
-from ui.other_widget.SteamSettingWidget.path_page import path_page
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, \
+    QSizePolicy, QScrollArea, QStackedWidget
+from creart import exists_module, add_creator
+from creart.creator import AbstractCreator, CreateTargetInfo
 
-from creart import create
+from ui.other_widget.SteamSettingWidget.path_page import path_page
 
 
 class SteamSettingWidget:

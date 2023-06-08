@@ -1,11 +1,8 @@
+from PyQt5.QtGui import QFont, QColor, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel
-from PyQt5.QtGui import QIcon, QFont, QColor, QPixmap
-from PyQt5.QtCore import Qt
 
-from typing import List
-
-from ui.share import shadow_setup
 from core.network_threads import PingServerThread
+from ui.share import shadow_setup
 
 
 def server_status_widget_setup(

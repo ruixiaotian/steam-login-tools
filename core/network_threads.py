@@ -16,21 +16,20 @@
  *                   不见满街漂亮妹，哪个归得程序员？
 """
 
+import subprocess
+import winreg
+from pathlib import Path
+
+import psutil
+import requests
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QLabel, QMessageBox, QMainWindow
+from PyQt5.QtWidgets import QLabel, QMainWindow
+from creart import create
+from loguru import logger
 
 from core.file_operation import FileOperation
 from core.tcping import Ping
-
-import psutil
-import shutil
-import requests
-import winreg
-import subprocess
-from loguru import logger
-from pathlib import Path
-from creart import create
 
 
 class PingServerThread(QThread):

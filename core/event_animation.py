@@ -15,8 +15,8 @@
  *                   别人笑我忒疯癫，我笑自己命太贱；
  *                   不见满街漂亮妹，哪个归得程序员？
 """
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import QSize, QParallelAnimationGroup, QPropertyAnimation, QPoint, QEasingCurve
+from PyQt5.QtWidgets import QWidget
 
 
 def login_account_animation_max(

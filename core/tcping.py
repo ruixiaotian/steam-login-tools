@@ -7,19 +7,18 @@ Ping主机
 
 import socket
 import time
-import click
-
-from loguru import logger
 from collections import namedtuple
 from functools import partial
-from six.moves import zip_longest
-from six import print_
 from timeit import default_timer as timer
+
+import click
+from creart import create
+from loguru import logger
 from prettytable import PrettyTable
+from six import print_
+from six.moves import zip_longest
 
 from core.file_operation import FileOperation
-
-from creart import create
 
 __version__ = "0.1.1rc1"
 

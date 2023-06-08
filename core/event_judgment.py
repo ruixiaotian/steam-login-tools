@@ -16,6 +16,7 @@
  *                   不见满街漂亮妹，哪个归得程序员？
 """
 from PyQt5.Qt import *
+
 from core.event_animation import \
     login_account_animation_max, \
     login_account_animation_min, \

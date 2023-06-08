@@ -9,16 +9,12 @@
 """
 import json
 import winreg
-import vdf
-import asyncio
-from loguru import logger
-from pathlib import Path
-from json.decoder import JSONDecodeError
-from PyQt5.QtCore import QThread, pyqtSignal
-
-from creart import create, exists_module, add_creator
-from creart.creator import AbstractCreator, CreateTargetInfo
 from abc import ABC
+from pathlib import Path
+
+from creart import exists_module, add_creator
+from creart.creator import AbstractCreator, CreateTargetInfo
+from loguru import logger
 
 
 class FileOperation:

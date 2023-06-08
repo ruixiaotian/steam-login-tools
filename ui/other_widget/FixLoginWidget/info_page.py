@@ -1,8 +1,5 @@
+from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QWidget, QLabel, QTextEdit, QGridLayout
-from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtCore import QSize
-
-from creart import create
 
 from ui.share import shadow_setup
 

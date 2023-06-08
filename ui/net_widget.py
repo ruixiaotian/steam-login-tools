@@ -2,10 +2,11 @@
 网络加速页面
 """
 
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout
-from PyQt5.QtGui import QFont, QPixmap
-from PyQt5.QtCore import Qt
 from pathlib import Path
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout
 
 
 class NetWidget:

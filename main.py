@@ -7,9 +7,10 @@
 """
 程序的主入口~
 """
+import cgitb
 import sys
 from pathlib import Path
-import cgitb
+
 from loguru import logger
 
 LOGO = r"""

@@ -2,11 +2,12 @@
 设置页面页面
 """
 
+from pathlib import Path
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QPixmap, QColor
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, QGraphicsDropShadowEffect, QSpacerItem, \
     QSizePolicy, QVBoxLayout, QListWidget, QListWidgetItem, QCheckBox
-from PyQt5.QtGui import QFont, QPixmap, QColor
-from PyQt5.QtCore import Qt
-from pathlib import Path
 
 from core.event_judgment import setting_widget_size_button_checked_event
 

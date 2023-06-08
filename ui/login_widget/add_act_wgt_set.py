@@ -1,14 +1,12 @@
+from typing import List
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QFont, QColor
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLineEdit, QPushButton, QCompleter, \
     QAction
-from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtCore import Qt
-
-from typing import List
 from creart import create
 
 from core.file_operation import FileOperation
-from core.network_threads import SteamLoginThread
-
 from ui.share import shadow_setup
 
 __file_operation = create(FileOperation)

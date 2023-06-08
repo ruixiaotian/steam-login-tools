@@ -9,6 +9,7 @@
 """
 
 import sys
+from pathlib import Path
 
 from PyQt5.QtCore import Qt, QPropertyAnimation
 from PyQt5.QtGui import QIcon, QFontDatabase, QMouseEvent, QCloseEvent, QColor, QFont
@@ -16,7 +17,6 @@ from PyQt5.QtWidgets import QWidget, QMainWindow, QStackedWidget, QApplication, 
     QGraphicsDropShadowEffect, QSpacerItem
 from creart import create
 from loguru import logger
-from pathlib import Path
 
 from ui.left_widget import top_icon_setup, left_button_setup, left_label_setup
 from ui.login_widget import LoginWidget
