@@ -23,7 +23,7 @@ def fix_page(font: str, ui: QMainWindow) -> QWidget:
     # 创建子控件
     title = QLabel("修复错误")
     title.setFont(QFont(font, 10))
-    title.setObjectName("set_title_label")
+    title.setObjectName("other_page_min_title_label")
 
     # 添加到布局
     title_layout.addWidget(title, 0, 0, 1, 1, Qt.AlignLeft)

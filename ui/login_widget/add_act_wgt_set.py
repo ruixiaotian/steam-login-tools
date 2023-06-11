@@ -2,11 +2,12 @@ from typing import List
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLineEdit, QPushButton, QCompleter, \
+from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLineEdit, QPushButton, QCompleter, \
     QAction
 from creart import create
 
 from core.file_operation import FileOperation
+from ui.other_widget.BulkImportWidget import BulkImportWidget
 from ui.share import shadow_setup
 
 __file_operation = create(FileOperation)
@@ -22,8 +23,8 @@ def add_account_widget_setup(font: str, refresh: callable):
     layout = QGridLayout(widget)
 
     # 创建控件
-    user_edit, password_edit, ssfn_edit = QLineEdit(), QLineEdit(), QLineEdit()
-    save_button = QPushButton('保存')
+    user_edit, password_edit, ssfn_edit = [QLineEdit() for _ in range(3)]
+    save_button, bulk_import_btn = QPushButton('保存'), QPushButton("批量导入")
     edit_list = [user_edit, password_edit, ssfn_edit]
 
     # 创建列表
@@ -37,9 +38,17 @@ def add_account_widget_setup(font: str, refresh: callable):
 
     # 单独设置属性
     widget.setObjectName('add_account_widget')  # 设置控件的名字
+
+    # 按钮设置
     save_button.setObjectName("save_button")
-    save_button.setFixedSize(100, 30)
+    save_button.setFixedSize(80, 30)
     save_button.setFont(QFont(font, 11))
+
+    bulk_import_btn.setObjectName("bulk_import_btn")
+    bulk_import_btn.setFixedSize(80, 30)
+    bulk_import_btn.setFont(QFont(font, 11))
+
+    # 编辑框设置
     password_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码输入模式
     # 设置可见与不可见切换和联想器
     __pwd_edit_toggles_visible_state(password_edit)
@@ -63,17 +72,22 @@ def add_account_widget_setup(font: str, refresh: callable):
     """绑定按钮信号"""
     # 保存按钮
     save_button.clicked.connect(
-        lambda: __save_button_trough(
-            refresh, user_edit, password_edit, ssfn_edit
-        )
+        lambda: __save_btn_trough(refresh, user_edit, password_edit, ssfn_edit)
+    )
+    # 批量导入按钮
+    bulk_import_btn.clicked.connect(
+        lambda: create(BulkImportWidget).page.setCurrentIndex(4)
     )
 
     # 添加到布局
     __add_layout(
         layout,
-        [user_edit, password_edit, ssfn_edit, save_button],
-        [Qt.AlignHCenter for _ in range(4)]
+        [user_edit, password_edit, ssfn_edit],
+        [Qt.AlignHCenter for _ in range(3)]
     )
+    layout.addWidget(save_button, 3, 0, 1, 1, Qt.AlignRight)
+    layout.addWidget(bulk_import_btn, 3, 1, 1, 1, Qt.AlignLeft)
+    layout.setHorizontalSpacing(20)
 
     # 设置阴影
     shadow_setup(
@@ -83,7 +97,7 @@ def add_account_widget_setup(font: str, refresh: callable):
     return widget
 
 
-def __save_button_trough(
+def __save_btn_trough(
         refresh: callable, user_edit: QLineEdit,
         pwd_edit: QLineEdit, ssfn_edit: QLineEdit
 ) -> None:
@@ -100,10 +114,10 @@ def __add_layout(
         layout: QGridLayout, widget: List[QLineEdit], layout_policy: List[Qt]
 ) -> None:
     """添加到布局"""
-    layout.setContentsMargins(4, 35, 0, 20)
+    layout.setContentsMargins(0, 35, 0, 20)
 
     for num, edit, policy in zip(range(widget.__len__()), widget, layout_policy):
-        layout.addWidget(edit, num, 0, 1, 1, policy)
+        layout.addWidget(edit, num, 0, 1, 2, policy)
 
 
 def __pwd_edit_toggles_visible_state(pwd_edit: QLineEdit):

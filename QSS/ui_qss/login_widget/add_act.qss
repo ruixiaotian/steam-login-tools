@@ -54,11 +54,25 @@ QPushButton#save_button {
     /*设置边框和圆角*/
     border: 2px solid #D9D9D9;
     border-radius: 14px;
-    /*设置边距*/
-    margin-right: 10px;
 }
 
 QPushButton#save_button:focus {
     /*移除虚线框*/
     outline: none;
 }
+
+QPushButton#bulk_import_btn {
+    /*设置背景颜色*/
+    background-color: transparent;
+    /*设置字体颜色*/
+    color: #001447;
+    /*设置边框和圆角*/
+    border: 2px solid #D9D9D9;
+    border-radius: 14px;
+}
+
+QPushButton#bulk_import_btn:focus {
+    /*移除虚线框*/
+    outline: none;
+}
+

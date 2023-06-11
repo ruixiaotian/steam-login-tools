@@ -1,0 +1,36 @@
+QLabel#file_label {
+    /*设置背景透明*/
+    background-color: transparent;
+}
+
+
+QLineEdit#file_path {
+    /*设置背景透明*/
+    background-color: transparent;
+    /*设置边框*/
+    border: none;
+    border-bottom: 1px solid #BEBEBE;
+}
+
+QLineEdit#file_path:focus {
+    border-bottom: 1px solid #1DBEF5;
+}
+
+
+QPushButton#file_choose_btn {
+    /*设置背景颜色*/
+    background-color: rgb(250, 247, 255);
+    /*设置圆角*/
+    border-radius: 6px;
+}
+
+QPushButton#file_choose_btn:hover {
+    /*设置背景颜色*/
+    background-color: rgba(250, 230, 240, 0.9);
+}
+
+QPushButton#file_choose_btn:pressed {
+    /*设置背景颜色*/
+    background-color: rgba(230, 230, 240, 0.9);
+}
+
