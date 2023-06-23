@@ -46,5 +46,5 @@ def rush_backtracking():
 if __name__ == '__main__':
     # 打印一个华丽的LOGO
     logger.opt(colors=True).info(f"<blue>{LOGO}</>")
-    from ui import SteamLoginUI, QApplication
+    from Ui import SteamLoginUI, QApplication
     main()

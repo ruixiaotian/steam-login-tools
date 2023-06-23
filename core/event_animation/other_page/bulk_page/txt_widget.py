@@ -1,48 +1,45 @@
-from PyQt5.QtCore import QSize, QParallelAnimationGroup, QPropertyAnimation, QPoint, QEasingCurve
+from PyQt5.QtCore import QSize, QPoint, QEasingCurve
 from PyQt5.QtWidgets import QWidget
+
+from core.event_animation.AnimationObject import Animation
+
+
+page_state = True
 
 
 def max_size(widget: QWidget):
     """放大控件"""
-    # 放大
-    widget_animation_resize = QPropertyAnimation(widget, b"size", widget)  # 创建放大动画对象
-    widget_animation_resize.setDuration(600)  # 设置动画持续时间
-    widget_animation_resize.setStartValue(QSize(widget.width(), widget.height()))  # 初始位置
-    widget_animation_resize.setEasingCurve(QEasingCurve.OutBack)  # 设置动画曲线
-    widget_animation_resize.setEndValue(
-        QSize(
-            widget.width(),
-            widget.height() + 200
+    # 声明全局变量
+    global page_state
+    # 判断状态
+    if page_state:
+        animation_obj = Animation(widget)
+        resize_animation = animation_obj.setSize(
+            time=600, easing_curve=QEasingCurve.OutBack,
+            start_value=QSize(widget.width(), widget.height()),
+            end_value=QSize(widget.width(), widget.height() + 320)
         )
-    )  # 结束位置
-
-    # 添加到动画组
-    # 串行动画组
-    animation_sequent_group = QParallelAnimationGroup(widget)
-    animation_sequent_group.addAnimation(widget_animation_resize)
-
-    # 启动动画
-    animation_sequent_group.start()
+        # 添加到串行动画组并启动
+        animation_group = animation_obj.addAnimationGroup(resize_animation, parallel_mod=True)
+        animation_group.start()
+        # 设置状态
+        page_state = False
 
 
 def min_size(widget: QWidget):
     """缩小控件"""
-    # 缩小
-    widget_animation_resize = QPropertyAnimation(widget, b"size", widget)  # 创建缩小动画对象
-    widget_animation_resize.setDuration(800)  # 设置动画持续时间
-    widget_animation_resize.setStartValue(QSize(widget.width(), widget.height()))  # 初始位置
-    widget_animation_resize.setEasingCurve(QEasingCurve.OutBack)  # 设置动画曲线
-    widget_animation_resize.setEndValue(
-        QSize(
-            widget.width(),
-            widget.height() - 200
+    # 声明全局变量
+    global page_state
+    # 判断状态
+    if not page_state:
+        animation_obj = Animation(widget)
+        resize_animation = animation_obj.setSize(
+            time=800, easing_curve=QEasingCurve.InBack,
+            start_value=QSize(widget.width(), widget.height()),
+            end_value=QSize(widget.width(), widget.height() - 320)
         )
-    )  # 结束位置
-
-    # 添加到动画组
-    # 串行动画组
-    animation_sequent_group = QParallelAnimationGroup(widget)
-    animation_sequent_group.addAnimation(widget_animation_resize)
-
-    # 启动动画
-    animation_sequent_group.start()
+        # 添加到串行动画组并启动
+        animation_group = animation_obj.addAnimationGroup(resize_animation, parallel_mod=True)
+        animation_group.start()
+        # 设置状态
+        page_state = True

@@ -178,7 +178,7 @@ class Launcher(QMainWindow):
             json_data = json.load(f)
         self.label_widget.setText("检测更新...")
 
-        res = requests.get("https://wp.qiao.icu/onedrive/web/BridgeClub/SteamLoginTool/steam_login_tools.json").json()
+        res = requests.get("https://wp.qiao.icu/api/raw/?path=/web/BridgeClub/SteamLoginTool/steam_login_tools.json").json()
 
         if json_data["ver"] != res["ver"]:
             self.label_widget.setText("检测到有新版本,开始下载...")
@@ -265,7 +265,7 @@ class Download(QThread):
             self, file_path: Path, tmp_path: Path, label: QLabel
     ):
         """初始化
-        file_path: 文件路径 (不包含文件名
+        file_path_edit: 文件路径 (不包含文件名
         tmp_path: 临时文件路径
 
         """
@@ -300,7 +300,7 @@ class Download(QThread):
         """读取json文件，获取下载地址"""
         self.label.setText("读取json文件...")
         # 读取json文件
-        json_url = r"https://wp.qiao.icu/onedrive/web/BridgeClub/SteamLoginTool/steam_login_tools.json"
+        json_url = r"https://wp.qiao.icu/api/raw/?path=/web/BridgeClub/SteamLoginTool/steam_login_tools.json"
         response = requests.get(json_url).json()
 
         # 解析json文件到变量
@@ -506,7 +506,7 @@ def rush_backtracking():
 
 
 if __name__ == '__main__':
-    # rush_backtracking()
+    rush_backtracking()
     app = QApplication(sys.argv)
     window = Launcher()
     sys.exit(app.exec_())

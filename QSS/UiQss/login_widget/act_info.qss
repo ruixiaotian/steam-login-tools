@@ -1,0 +1,199 @@
+QWidget#account_info_widget {
+    /*设置背景颜色*/
+    background-color: #F0F5F9;
+    /*设置边距*/
+    margin: 10px 15px 10px 15px;
+    /*设置圆角*/
+    border-radius: 24px;
+}
+
+QCheckBox#size_button::indicator:unchecked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/LoginWidget/account_info/size_button_unchecked.svg')
+}
+
+QCheckBox#size_button::indicator:checked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置内边距*/
+    padding: 2px;
+    /*设置背景图片*/
+    image: url('./img/icon/LoginWidget/account_info/size_button_checked.svg')
+}
+
+QCheckBox#dw_button::indicator:unchecked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/LoginWidget/account_info/dw_button.svg')
+}
+
+QCheckBox#dw_button::indicator:checked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/LoginWidget/account_info/dw_button.svg')
+}
+
+QCheckBox#repair_button::indicator:unchecked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/LoginWidget/account_info/fix_btn.svg')
+}
+
+QCheckBox#repair_button::indicator:checked {
+    /*清除边框*/
+    border: none;
+    /*设置宽高*/
+    width: 20px;
+    height: 20px;
+    /*设置背景图片*/
+    image: url('./img/icon/LoginWidget/account_info/fix_btn.svg')
+}
+
+QScrollArea#scroll_widget {
+    /*设置边框*/
+    border: none;
+    /*设置背景*/
+    background-color: transparent;
+}
+
+QScrollArea#scroll_widget QScrollBar {
+    /*设置背景*/
+    background-color: transparent;
+    /*隐藏滚动条*/
+    width: 0;
+    height: 0;
+}
+
+QScrollArea#scroll_widget QScrollBar::vertical {
+    /*隐藏滚动条*/
+    width: 0;
+    height: 0;
+}
+
+QScrollArea#scroll_widget QScrollBar::handle {
+    /*隐藏滚动条*/
+    width: 0;
+    height: 0;
+}
+
+QScrollArea#scroll_widget QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical {
+    /*隐藏箭头*/
+    width: 0;
+    height: 0;
+    /*设置背景*/
+    background-color: transparent;
+}
+
+QScrollArea#scroll_widget QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    /*隐藏箭头*/
+    width: 0;
+    height: 0;
+    /*设置背景*/
+    background-color: transparent;
+}
+
+QWidget#scroll_widget_content {
+    /*设置背景*/
+    background-color: transparent;
+}
+
+QWidget#scroll_widget_card {
+    /*设置背景*/
+    background-color: transparent;
+    /*设置边框*/
+    border-bottom: 1px solid #DCDCDC;
+}
+
+QLabel#avatar_img {
+    /*设置背景*/
+    background-color: transparent;
+    /*设置圆角*/
+    border-radius: 5px;
+    /*设置边框*/
+    border: 2px solid #4530B3;
+    /*设置边距*/
+    padding: 0;
+}
+
+QLabel#account_img_label, QLabel#account_name_label {
+    /*设置背景*/
+    background-color: transparent;
+}
+
+QWidget#account_attributes {
+    /*设置背景*/
+    background-color: #1DBEF5;
+    /*设置圆角*/
+    border-radius: 6px;
+}
+
+QLabel#recently_logged, QLabel#offline_logged {
+    /*设置颜色*/
+    color: #FFFFFF;
+}
+
+QWidget#logged_time_widget {
+    background-color: transparent;
+}
+
+QLabel#logged_time {
+    /*设置背景*/
+    background-color: transparent;
+    /*设置颜色*/
+    color: #C4C4C4;
+}
+
+QPushButton#other_btn {
+    /*设置背景*/
+    background-color: transparent;
+}
+
+QPushButton#other_btn::menu-indicator {
+    /*隐藏三角形*/
+    image: none;
+    padding: 0;
+    margin: -1;
+}
+
+QMenu#other_btn_menu {
+    /*设置颜色*/
+    color: #BEBEBE;
+    /*设置背景颜色*/
+    background-color: #E4EEF8;
+    /*设置边框*/
+    border: 3px solid #FAF7FF;
+    /*设置圆角*/
+    border-radius: 8px;
+    /*设置边距*/
+    padding: 5px 5px 5px 10px;
+}
+
+QMenu#other_btn_menu::item {
+    /*设置边距*/
+    padding: 5px 5px 5px 5px;
+}
+
+QMenu#other_btn_menu::item:selected {
+    /*设置圆角*/
+    border-radius: 3px;
+}
