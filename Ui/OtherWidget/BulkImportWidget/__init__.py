@@ -4,11 +4,12 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, \
     QSizePolicy, QScrollArea, QStackedWidget, QSpacerItem, QPushButton
-from creart import exists_module, add_creator
+from creart import exists_module, add_creator, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Ui.OtherWidget.BulkImportWidget.info_page import info_page
 from Ui.OtherWidget.BulkImportWidget.TextImportPage import TextImportPage
+from Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard import TextImportTabelCard
 
 
 class BulkImportWidget:
@@ -99,11 +100,13 @@ class BulkImportWidget:
         widget.setWidgetResizable(True)
 
         # 获取外部控件
-        text_page_class = TextImportPage(self.font)
+        create(TextImportPage).initialize(self.font)
+        create(TextImportTabelCard).initialize(self.font)
 
         # 添加控件
         # layout.addWidget(info_page(self.font))
-        layout.addWidget(text_page_class.txt_page(), 0, 0, 1, 1)
+        layout.addWidget(create(TextImportPage).txt_page(), 0, 0, 1, 1)
+        layout.addWidget(create(TextImportTabelCard).table_card(), 2, 0, 1, 1)
         layout.addItem(QSpacerItem(1, 500, QSizePolicy.Expanding, QSizePolicy.Expanding), 2, 0, 1, 1)
 
         # 设置边距

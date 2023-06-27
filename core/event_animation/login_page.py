@@ -16,13 +16,13 @@ def login_account_animation_max(
     # 创建移动动画
     animation_obj = Animation(info_widget)
     move_animation = animation_obj.setPos(
-        time=1200, easing_curve=QEasingCurve.OutBack,
+        time=700, easing_curve=QEasingCurve.OutBack,
         start_value=QPoint(info_widget.x(), info_widget.y()),
         end_value=QPoint(info_widget.x(), info_widget.y() - 205)
     )
     # 创建放大动画
     resize_animation = animation_obj.setSize(
-        time=1000, easing_curve=QEasingCurve.OutBack,
+        time=500, easing_curve=QEasingCurve.OutBack,
         start_value=QSize(info_widget.width(), info_widget.height()),
         end_value=QSize(info_widget.width(), info_widget.height() + 200)
     )
@@ -50,13 +50,13 @@ def login_account_animation_min(
     # 创建移动动画
     animation_obj = Animation(info_widget)
     move_animation = animation_obj.setPos(
-        time=1200, easing_curve=QEasingCurve.OutBack,
+        time=700, easing_curve=QEasingCurve.OutBack,
         start_value=QPoint(info_widget.x(), info_widget.y()),
         end_value=QPoint(info_widget.x(), info_widget.y() + 205)
     )
     # 创建放大动画
     resize_animation = animation_obj.setSize(
-        time=1000, easing_curve=QEasingCurve.OutBack,
+        time=500, easing_curve=QEasingCurve.OutBack,
         start_value=QSize(info_widget.width(), info_widget.height()),
         end_value=QSize(info_widget.width(), info_widget.height() - 200)
     )

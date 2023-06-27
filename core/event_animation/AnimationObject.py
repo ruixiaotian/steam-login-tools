@@ -28,7 +28,7 @@ class Animation:
 
     def setSize(
             self, time: int, easing_curve: QEasingCurve,
-            start_value: Tuple[int, int] | QSize | QPoint, end_value: Tuple[int, int] | QSize | QPoint
+            start_value: Tuple[int, int] | QSize, end_value: Tuple[int, int] | QSize
     ) -> QPropertyAnimation:
         """设置控件大小"""
         # 创建放大动画对象
@@ -44,7 +44,7 @@ class Animation:
 
     def setPos(
             self, time: int, easing_curve: QEasingCurve,
-            start_value: Tuple[int, int] | QSize | QPoint, end_value: Tuple[int, int] | QSize | QPoint
+            start_value: Tuple[int, int] | QPoint, end_value: Tuple[int, int] | QPoint
     ) -> QPropertyAnimation:
         """设置控件位置"""
         # 创建放大动画对象

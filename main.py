@@ -9,6 +9,7 @@
 """
 import cgitb
 import sys
+import os
 from pathlib import Path
 
 from loguru import logger
@@ -26,6 +27,7 @@ LOGO = r"""
 
 def main():
     # rush_backtracking()
+    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
     app = QApplication(sys.argv)
     win = SteamLoginUI()
     win.show()

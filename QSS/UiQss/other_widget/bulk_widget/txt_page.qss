@@ -1,10 +1,14 @@
-QLabel#file_label {
+QLabel#file_label,
+QLabel#separator_label,
+QLabel#encode_label {
     /*设置背景透明*/
     background-color: transparent;
 }
 
 
-QLineEdit#file_path_edit {
+QLineEdit#file_path_edit,
+QLineEdit#separator_edit,
+QLineEdit#encod_edit {
     /*设置背景透明*/
     background-color: transparent;
     /*设置边框*/
@@ -12,25 +16,33 @@ QLineEdit#file_path_edit {
     border-bottom: 1px solid #BEBEBE;
 }
 
-QLineEdit#file_path_edit:focus {
+QLineEdit#file_path_edit:focus,
+QLineEdit#separator_edit:focus,
+QLineEdit#encod_edit:focus {
     border-bottom: 1px solid #1DBEF5;
 }
 
-
-QPushButton#file_choose_btn {
+QPushButton#file_choose_btn,
+QPushButton#parse_button {
     /*设置背景颜色*/
     background-color: rgb(250, 247, 255);
     /*设置圆角*/
     border-radius: 6px;
 }
 
-QPushButton#file_choose_btn:hover {
+QPushButton#file_choose_btn:hover,
+QPushButton#parse_button:hover {
     /*设置背景颜色*/
     background-color: rgba(250, 230, 240, 0.9);
 }
 
-QPushButton#file_choose_btn:pressed {
+QPushButton#file_choose_btn:pressed,
+QPushButton#parse_button:pressed {
     /*设置背景颜色*/
     background-color: rgba(230, 230, 240, 0.9);
 }
 
+QTableWidget#TextImportPageDateTable {
+    /*隐藏边框*/
+    border: none;
+}
