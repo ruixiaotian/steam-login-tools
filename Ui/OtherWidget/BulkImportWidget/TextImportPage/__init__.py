@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QSizePolicy
 from creart import exists_module, add_creator
 from creart.creator import AbstractCreator, CreateTargetInfo
 
-from Ui.OtherWidget.BulkImportWidget.TextImportPage.Func import FilePathFunc
+from Ui.OtherWidget.BulkImportWidget.TextImportPage.Func import FilePathFunc, DataParsingFunc
 from Ui.Share import shadow_setup
 
 
@@ -23,7 +23,7 @@ class TextImportPage:
 
     def txt_page(self) -> QWidget:
         """
-        修复错误介绍控件
+        从txt导入控件
         :return:
         """
         # 创建大控件
@@ -48,7 +48,7 @@ class TextImportPage:
         # 创建子控件
         self.title = QLabel("从TXT导入")
         self.title.setFont(QFont(self.font, 10))
-        self.title.setFixedHeight(10)
+        self.title.setFixedHeight(13)
         self.title.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.title.setObjectName("other_page_min_title_label")
         # 添加到布局
@@ -140,7 +140,8 @@ class TextImportPage:
         self.parse_button = QPushButton("解析数据")
 
         # 添加到控件列表
-        self.date_func_control_list = [separator_label, self.separator_edit, encode_label, self.encod_edit, self.parse_button]
+        self.date_func_control_list = [separator_label, self.separator_edit, encode_label, self.encod_edit,
+                                       self.parse_button]
         control_objname_list = ["separator_label", "separator_edit", "encode_label", "encod_edit", "parse_button"]
 
         # 设置通用属性
@@ -159,6 +160,11 @@ class TextImportPage:
         self.parse_button.setFixedSize(65, 20)
         shadow_setup(self.parse_button, (1, 1), 5, QColor(29, 190, 245, 40))
 
+        # 链接到槽函数
+        self.parse_button.clicked.connect(
+            lambda: DataParsingFunc().parse_button_trough()
+        )
+
         # 隐藏控件
         _ = [control.setHidden(True) for control in self.date_func_control_list]
 
@@ -168,6 +174,7 @@ class TextImportPage:
         layout.setContentsMargins(20, 0, 20, 0)
 
         return layout
+
 
 class TextImportPageClassCreator(AbstractCreator, ABC):
     # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，

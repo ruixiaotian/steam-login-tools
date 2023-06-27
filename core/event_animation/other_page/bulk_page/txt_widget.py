@@ -13,13 +13,14 @@ class TextImportPageAnimation:
 
     def __init__(self):
         self.page_state = True
+        self.table_state = True
 
         # 获取控件
         from Ui.OtherWidget.BulkImportWidget.TextImportPage import TextImportPage
         from Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard import TextImportTabelCard
         self.card_wgt = create(TextImportPage).widget
         self.data_func_control_list = create(TextImportPage).date_func_control_list
-        self.table_wgt = create(TextImportTabelCard).data_table
+        self.table_wgt = create(TextImportTabelCard).widget
 
     def card_max_size(self):
         """放大控件"""
@@ -61,36 +62,15 @@ class TextImportPageAnimation:
 
     def table_enter_move(self):
         """QTableWidget入场动画"""
-        self.table_wgt.setHidden(False)  # 显示表格
-        animation_obj = Animation(self.table_wgt)
-        move_animation = animation_obj.setPos(
-            time=1800, easing_curve=QEasingCurve.OutBounce,
-            start_value=QPoint(self.table_wgt.x(), self.table_wgt.y() + 300),
-            end_value=QPoint(self.table_wgt.x(), self.table_wgt.y())
-        )
-        # 添加到串行动画组并启动
-        animation_group = animation_obj.addAnimationGroup(move_animation, parallel_mod=True)
-        # 链接槽函数
-        animation_group.start()
+        if self.table_state:
+            self.table_wgt.setHidden(False)  # 显示表格
+            self.table_state = False
 
     def table_exit_move(self):
-        """QTableWidget出场动画"""
-        animation_obj = Animation(self.table_wgt)
-        move_animation = animation_obj.setPos(
-            time=600, easing_curve=QEasingCurve.OutCirc,
-            start_value=QPoint(self.table_wgt.x(), self.table_wgt.y()),
-            end_value=QPoint(self.table_wgt.x(), self.table_wgt.y() + 350)
-        )
-        # 添加到串行动画组并启动
-        animation_group = animation_obj.addAnimationGroup(move_animation, parallel_mod=True)
-        # 链接槽函数
-        animation_group.finished.connect(
-            lambda: (
-                self.table_wgt.setHidden(True),
-                self.card_min_size()
-            )
-        )
-        animation_group.start()
+        """QTableWidget出场"""
+        if not self.table_state:
+            self.table_wgt.setHidden(True)  # 显示表格
+            self.table_state = True
 
 
 class TextImportPageAnimationClassCreator(AbstractCreator, ABC):

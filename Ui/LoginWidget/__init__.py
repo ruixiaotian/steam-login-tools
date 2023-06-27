@@ -4,27 +4,31 @@
 # @Author  : 桥话语权
 # @File    : LoginWidget.py
 # @Software: PyCharm
+from abc import ABC
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, QSizePolicy, QScrollArea, QSpacerItem
-from creart import create
+from creart import exists_module, add_creator, create
+from creart.creator import AbstractCreator, CreateTargetInfo
 
-from core.file_operation import FileOperation
 from Ui.LoginWidget.act_info_wgt_set import scroll_widget_card_setup, account_info_widget_right_size_btn, \
     account_info_widget_right_dw_btn, account_info_widget_right_repair_btn
 from Ui.LoginWidget.add_act_wgt_set import add_account_widget_setup
 from Ui.LoginWidget.server_status_wgt_set import server_status_widget_setup
 from Ui.Share import shadow_setup
+from core.file_operation import FileOperation
 
 
 class LoginWidget:
     __file_operation = create(FileOperation)
 
-    def __init__(self, parent, font: str):
+    def __init__(self):
+        self.pings = []
+
+    def initialize(self, parent, font: str):
         self.parent = parent
         self.font = font
-        self.pings = list()
 
     def login_widget_setup(self, ui: QMainWindow):
         """
@@ -41,7 +45,7 @@ class LoginWidget:
 
         # 获取控件
         title_widget = self.__title_widget_setup()
-        add_account_widget = add_account_widget_setup(self.font, self.__refresh_widget)
+        add_account_widget = add_account_widget_setup(self.font, self.refresh_widget)
         server_status_widget = server_status_widget_setup(self.font, ui, self.pings)
         account_info_widget = self.__account_info_widget_setup(add_account_widget, server_status_widget)
         # 添加控件
@@ -143,7 +147,7 @@ class LoginWidget:
         account: list = self.__file_operation.read_cammy_json()  # 读取账号信息
         for i, num in zip(account, range(len(account))):
             # 循环创建控件
-            layout.addWidget(scroll_widget_card_setup(i, self.font, self.__refresh_widget, self.parent), num, 0, 1, 1,
+            layout.addWidget(scroll_widget_card_setup(i, self.font, self.refresh_widget, self.parent), num, 0, 1, 1,
                              Qt.AlignTop)
 
         layout.addItem(
@@ -156,7 +160,7 @@ class LoginWidget:
 
         return widget
 
-    def __refresh_widget(self):
+    def refresh_widget(self):
         """
         刷新窗体
         :return:
@@ -165,3 +169,22 @@ class LoginWidget:
         self.scroll_widget_content.setObjectName('scroll_widget_content')
         self.scroll_widget_content.resize(540, 220)
         self.scroll_widget.setWidget(self.scroll_widget_content)
+
+
+class LoginWidgetClassCreator(AbstractCreator, ABC):
+    # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
+    # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
+    targets = (CreateTargetInfo("Ui.LoginWidget", "LoginWidget"),)
+
+    # 静态方法available()，用于检查模块"BulkImportWidget"是否存在，返回值为布尔型。
+    @staticmethod
+    def available() -> bool:
+        return exists_module("Ui.LoginWidget")
+
+    # 静态方法create()，用于创建LoginWidget类的实例，返回值为LoginWidget对象。
+    @staticmethod
+    def create(create_type: [LoginWidget]) -> LoginWidget:
+        return LoginWidget()
+
+
+add_creator(LoginWidgetClassCreator)

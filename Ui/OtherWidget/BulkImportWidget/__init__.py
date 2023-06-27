@@ -106,7 +106,7 @@ class BulkImportWidget:
         # 添加控件
         # layout.addWidget(info_page(self.font))
         layout.addWidget(create(TextImportPage).txt_page(), 0, 0, 1, 1)
-        layout.addWidget(create(TextImportTabelCard).table_card(), 2, 0, 1, 1)
+        layout.addWidget(create(TextImportTabelCard).table_page(), 1, 0, 1, 1)
         layout.addItem(QSpacerItem(1, 500, QSizePolicy.Expanding, QSizePolicy.Expanding), 2, 0, 1, 1)
 
         # 设置边距

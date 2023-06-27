@@ -125,9 +125,9 @@ class SteamLoginUI(QMainWindow):
 
         """页面设置"""
         # 登录页面
-        login = LoginWidget(self, self.font_name)
-        login_widget = login.login_widget_setup(self)
-        self.pings = login.pings
+        create(LoginWidget).initialize(self, self.font_name)
+        login_widget = create(LoginWidget).login_widget_setup(self)
+        self.pings = create(LoginWidget).pings
 
         # 网络加速页面
         net = NetWidget(self, self.font_name)

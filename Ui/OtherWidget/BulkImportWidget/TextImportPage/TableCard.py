@@ -5,54 +5,176 @@
 # @Author :Qiao
 from abc import ABC
 
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QWidget, QGridLayout, QTableWidget, QHeaderView, QAbstractItemView
-from creart import exists_module, add_creator
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import QWidget, QGridLayout, QTableWidget, QHeaderView, \
+    QAbstractItemView, QSizePolicy, QLabel, QPushButton, QSpacerItem
+from creart import exists_module, add_creator, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Ui.Share import shadow_setup
+from core.file_operation import FileOperation
 
 
 class TextImportTabelCard:
 
     def __init__(self):
         self.widget = QWidget()
+        self.data_table = QTableWidget(0, 3)
+        self.count_label = QLabel()
+        self.clear_button = QPushButton("清空")
+        self.import_button = QPushButton("导入")
 
     def initialize(self, font: str):
         """接收参数和初始化"""
         # 创建变量
         self.font = font
-
-        # 初始化
-        self.widget.setObjectName("author_info_widget")
-        shadow_setup(self.widget, (2, 2), 10, QColor(29, 190, 245, 60))
         # 隐藏控件
         self.widget.setHidden(True)
 
-    def table_card(self):
-        """表格卡片构建"""
+    def table_page(self) -> QWidget:
+        """表格数据控件"""
         # 创建大控件
         layout = QGridLayout(self.widget)
 
-        # 创建表格子控件
-        self.data_table = QTableWidget()
+        """创建子控件"""
+        title_wgt = self.title_control()
+        table_wgt = self.table_card()
+
+        """添加到控件"""
+        layout.addWidget(title_wgt, 0, 0, 1, 1)
+        layout.addWidget(table_wgt, 1, 0, 1, 1)
+        layout.setVerticalSpacing(0)
+
+        return self.widget
+
+    def title_control(self) -> QWidget:
+        """标题控件"""
+        # 创建控件
+        title_wgt = QWidget()
+        title_layout = QGridLayout(title_wgt)
+        # 创建子控件
+        self.title = QLabel("数据列表")
+        self.title.setFont(QFont(self.font, 10))
+        self.title.setFixedHeight(13)
+        self.title.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.title.setObjectName("other_page_min_title_label")
+        # 添加到布局
+        title_layout.addWidget(self.title)
+        title_layout.setContentsMargins(30, 0, 0, 0)
+        title_layout.setVerticalSpacing(0)
+
+        return title_wgt
+
+    def table_card(self) -> QWidget:
+        """表格卡片构建"""
+        # 创建大控件
+        card_wgt = QWidget()
+        layout = QGridLayout(card_wgt)
+        # 设置最大高度和对象名称
+        card_wgt.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        card_wgt.setObjectName("author_info_widget")
+
+        # 添加到控件
+        layout.addLayout(self.table_show(), 0, 0, 1, 1, Qt.AlignTop)
+        layout.addLayout(self.table_func(), 1, 0, 1, 1, Qt.AlignTop)
+
+        # 添加阴影
+        shadow_setup(card_wgt, (2, 2), 10, QColor(29, 190, 245, 60))
+
+        return card_wgt
+
+    def table_show(self) -> QGridLayout:
+        """表格展示"""
+        # 创建布局
+        layout = QGridLayout()
 
         # 设置控件
-        self.data_table.setFixedSize(520, 315)  # 固定大小
-        self.data_table.setHorizontalHeaderLabels(["数据"])  # 设置表头
+        self.data_table.setFont(QFont(self.font))
+        self.data_table.setFixedHeight(200)  # 固定大小
+        self.data_table.setHorizontalHeaderLabels(["账号", "密码", "SSFN"])  # 设置表头
         self.data_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表头自适应
         self.data_table.horizontalHeader().setSectionsClickable(False)  # 禁止点击表头
         self.data_table.verticalHeader().setVisible(False)  # 隐藏行表头
+        self.data_table.setShowGrid(False)  # 隐藏分割线
+        self.data_table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # 禁用垂直进度条
         self.data_table.setEditTriggers(QAbstractItemView.NoEditTriggers)  # 设置禁止编辑
         self.data_table.setSelectionBehavior(QAbstractItemView.SelectRows)  # 设置整行选中
         self.data_table.setWordWrap(True)
         # 设置属性名
         self.data_table.setObjectName("TextImportPageDateTable")
-        # 添加到控件
-        layout.addWidget(self.data_table)
-        layout.setVerticalSpacing(0)
 
-        return self.widget
+        layout.setContentsMargins(7, 10, 1, 4)
+
+        # 添加到控件
+        layout.addWidget(self.data_table, 0, 0, 1, 1, Qt.AlignVCenter)
+
+        return layout
+
+    def table_func(self):
+        """表格功能"""
+        # 创建布局
+        layout = QGridLayout()
+
+        # 创建控件列表
+        control_list = [self.count_label, self.clear_button, self.import_button]
+        control_name_list = ["count_label", "clear_button", "import_button"]
+
+        # 设置通用属性
+        _ = [control.setFont(QFont(self.font)) for control in control_list]
+        _ = [control.setObjectName(name) for control, name in zip(control_list, control_name_list)]
+        _ = [shadow_setup(btn, (1, 1), 5, QColor(29, 190, 245, 40)) for btn in [self.clear_button, self.import_button]]
+        _ = [btn.setFixedSize(65, 20) for btn in [self.clear_button, self.import_button]]
+
+        # 单独设置属性
+        self.count_label.setFixedWidth(320)
+
+        # 链接信号
+        self.clear_button.clicked.connect(
+            lambda: (
+                self.data_table.setRowCount(0),
+                self.count_label.setText("已清空所有数据")
+            )
+        )
+        self.import_button.clicked.connect(
+            lambda: self.import_data()
+        )
+
+        # 添加到布局
+        layout.addWidget(self.count_label, 0, 0, 1, 1, Qt.AlignLeft)
+        layout.addWidget(self.clear_button, 0, 2, 1, 1, Qt.AlignRight)
+        layout.addWidget(self.import_button, 0, 3, 1, 1, Qt.AlignRight)
+
+        layout.setContentsMargins(15, 0, 15, 0)
+        layout.setHorizontalSpacing(0)
+
+        return layout
+
+    def import_data(self):
+        """导入卡密文件"""
+        exist_data = [i['cammy_user'] for i in create(FileOperation).read_cammy_json()]
+        num_duplicates = 0
+        for row in range(self.data_table.rowCount()):
+            # 循环导入
+            if self.data_table.item(row, 0).text() in exist_data:
+                # 去除重复
+                num_duplicates += 1
+                continue
+            cammy = FileOperation.cammy_template
+            cammy["cammy_user"] = self.data_table.item(row, 0).text()
+            cammy["cammy_pwd"] = self.data_table.item(row, 1).text()
+            cammy["cammy_ssfn"] = self.data_table.item(row, 2).text()
+            create(FileOperation).modify_json(
+                create(FileOperation).cammy_data_path,
+                cammy, add=True
+            )
+        self.count_label.setText(
+            f"成功导入 {self.data_table.rowCount() - num_duplicates} 组数据 "
+            f"去除重复 {num_duplicates} 组"
+        )
+        self.data_table.setRowCount(0)  # 清除列表
+        from Ui.LoginWidget import LoginWidget
+        create(LoginWidget).refresh_widget()  # 刷新
 
 
 class TextImportTabelCardCreator(AbstractCreator, ABC):
@@ -77,6 +199,3 @@ class TextImportTabelCardCreator(AbstractCreator, ABC):
 
 
 add_creator(TextImportTabelCardCreator)
-
-
-
