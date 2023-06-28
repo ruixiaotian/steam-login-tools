@@ -21,7 +21,7 @@ from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Ui.Share import shadow_setup
-from core.file_operation import FileOperation
+from Core.file_operation import FileOperation
 
 
 class TextImportTabelCard:

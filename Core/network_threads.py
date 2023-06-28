@@ -28,8 +28,8 @@ from PyQt5.QtWidgets import QLabel, QMainWindow
 from creart import create
 from loguru import logger
 
-from core.file_operation import FileOperation
-from core.tcping import Ping
+from Core.file_operation import FileOperation
+from Core.tcping import Ping
 
 
 class PingServerThread(QThread):

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2023/3/3 12:21
 # @Author  : 桥话语权
-# @File    : event_judgment.py
+# @File    : EventJudgment.py
 # @Software: PyCharm
 """
  *            佛曰:
@@ -17,7 +17,7 @@
 """
 from PyQt5.Qt import *
 
-from core.event_animation import (
+from Core.event_animation import (
     login_account_animation_max,
     login_account_animation_min,
     setting_account_animation_max,
@@ -25,7 +25,7 @@ from core.event_animation import (
 )
 
 
-def list_widget_icon_color(current: QListWidgetItem, previous: QListWidgetItem) -> None:
+def leftIconColor(current: QListWidgetItem, previous: QListWidgetItem) -> None:
     """
     用于修改列表图标显示的颜色
     :param current: 当前列表项

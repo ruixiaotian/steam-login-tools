@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QMessageBox, QPush
 from creart import create
 
 from Ui.Share import shadow_setup
-from core.file_operation import FileOperation
+from Core.file_operation import FileOperation
 
 
 def fix_63_layout(font: str, ui: QMainWindow):

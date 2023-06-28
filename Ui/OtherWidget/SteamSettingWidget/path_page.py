@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QGridLayout, QLabel, QLineEdit, QPushButton, QWidget
 from creart import create
 
 from Ui.Share import shadow_setup
-from core.file_operation import FileOperation
+from Core.file_operation import FileOperation
 
 
 def path_page(font: str) -> QWidget:

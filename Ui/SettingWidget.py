@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (QCheckBox, QGraphicsDropShadowEffect, QGridLayout,
                              QLabel, QListWidget, QListWidgetItem, QMainWindow,
                              QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
-from core.event_judgment import setting_widget_size_button_checked_event
+from Core.EventJudgment import setting_widget_size_button_checked_event
 
 
 class SettingWidget:

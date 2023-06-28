@@ -16,9 +16,9 @@ from PyQt5.QtWidgets import (
 from creart import create
 
 from Ui.OtherWidget import FixLoginWidget, SteamSettingWidget
-from core.event_judgment import login_widget_size_button_checked_event
-from core.file_operation import FileOperation
-from core.network_threads import SteamLoginThread
+from Core.EventJudgment import login_widget_size_button_checked_event
+from Core.file_operation import FileOperation
+from Core.network_threads import SteamLoginThread
 
 
 def account_info_widget_right_size_btn(
@@ -45,26 +45,6 @@ def account_info_widget_right_size_btn(
     )
 
     return size_button
-
-
-def account_info_widget_right_dw_btn() -> QCheckBox:
-    """
-    设置右侧下载旧版Steam文件按钮
-    :return:
-    """
-    # 创建按钮
-    dw_button = QCheckBox()
-
-    # 下载按钮属性设置
-    dw_button.setObjectName("dw_button")
-    dw_button.setFixedSize(32, 32)
-
-    # 信号绑定
-    dw_button.stateChanged.connect(
-        lambda: create(SteamSettingWidget).page.setCurrentIndex(4)
-    )
-
-    return dw_button
 
 
 def account_info_widget_right_repair_btn() -> QCheckBox:

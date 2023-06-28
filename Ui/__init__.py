@@ -4,15 +4,12 @@
 # @Author  : 桥话语权
 # @File    : __init__.py.py
 # @Software: PyCharm
-"""
-* 程序UI
-"""
 import sys
 from abc import ABC
 from pathlib import Path
 
 from PyQt5.QtCore import QPropertyAnimation, Qt
-from PyQt5.QtGui import QCloseEvent, QColor, QFont, QFontDatabase, QIcon, QMouseEvent
+from PyQt5.QtGui import QCloseEvent, QColor, QFontDatabase, QIcon, QMouseEvent
 from PyQt5.QtWidgets import (
     QApplication,
     QGraphicsDropShadowEffect,
@@ -27,7 +24,7 @@ from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 from loguru import logger
 
-from Ui.LeftWidget import left_button_setup, left_label_setup, top_icon_setup
+from Ui.LeftWidget import LeftWidget
 from Ui.LoginWidget import LoginWidget
 from Ui.NetWidget import NetWidget
 from Ui.OtherWidget import BulkImportWidget, FixLoginWidget, SteamSettingWidget
@@ -123,27 +120,16 @@ class SteamLoginUI(QMainWindow):
         widget.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Minimum)
         widget.setObjectName("left_widget")
 
+        # 初始化LeftWidget
+        create(LeftWidget).initialize(self.font_name, self.page_widget, self)
+        leftWidget = create(LeftWidget)
+
         # 添加到布局中
-        layout.addWidget(
-            top_icon_setup(QFont(self.font_name, 12)), 0, 0, 1, 1, Qt.AlignTop
-        )
-        layout.addItem(
-            QSpacerItem(10, 50, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 0, 1, 1
-        )
-        layout.addWidget(
-            left_button_setup(QFont(self.font_name, 13), self.page_widget),
-            2,
-            0,
-            1,
-            1,
-            Qt.AlignTop,
-        )
-        layout.addItem(
-            QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Minimum), 3, 0, 1, 1
-        )
-        layout.addWidget(
-            left_label_setup(self.font_name, self), 4, 0, 1, 1, Qt.AlignBottom
-        )
+        layout.addWidget(leftWidget.top_icon_setup(), 0, 0, 1, 1, Qt.AlignTop)
+        layout.addItem(QSpacerItem(10, 50, QSizePolicy.Minimum), 1, 0, 1, 1)
+        layout.addWidget(leftWidget.left_button_setup(), 2, 0, 1, 1, Qt.AlignTop)
+        layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum), 3, 0, 1, 1)
+        layout.addWidget(leftWidget.left_label_setup(), 4, 0, 1, 1, Qt.AlignBottom)
 
         return widget
 
@@ -154,7 +140,7 @@ class SteamLoginUI(QMainWindow):
         """页面设置"""
         # 登录页面
         create(LoginWidget).initialize(self, self.font_name)
-        login_widget = create(LoginWidget).login_widget_setup(self)
+        login_widget = create(LoginWidget).login_widget_setup()
         self.pings = create(LoginWidget).pings
 
         # 网络加速页面
@@ -180,7 +166,7 @@ class SteamLoginUI(QMainWindow):
         set_wgt.initialize(self, self.font_name, self.page_widget)
         dw_widget = set_wgt.dw_widget_setup()
 
-        wgt_list = [
+        widget_list = [
             login_widget,
             net_widget,
             setting_widget,
@@ -188,9 +174,8 @@ class SteamLoginUI(QMainWindow):
             bulk_widget,
             dw_widget,
         ]
-        for i in wgt_list:
-            # 循环加入QStackedWidget
-            self.page_widget.addWidget(i)
+
+        _ = [self.page_widget.addWidget(widget) for widget in widget_list]
 
         self.page_widget.resize(500, 400)
 

@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QEasingCurve, QPoint, QSize
 from PyQt5.QtWidgets import QWidget
 
-from core.event_animation.AnimationObject import Animation
+from Core.event_animation.AnimationObject import Animation
 
 
 def setting_account_animation_max(info_widget: QWidget, setting_widget: QWidget):

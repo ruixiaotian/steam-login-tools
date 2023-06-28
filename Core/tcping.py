@@ -18,7 +18,7 @@ from prettytable import PrettyTable
 from six import print_
 from six.moves import zip_longest
 
-from core.file_operation import FileOperation
+from Core.file_operation import FileOperation
 
 __version__ = "0.1.1rc1"
 

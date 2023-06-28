@@ -11,7 +11,6 @@ from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import (
     QGridLayout,
     QLabel,
-    QMainWindow,
     QScrollArea,
     QSizePolicy,
     QSpacerItem,
@@ -20,16 +19,15 @@ from PyQt5.QtWidgets import (
 from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
+from Core.file_operation import FileOperation
+from Ui.LoginWidget.AddUserCard import AddUserCard
+from Ui.LoginWidget.ServerStateCard import ServerStateCard
 from Ui.LoginWidget.act_info_wgt_set import (
-    account_info_widget_right_dw_btn,
     account_info_widget_right_repair_btn,
     account_info_widget_right_size_btn,
     scroll_widget_card_setup,
 )
-from Ui.LoginWidget.add_act_wgt_set import add_account_widget_setup
-from Ui.LoginWidget.server_status_wgt_set import server_status_widget_setup
 from Ui.Share import shadow_setup
-from core.file_operation import FileOperation
 
 
 class LoginWidget:
@@ -42,10 +40,9 @@ class LoginWidget:
         self.parent = parent
         self.font = font
 
-    def login_widget_setup(self, ui: QMainWindow):
+    def login_widget_setup(self):
         """
         设置登录界面
-        :param ui: 总窗体
         :return:
         """
         widget = QWidget()
@@ -56,9 +53,12 @@ class LoginWidget:
         widget.setObjectName("LoginWidget")
 
         # 获取控件
+        create(ServerStateCard).initialize(self.parent, self.font, self.pings)
+        create(AddUserCard).initialize(self.parent, self.font, self.refresh_widget)
+
         title_widget = self.__title_widget_setup()
-        add_account_widget = add_account_widget_setup(self.font, self.refresh_widget)
-        server_status_widget = server_status_widget_setup(self.font, ui, self.pings)
+        add_account_widget = create(AddUserCard).add_user_setup()
+        server_status_widget = create(ServerStateCard).server_state_setup()
         account_info_widget = self.__account_info_widget_setup(
             add_account_widget, server_status_widget
         )
@@ -112,7 +112,6 @@ class LoginWidget:
         size_button = account_info_widget_right_size_btn(
             widget, add_account_widget, server_status_widget
         )
-        dw_button = account_info_widget_right_dw_btn()
         fix_button = account_info_widget_right_repair_btn()
 
         # 设置控件属性
@@ -158,8 +157,8 @@ class LoginWidget:
         widget = QWidget()
         layout = QGridLayout(widget)
 
-        account: list = self.__file_operation.read_cammy_json()  # 读取账号信息
-        for i, num in zip(account, range(len(account))):
+        user_list: list = self.__file_operation.read_cammy_json()  # 读取账号信息
+        for i, num in zip(user_list, range(len(user_list))):
             # 循环创建控件
             layout.addWidget(
                 scroll_widget_card_setup(
@@ -174,7 +173,7 @@ class LoginWidget:
 
         layout.addItem(
             QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding),
-            len(account) + 1,
+            len(user_list) + 1,
             0,
             1,
             1,
@@ -201,7 +200,7 @@ class LoginWidgetClassCreator(AbstractCreator, ABC):
     # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
     targets = (CreateTargetInfo("Ui.LoginWidget", "LoginWidget"),)
 
-    # 静态方法available()，用于检查模块"BulkImportWidget"是否存在，返回值为布尔型。
+    # 静态方法available()，用于检查模块"LoginWidget"是否存在，返回值为布尔型。
     @staticmethod
     def available() -> bool:
         return exists_module("Ui.LoginWidget")

@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
 )
 from creart import create
 
-from core.event_animation.other_page.bulk_page import TextImportPageAnimation
+from Core.event_animation.other_page.bulk_page import TextImportPageAnimation
 
 
 class FilePathFunc:

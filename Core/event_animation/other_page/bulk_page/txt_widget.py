@@ -4,7 +4,7 @@ from PyQt5.QtCore import QSize, QEasingCurve
 from creart import exists_module, add_creator, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 
-from core.event_animation.AnimationObject import Animation
+from Core.event_animation.AnimationObject import Animation
 
 
 class TextImportPageAnimation:
@@ -84,7 +84,7 @@ class TextImportPageAnimationClassCreator(AbstractCreator, ABC):
     # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
     targets = (
         CreateTargetInfo(
-            "core.event_animation.other_page.bulk_page.txt_widget",
+            "Core.event_animation.other_page.bulk_page.txt_widget",
             "TextImportPageAnimation",
         ),
     )
@@ -92,7 +92,7 @@ class TextImportPageAnimationClassCreator(AbstractCreator, ABC):
     # 静态方法available()，用于检查模块"BulkImportWidget"是否存在，返回值为布尔型。
     @staticmethod
     def available() -> bool:
-        return exists_module("core.event_animation.other_page.bulk_page.txt_widget")
+        return exists_module("Core.event_animation.other_page.bulk_page.txt_widget")
 
     # 静态方法create()，用于创建TextImportPageAnimation类的实例，返回值为TextImportPageAnimation对象。
     @staticmethod
