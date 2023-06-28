@@ -59,9 +59,9 @@ class LeftWidget:
         logo_label.setAlignment(Qt.AlignHCenter)
 
         # 设置文字 QLabel 内容
-        word_label = QLabel("Steam Login")
+        word_label = QLabel("Steam Login Tools")
         word_label.setObjectName("logo_word_label")
-        word_label.setFont(QFont(self.font, 12))
+        word_label.setFont(QFont(self.font, 11))
         word_label.setAlignment(Qt.AlignCenter)
 
         # 添加到布局
@@ -132,7 +132,7 @@ class LeftWidget:
 
         # 创建控件
         button = QPushButton("退出软件")
-        label = QLabel("3.0.0.6_Beta")
+        label = QLabel("3.0.0.8_Beta")
         # 设置属性
         button.setFont(QFont(self.font, 8))
         label.setFont(QFont(self.font, 6))

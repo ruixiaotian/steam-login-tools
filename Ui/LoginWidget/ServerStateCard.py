@@ -139,7 +139,8 @@ class ServerStateCard:
             ping.start()
             self.pings.append(ping)
 
-    def __add_layout(self, layout: QGridLayout, wgt_list: list):
+    @staticmethod
+    def __add_layout(layout: QGridLayout, wgt_list: list):
         """
         添加到布局
         :return:

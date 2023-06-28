@@ -64,7 +64,7 @@ def leftIconColor(current: QListWidgetItem, previous: QListWidgetItem) -> None:
         return
 
 
-def login_widget_size_button_checked_event(
+def userInfoSizeBtnTrough(
     button_state: int,
     info_widget: QWidget,
     account_widget: QWidget,

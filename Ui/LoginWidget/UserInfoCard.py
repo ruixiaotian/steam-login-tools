@@ -1,4 +1,5 @@
 import datetime
+from abc import ABC
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon, QPixmap
@@ -13,76 +14,26 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QWidget,
 )
-from creart import create
+from creart import add_creator, create, exists_module
+from creart.creator import AbstractCreator, CreateTargetInfo
 
-from Ui.OtherWidget import FixLoginWidget, SteamSettingWidget
-from Core.EventJudgment import login_widget_size_button_checked_event
+from Core.EventJudgment import userInfoSizeBtnTrough
 from Core.file_operation import FileOperation
 from Core.network_threads import SteamLoginThread
+from Ui.OtherWidget import FixLoginWidget
 
 
-def account_info_widget_right_size_btn(
-    widget, add_account_widget, server_status_widget
-) -> QCheckBox:
-    """
-    设置右侧的放大/缩小控件
-    :param widget:  承载窗体
-    :param add_account_widget:  添加账号的控件
-    :param server_status_widget:  服务器状态的控件
-    :return:
-    """
-    size_button = QCheckBox()
+class UserInfoCard:
+    def initialize(
+        self, widget: QWidget, add_user_card: QWidget, server_state_card: QWidget
+    ) -> None:
+        self.base_widget = widget
+        self.add_user_card = add_user_card
+        self.server_state_card = server_state_card
 
-    # 单独设置属性
-    # 放大_缩小按钮设置, 绑定事件
-    size_button.setObjectName("size_button")
-    size_button.setFixedSize(32, 32)
-    # int类型 当选中时为2,未选中时为0
-    size_button.stateChanged.connect(
-        lambda state: login_widget_size_button_checked_event(
-            state, widget, add_account_widget, server_status_widget
-        )
-    )
-
-    return size_button
-
-
-def account_info_widget_right_repair_btn() -> QCheckBox:
-    """
-    设置右侧修复登录按钮
-    :return:
-    """
-    # 创建按钮
-    repair_button = QCheckBox()
-
-    # 下载按钮属性设置
-    repair_button.setObjectName("repair_button")
-    repair_button.setFixedSize(32, 32)
-
-    # 信号绑定
-    repair_button.stateChanged.connect(
-        lambda: create(FixLoginWidget).page.setCurrentIndex(3)
-    )
-
-    return repair_button
-
-
-class CardWidget:
-    def __init__(self, font: str, refresh: callable, parent: QWidget):
-        self.font = font
-        self.parent = parent
-        self.__file_operation = create(FileOperation)
-        self.__refresh_widget = refresh
-
-    @staticmethod
-    def __account_info_widget_right_size_btn(
-        widget, add_account_widget, server_status_widget
-    ) -> QCheckBox:
+    def size_btn(self) -> QCheckBox:
         """
         设置右侧的放大/缩小控件
-        :param widget:  承载窗体
-        :param add_account_widget:  添加账号的控件
-        :param server_status_widget:  服务器状态的控件
         :return:
         """
         size_button = QCheckBox()
@@ -93,12 +44,37 @@ class CardWidget:
         size_button.setFixedSize(32, 32)
         # int类型 当选中时为2,未选中时为0
         size_button.stateChanged.connect(
-            lambda state: login_widget_size_button_checked_event(
-                state, widget, add_account_widget, server_status_widget
-            )
+            lambda state: userInfoSizeBtnTrough(state, self.base_widget, self.add_user_card, self.server_state_card)
         )
 
         return size_button
+
+    @staticmethod
+    def repair_btn() -> QCheckBox:
+        """
+        设置右侧修复登录按钮
+        :return:
+        """
+        # 创建按钮
+        repair_button = QCheckBox()
+
+        # 修复按钮属性设置
+        repair_button.setObjectName("repair_button")
+        repair_button.setFixedSize(32, 32)
+
+        # 信号绑定
+        repair_button.stateChanged.connect(
+            lambda: create(FixLoginWidget).page.setCurrentIndex(3)
+        )
+
+        return repair_button
+
+
+class CardWidget:
+    def __init__(self, font: str, refresh: callable, parent: QWidget):
+        self.font = font
+        self.parent = parent
+        self.__refresh_widget = refresh
 
     def scroll_widget_card_setup(self, account: dict) -> QWidget:
         """
@@ -278,7 +254,7 @@ class CardWidget:
 
         return btn
 
-    def __other_btn_menu_login_action(self, action: QAction, account_info: dict):
+    def __other_btn_menu_login_action(self, action: QAction, account_info: dict) -> None:
         """其他按钮的菜单登录账号选项行为槽函数"""
         # 登录线程
         self.login = SteamLoginThread(account_info, self.parent)
@@ -289,32 +265,32 @@ class CardWidget:
         )
         self.login.start()
         # 刷新卡密信息
-        cammy = self.__file_operation.read_cammy_json()
+        cammy = create(FileOperation).read_cammy_json()
         for cammy_item in cammy:
             if cammy_item["cammy_user"] == account_info["cammy_user"]:
                 cammy_item["Timestamp"] = str(datetime.datetime.now().timestamp())
-        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
+        create(FileOperation).write_json(create(FileOperation).cammy_data_path, cammy)
         self.__refresh_widget()
 
-    def __other_btn_menu_remove_action(self, account_info: dict):
+    def __other_btn_menu_remove_action(self, account_info: dict) -> None:
         """其他按钮的菜单删除账号选项行为槽函数"""
         # 读取卡密
-        cammy_list = self.__file_operation.read_cammy_json()
+        cammy_list = create(FileOperation).read_cammy_json()
         # 遍历卡密列表删除卡密
         for cammy in cammy_list:
             if cammy["cammy_user"] == account_info["cammy_user"]:
                 cammy_list.remove(cammy)
                 break
         # 写入卡密文件
-        self.__file_operation.write_json(
-            self.__file_operation.cammy_data_path, cammy_list
+        create(FileOperation).write_json(
+            create(FileOperation).cammy_data_path, cammy_list
         )
         # 刷新窗体
         self.__refresh_widget()
 
-    def __other_btn_menu_skip_action(self, action: QAction, account_info: dict):
+    def __other_btn_menu_skip_action(self, action: QAction, account_info: dict) -> None:
         """其他按钮的菜单跳过验证选项行为槽函数"""
-        cammy = self.__file_operation.read_cammy_json()
+        cammy = create(FileOperation).read_cammy_json()
         if action.isChecked():
             action.setIcon(QIcon("./img/icon/LoginWidget/account_info/check.svg"))
             for cammy_item in cammy:
@@ -327,12 +303,13 @@ class CardWidget:
                 if cammy_item["cammy_user"] == account_info["cammy_user"]:
                     cammy_item["skip_email"] = False
                     break
-        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
+        create(FileOperation).write_json(create(FileOperation).cammy_data_path, cammy)
         self.__refresh_widget()
 
-    def __read_menu_config(self, action_list: QAction, account_info: dict):
+    @staticmethod
+    def __read_menu_config(action_list: QAction, account_info: dict) -> None:
         """读取卡密设置"""
-        cammy_list = self.__file_operation.read_cammy_json()
+        cammy_list = create(FileOperation).read_cammy_json()
         for cammy in cammy_list:
             if cammy["cammy_user"] == account_info["cammy_user"]:
                 if cammy["skip_email"]:
@@ -349,7 +326,26 @@ class CardWidget:
 
 def scroll_widget_card_setup(
     account: dict, font: str, refresh: callable, ui: QMainWindow
-):
+) -> QWidget:
     """卡片"""
     card = CardWidget(font, refresh, ui)
     return card.scroll_widget_card_setup(account)
+
+
+class UserInfoCardCreator(AbstractCreator, ABC):
+    # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
+    # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
+    targets = (CreateTargetInfo("Ui.LoginWidget.UserInfoCard", "UserInfoCard"),)
+
+    # 静态方法available()，用于检查模块"UserInfoCard"是否存在，返回值为布尔型。
+    @staticmethod
+    def available() -> bool:
+        return exists_module("Ui.LoginWidget.UserInfoCard")
+
+    # 静态方法create()，用于创建UserInfoCard类的实例，返回值为UserInfoCard对象。
+    @staticmethod
+    def create(create_type: [UserInfoCard]) -> UserInfoCard:
+        return UserInfoCard()
+
+
+add_creator(UserInfoCardCreator)

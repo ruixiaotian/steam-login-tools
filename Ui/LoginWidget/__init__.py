@@ -22,9 +22,8 @@ from creart.creator import AbstractCreator, CreateTargetInfo
 from Core.file_operation import FileOperation
 from Ui.LoginWidget.AddUserCard import AddUserCard
 from Ui.LoginWidget.ServerStateCard import ServerStateCard
-from Ui.LoginWidget.act_info_wgt_set import (
-    account_info_widget_right_repair_btn,
-    account_info_widget_right_size_btn,
+from Ui.LoginWidget.UserInfoCard import (
+    UserInfoCard,
     scroll_widget_card_setup,
 )
 from Ui.Share import shadow_setup
@@ -33,14 +32,14 @@ from Ui.Share import shadow_setup
 class LoginWidget:
     __file_operation = create(FileOperation)
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.pings = []
 
-    def initialize(self, parent, font: str):
+    def initialize(self, parent, font: str) -> None:
         self.parent = parent
         self.font = font
 
-    def login_widget_setup(self):
+    def login_widget_setup(self) -> QWidget:
         """
         设置登录界面
         :return:
@@ -56,21 +55,19 @@ class LoginWidget:
         create(ServerStateCard).initialize(self.parent, self.font, self.pings)
         create(AddUserCard).initialize(self.parent, self.font, self.refresh_widget)
 
-        title_widget = self.__title_widget_setup()
-        add_account_widget = create(AddUserCard).add_user_setup()
-        server_status_widget = create(ServerStateCard).server_state_setup()
-        account_info_widget = self.__account_info_widget_setup(
-            add_account_widget, server_status_widget
-        )
+        self.title_widget = self.__title_widget_setup()
+        self.add_account_widget = create(AddUserCard).add_user_setup()
+        self.server_status_widget = create(ServerStateCard).server_state_setup()
+        account_info_widget = self.__account_info_widget_setup()
         # 添加控件
-        layout.addWidget(title_widget, 0, 0, 1, 2)
-        layout.addWidget(add_account_widget, 1, 0, 1, 1)
-        layout.addWidget(server_status_widget, 1, 1, 1, 1)
+        layout.addWidget(self.title_widget, 0, 0, 1, 2)
+        layout.addWidget(self.add_account_widget, 1, 0, 1, 1)
+        layout.addWidget(self.server_status_widget, 1, 1, 1, 1)
         layout.addWidget(account_info_widget, 2, 0, 1, 2)
 
         return widget
 
-    def __title_widget_setup(self):
+    def __title_widget_setup(self) -> QWidget:
         """
         设置顶部标题的控件
 
@@ -93,7 +90,7 @@ class LoginWidget:
 
         return widget
 
-    def __account_info_widget_setup(self, add_account_widget, server_status_widget):
+    def __account_info_widget_setup(self):
         """
         设置账号信息的控件
 
@@ -109,10 +106,9 @@ class LoginWidget:
         self.__account_info_widget_left()
 
         # 右侧
-        size_button = account_info_widget_right_size_btn(
-            widget, add_account_widget, server_status_widget
-        )
-        fix_button = account_info_widget_right_repair_btn()
+        create(UserInfoCard).initialize(widget, self.add_account_widget, self.server_status_widget)
+        size_button = create(UserInfoCard).size_btn()
+        fix_button = create(UserInfoCard).repair_btn()
 
         # 设置控件属性
         widget.resize(540, 230)
@@ -122,7 +118,6 @@ class LoginWidget:
         layout.addWidget(self.scroll_widget, 0, 0, 3, 1)
         layout.addWidget(size_button, 0, 1, 1, 1, Qt.AlignTop)
         layout.addWidget(fix_button, 1, 1, 1, 1, Qt.AlignTop)
-        # layout.addWidget(dw_button, 1, 1, 1, 1, Qt.AlignTop)
 
         layout.addItem(
             QSpacerItem(1, 500, QSizePolicy.Minimum, QSizePolicy.Maximum), 2, 1, 1, 1
@@ -158,11 +153,11 @@ class LoginWidget:
         layout = QGridLayout(widget)
 
         user_list: list = self.__file_operation.read_cammy_json()  # 读取账号信息
-        for i, num in zip(user_list, range(len(user_list))):
+        for user, num in zip(user_list, range(len(user_list))):
             # 循环创建控件
             layout.addWidget(
                 scroll_widget_card_setup(
-                    i, self.font, self.refresh_widget, self.parent
+                    user, self.font, self.refresh_widget, self.parent
                 ),
                 num,
                 0,
