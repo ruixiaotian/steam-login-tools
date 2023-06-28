@@ -6,11 +6,10 @@ from pathlib import Path
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout
+from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QWidget
 
 
 class NetWidget:
-
     def __init__(self, parent: QMainWindow, font: str):
         self.parent = parent
         self.font = font
@@ -25,7 +24,7 @@ class NetWidget:
 
         # 设置属性
         widget.resize(400, 500)
-        widget.setObjectName('net_widget')
+        widget.setObjectName("net_widget")
 
         # 获取控件
         img_path = Path("./img/icon/net/under_development.png")

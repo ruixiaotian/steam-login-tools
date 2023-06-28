@@ -1,21 +1,23 @@
-from abc import ABC
 from pathlib import Path
-from typing import List
 
-from PyQt5.QtWidgets import QLineEdit, QWidget, QFileDialog, QAction, QMessageBox, \
-    QTableWidgetItem
-from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-from creart import exists_module, add_creator, create
-from creart.creator import AbstractCreator, CreateTargetInfo
+from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtWidgets import (
+    QAction,
+    QFileDialog,
+    QLineEdit,
+    QMessageBox,
+    QTableWidgetItem,
+)
+from creart import create
 
 from core.event_animation.other_page.bulk_page import TextImportPageAnimation
 
 
 class FilePathFunc:
-
     def __init__(self):
         from Ui.OtherWidget.BulkImportWidget.TextImportPage import TextImportPage
+
         self.card_wgt = create(TextImportPage).widget
         self.file_path_edit = create(TextImportPage).file_path_edit
         self.date_func_control_list = create(TextImportPage).date_func_control_list
@@ -24,8 +26,10 @@ class FilePathFunc:
     def chose_file_path_trough(self) -> None:
         """选择文件按钮绑定槽函数"""
         file_path, _ = QFileDialog.getOpenFileName(
-            parent=self.card_wgt, caption='打开账号数据',
-            directory=str(Path.home() / 'Desktop'), filter='Text Files (*.txt)'
+            parent=self.card_wgt,
+            caption="打开账号数据",
+            directory=str(Path.home() / "Desktop"),
+            filter="Text Files (*.txt)",
         )
         if not file_path:
             # 检查用户是否选择文件
@@ -52,7 +56,7 @@ class FilePathFunc:
                     self.file_path_edit.clear(),
                     create(TextImportPageAnimation).card_min_size(),
                     create(TextImportPageAnimation).table_exit_move(),
-                    self.file_path_edit.removeAction(action)
+                    self.file_path_edit.removeAction(action),
                 )
             )
             # 添加Action
@@ -64,7 +68,10 @@ class DataParsingFunc:
 
     def __init__(self):
         from Ui.OtherWidget.BulkImportWidget.TextImportPage import TextImportPage
-        from Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard import TextImportTabelCard
+        from Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard import (
+            TextImportTabelCard,
+        )
+
         self.card_wgt = create(TextImportTabelCard).widget
         self.table_wgt = create(TextImportTabelCard).data_table
         self.file_path = create(TextImportPage).file_path_edit.text()
@@ -77,7 +84,7 @@ class DataParsingFunc:
     def parse_button_trough(self):
         """解析数据槽函数"""
         # 解析数据
-        data_list = [['无数据']] if not self.data_parse() else self.data_parse()
+        data_list = [["无数据"]] if not self.data_parse() else self.data_parse()
         self.table_wgt.setRowCount(0)  # 清理
         self.count_label.setText(f"共计找到 {len(data_list).__str__()} 组数据")
         for data in data_list:
@@ -98,7 +105,10 @@ class DataParsingFunc:
         """数据解析"""
         try:
             with open(Path(self.file_path), "r", encoding=self.encode) as f:
-                return [data.split(self.separator, 3) for data in [data.strip() for data in f.readlines()]]
+                return [
+                    data.split(self.separator, 3)
+                    for data in [data.strip() for data in f.readlines()]
+                ]
 
         except FileNotFoundError:
             QMessageBox.critical(self.card_wgt, "打开TXT文件时出错", "文件不存在", QMessageBox.Ok)
@@ -110,5 +120,6 @@ class DataParsingFunc:
             QMessageBox.critical(self.card_wgt, "打开TXT文件时出错", "权限不足", QMessageBox.Ok)
 
         except Exception as e:
-            QMessageBox.critical(self.card_wgt, "打开TXT文件时出错", f"未知错误:{e}", QMessageBox.Ok)
-
+            QMessageBox.critical(
+                self.card_wgt, "打开TXT文件时出错", f"未知错误:{e}", QMessageBox.Ok
+            )

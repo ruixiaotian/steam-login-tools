@@ -1,7 +1,6 @@
 from abc import ABC
 
-from PyQt5.QtCore import QSize, QEasingCurve, QPoint, QParallelAnimationGroup
-from PyQt5.QtWidgets import QWidget, QTableWidget
+from PyQt5.QtCore import QSize, QEasingCurve
 from creart import exists_module, add_creator, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 
@@ -13,11 +12,13 @@ class TextImportPageAnimation:
 
     def __init__(self):
         self.page_state = True
-        self.table_state = True
 
         # 获取控件
         from Ui.OtherWidget.BulkImportWidget.TextImportPage import TextImportPage
-        from Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard import TextImportTabelCard
+        from Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard import (
+            TextImportTabelCard,
+        )
+
         self.card_wgt = create(TextImportPage).widget
         self.data_func_control_list = create(TextImportPage).date_func_control_list
         self.table_wgt = create(TextImportTabelCard).widget
@@ -28,15 +29,20 @@ class TextImportPageAnimation:
         if self.page_state:
             animation_obj = Animation(self.card_wgt)
             resize_animation = animation_obj.setSize(
-                time=200, easing_curve=QEasingCurve.InOutExpo,
+                time=200,
+                easing_curve=QEasingCurve.InOutExpo,
                 start_value=QSize(self.card_wgt.width(), self.card_wgt.height()),
-                end_value=QSize(self.card_wgt.width() + 5, self.card_wgt.height() + 26)
+                end_value=QSize(self.card_wgt.width() + 5, self.card_wgt.height() + 26),
             )
             # 添加到串行动画组并启动
-            animation_group = animation_obj.addAnimationGroup(resize_animation, parallel_mod=True)
+            animation_group = animation_obj.addAnimationGroup(
+                resize_animation, parallel_mod=True
+            )
             # 链接槽函数拉起下一步
             animation_group.finished.connect(
-                lambda: [control.setHidden(False) for control in self.data_func_control_list]
+                lambda: [
+                    control.setHidden(False) for control in self.data_func_control_list
+                ]
             )
             animation_group.start()
             # 设置状态
@@ -50,27 +56,27 @@ class TextImportPageAnimation:
             [control.setHidden(True) for control in self.data_func_control_list]
             animation_obj = Animation(self.card_wgt)
             resize_animation = animation_obj.setSize(
-                time=200, easing_curve=QEasingCurve.OutCirc,
+                time=200,
+                easing_curve=QEasingCurve.OutCirc,
                 start_value=QSize(self.card_wgt.width(), self.card_wgt.height()),
-                end_value=QSize(self.card_wgt.width() - 5, self.card_wgt.height() - 26)
+                end_value=QSize(self.card_wgt.width() - 5, self.card_wgt.height() - 26),
             )
             # 添加到串行动画组并启动
-            animation_group = animation_obj.addAnimationGroup(resize_animation, parallel_mod=True)
+            animation_group = animation_obj.addAnimationGroup(
+                resize_animation, parallel_mod=True
+            )
             animation_group.start()
             # 设置状态
             self.page_state = True
 
     def table_enter_move(self):
         """QTableWidget入场动画"""
-        if self.table_state:
+        if self.page_state:
             self.table_wgt.setHidden(False)  # 显示表格
-            self.table_state = False
 
     def table_exit_move(self):
         """QTableWidget出场"""
-        if not self.table_state:
-            self.table_wgt.setHidden(True)  # 显示表格
-            self.table_state = True
+        self.table_wgt.setHidden(True)  # 显示表格
 
 
 class TextImportPageAnimationClassCreator(AbstractCreator, ABC):
@@ -79,7 +85,7 @@ class TextImportPageAnimationClassCreator(AbstractCreator, ABC):
     targets = (
         CreateTargetInfo(
             "core.event_animation.other_page.bulk_page.txt_widget",
-            "TextImportPageAnimation"
+            "TextImportPageAnimation",
         ),
     )
 

@@ -7,11 +7,20 @@
 """
 * 设置窗体左方的一些函数
 """
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont, QPixmap, QIcon, QPainter
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QFont, QIcon, QPainter, QPixmap
 from PyQt5.QtSvg import QSvgRenderer
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QMainWindow, QGridLayout, QListWidget, \
-    QListWidgetItem, QSizePolicy, QSpacerItem
+from PyQt5.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QListWidget,
+    QListWidgetItem,
+    QMainWindow,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QWidget,
+)
 
 from core.event_judgment import list_widget_icon_color
 
@@ -72,7 +81,7 @@ def left_button_setup(font: str, page_widget: QWidget) -> QWidget:
     file_name_list = [
         "./img/icon/LoginWidget/item_icon/user.svg",
         "./img/icon/LoginWidget/item_icon/net_acceleration.svg",
-        "./img/icon/LoginWidget/item_icon/fun_setting.svg"
+        "./img/icon/LoginWidget/item_icon/fun_setting.svg",
     ]
 
     # 窗体设置
@@ -134,11 +143,7 @@ def left_label_setup(font: str, ui: QMainWindow) -> QWidget:
 
     # 绑定按钮事件
     button.clicked.connect(
-        lambda: (
-            ui.close()
-            if ui.close_state else
-            not ui.close_state
-        )
+        lambda: (ui.close() if ui.close_state else not ui.close_state)
     )
 
     # 添加到布局

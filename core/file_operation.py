@@ -37,19 +37,17 @@ class FileOperation:
             "server3": "",
             "server3_port": "",
             "ping_info": False,
-            "ping_time": 0.5
+            "ping_time": 0.5,
         },
-        "steam_set": {
-            "path": None
-        }
+        "steam_set": {"path": None},
     }
 
     cammy_template = {  # 文件模板
-        'cammy_user': '',
-        'cammy_pwd': '',
-        'cammy_ssfn': '',
-        'Timestamp': '',
-        'skip_email': False,
+        "cammy_user": "",
+        "cammy_pwd": "",
+        "cammy_ssfn": "",
+        "Timestamp": "",
+        "skip_email": False,
     }
 
     def __init__(self):
@@ -67,13 +65,13 @@ class FileOperation:
         shell_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
         winreg_key = winreg.HKEY_CURRENT_USER
         open_reg = winreg.OpenKeyEx(winreg_key, shell_path)
-        self.document_path = Path(winreg.QueryValueEx(open_reg, 'Personal')[0])
+        self.document_path = Path(winreg.QueryValueEx(open_reg, "Personal")[0])
 
         # 获取软件数据存放路径
-        self.ridge_club_path = self.document_path / 'Bridge Club'
-        self.login_data_path = self.ridge_club_path / 'steam_login_data'
-        self.cammy_data_path = self.login_data_path / 'cammy.json'
-        self.config_data_path = self.login_data_path / 'config.json'
+        self.ridge_club_path = self.document_path / "Bridge Club"
+        self.login_data_path = self.ridge_club_path / "steam_login_data"
+        self.cammy_data_path = self.login_data_path / "cammy.json"
+        self.config_data_path = self.login_data_path / "config.json"
 
     def __get_steam_path(self):
         try:
@@ -93,7 +91,7 @@ class FileOperation:
             else:
                 self.steam_path = Path(self.config_data["steam_set"]["path"])
 
-            self.steam_exe_path = self.steam_path / 'steam.exe'
+            self.steam_exe_path = self.steam_path / "steam.exe"
 
             # 设置安装状态
             self.steam_install_state = True
@@ -110,16 +108,16 @@ class FileOperation:
         self.login_data_path.mkdir(exist_ok=True, parents=True)
         # 卡密数据json创建
         if not self.cammy_data_path.exists():  # 如果卡密文件不存在就创建
-            with open(self.cammy_data_path, 'w', encoding='utf-8') as f:
+            with open(self.cammy_data_path, "w", encoding="utf-8") as f:
                 json.dump(self.__cammy, f, ensure_ascii=False, indent=4)
         if not self.config_data_path.exists():  # 如果配置文件不存在，则创建配置文件
-            with open(self.config_data_path, 'w', encoding='utf-8') as f:
+            with open(self.config_data_path, "w", encoding="utf-8") as f:
                 json.dump(self.__config, f, ensure_ascii=False, indent=4)
 
     @staticmethod
     def read_json_file(path: str | Path):
         """读取json文件"""
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     def read_cammy_json(self) -> list:
@@ -133,13 +131,17 @@ class FileOperation:
     @staticmethod
     def write_json(file_path, data):
         """写入json文件"""
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             # 编码为utf-8, 否则会报错, 会导致json解析失败, 所以需要使用ensure_ascii=False
             json.dump(data, f, ensure_ascii=False, indent=4)
 
     def modify_json(
-            self, file_path: str | Path, data: dict | int,
-            insert: bool = False, add: bool = False, remove: bool = False
+        self,
+        file_path: str | Path,
+        data: dict | int,
+        insert: bool = False,
+        add: bool = False,
+        remove: bool = False,
     ):
         """
         修改json文件, 主要操作为插入/追加/删除某个值
@@ -175,9 +177,9 @@ class FileOperation:
         """删除SSFN"""
         try:
             # 遍历文件夹中的所有文件
-            for file_path in self.steam_path.glob('*'):
+            for file_path in self.steam_path.glob("*"):
                 # 判断是否为文件，且文件名是否以指定开头
-                if file_path.is_file() and file_path.name.startswith('ssfn'):
+                if file_path.is_file() and file_path.name.startswith("ssfn"):
                     # 删除文件
                     file_path.unlink()
         except Exception as e:

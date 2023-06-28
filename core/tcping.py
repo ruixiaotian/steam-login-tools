@@ -22,15 +22,19 @@ from core.file_operation import FileOperation
 
 __version__ = "0.1.1rc1"
 
-Statistics = namedtuple('Statistics', [
-    'host',
-    'port',
-    'successed',
-    'failed',
-    'success_rate',
-    'minimum',
-    'maximum',
-    'average'])
+Statistics = namedtuple(
+    "Statistics",
+    [
+        "host",
+        "port",
+        "successed",
+        "failed",
+        "success_rate",
+        "minimum",
+        "maximum",
+        "average",
+    ],
+)
 
 iprint = partial(print_, flush=True)
 
@@ -67,17 +71,22 @@ class Print(object):
         statistics_group = []
         for row in self.rows:
             total = row.successed + row.failed
-            statistics_header = '\n--- {}[:{}] tcping statistics ---'.format(
-                row.host, row.port)
-            statistics_body = '\n{} connections, {} successed, {} failed, {} success rate'.format(
-                total, row.successed, row.failed, row.success_rate)
-            statistics_footer = '\nminimum = {}, maximum = {}, average = {}'.format(
-                row.minimum, row.maximum, row.average)
+            statistics_header = "\n--- {}[:{}] tcping statistics ---".format(
+                row.host, row.port
+            )
+            statistics_body = (
+                "\n{} connections, {} successed, {} failed, {} success rate".format(
+                    total, row.successed, row.failed, row.success_rate
+                )
+            )
+            statistics_footer = "\nminimum = {}, maximum = {}, average = {}".format(
+                row.minimum, row.maximum, row.average
+            )
 
             statistics = statistics_header + statistics_body + statistics_footer
             statistics_group.append(statistics)
 
-        return ''.join(statistics_group)
+        return "".join(statistics_group)
 
     @property
     def table(self):
@@ -87,7 +96,7 @@ class Print(object):
         for row in self.rows:
             x.add_row(row)
 
-        return '\n' + x.get_string()
+        return "\n" + x.get_string()
 
     def set_table_field_names(self, field_names):
         self.table_field_names = field_names
@@ -132,7 +141,17 @@ class Ping(object):
         self._timeout = timeout
 
         self.print_.set_table_field_names(
-            ['Host', 'Port', 'Successed', 'Failed', 'Success Rate', 'Minimum', 'Maximum', 'Average'])
+            [
+                "Host",
+                "Port",
+                "Successed",
+                "Failed",
+                "Success Rate",
+                "Minimum",
+                "Maximum",
+                "Average",
+            ]
+        )
 
     def _create_socket(self, family, type_):
         return Socket(family, type_, self._timeout)
@@ -141,27 +160,30 @@ class Ping(object):
         count = self._successed + self._failed
         try:
             rate = (float(self._successed) / count) * 100
-            rate = '{0:.2f}'.format(rate)
+            rate = "{0:.2f}".format(rate)
         except ZeroDivisionError:
-            rate = '0.00'
+            rate = "0.00"
         return rate
 
     def statistics(self, n):
         conn_times = self._conn_times if self._conn_times != [] else [0]
-        minimum = '{0:.2f}ms'.format(min(conn_times))
-        maximum = '{0:.2f}ms'.format(max(conn_times))
-        average = '{0:.2f}ms'.format(avg(conn_times))
-        success_rate = self._success_rate() + '%'
+        minimum = "{0:.2f}ms".format(min(conn_times))
+        maximum = "{0:.2f}ms".format(max(conn_times))
+        average = "{0:.2f}ms".format(avg(conn_times))
+        success_rate = self._success_rate() + "%"
 
-        self.print_.add_statistics(Statistics(
-            self._host,
-            self._port,
-            self._successed,
-            self._failed,
-            success_rate,
-            minimum,
-            maximum,
-            average))
+        self.print_.add_statistics(
+            Statistics(
+                self._host,
+                self._port,
+                self._successed,
+                self._failed,
+                success_rate,
+                minimum,
+                maximum,
+                average,
+            )
+        )
 
     @property
     def result(self):
@@ -173,13 +195,14 @@ class Ping(object):
             try:
                 time.sleep(1)
                 cost_time = self.timer.cost(
-                    (s.connect, s.shutdown),
-                    ((self._host, self._port), None))
+                    (s.connect, s.shutdown), ((self._host, self._port), None)
+                )
                 s_runtime = 1000 * (cost_time)
 
                 if file.config_data["server_set"]["ping_info"]:
                     logger.info(
-                        f"连接到 {str(self._host).ljust(20)} 端口:{str(self._port).ljust(9)} 次数:{n} 耗时:{s_runtime:.2f} ms")
+                        f"连接到 {str(self._host).ljust(20)} 端口:{str(self._port).ljust(9)} 次数:{n} 耗时:{s_runtime:.2f} ms"
+                    )
 
                 # iprint("Connected to %s[:%s]: seq=%d time=%.2f ms" % (
                 #     self._host, self._port, n, s_runtime))
@@ -208,11 +231,15 @@ class Ping(object):
 
 
 @click.command()
-@click.option('--port', '-p', default=80, type=click.INT, help='Tcp port')
-@click.option('--count', '-c', default=10, type=click.INT, help='Try connections counts')
-@click.option('--timeout', '-t', default=1, type=click.FLOAT, help='Timeout seconds')
-@click.option('--report/--no-report', default=False, help='Show report to replace statistics')
-@click.argument('host')
+@click.option("--port", "-p", default=80, type=click.INT, help="Tcp port")
+@click.option(
+    "--count", "-c", default=10, type=click.INT, help="Try connections counts"
+)
+@click.option("--timeout", "-t", default=1, type=click.FLOAT, help="Timeout seconds")
+@click.option(
+    "--report/--no-report", default=False, help="Show report to replace statistics"
+)
+@click.argument("host")
 def cli(host, port, count, timeout, report):
     ping = Ping(host, port, timeout)
     try:
@@ -226,5 +253,5 @@ def cli(host, port, count, timeout, report):
         iprint(ping.result.raw)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

@@ -1,18 +1,26 @@
 from abc import ABC
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit, QSizePolicy, QPushButton, \
-    QTableWidget, QHeaderView, QAbstractItemView
-from creart import exists_module, add_creator
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSizePolicy,
+    QWidget,
+)
+from creart import add_creator, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
-from Ui.OtherWidget.BulkImportWidget.TextImportPage.Func import FilePathFunc, DataParsingFunc
+from Ui.OtherWidget.BulkImportWidget.TextImportPage.Func import (
+    DataParsingFunc,
+    FilePathFunc,
+)
 from Ui.Share import shadow_setup
 
 
 class TextImportPage:
-
     def __init__(self):
         """初始化方法"""
         self.widget = QWidget()
@@ -140,13 +148,29 @@ class TextImportPage:
         self.parse_button = QPushButton("解析数据")
 
         # 添加到控件列表
-        self.date_func_control_list = [separator_label, self.separator_edit, encode_label, self.encod_edit,
-                                       self.parse_button]
-        control_objname_list = ["separator_label", "separator_edit", "encode_label", "encod_edit", "parse_button"]
+        self.date_func_control_list = [
+            separator_label,
+            self.separator_edit,
+            encode_label,
+            self.encod_edit,
+            self.parse_button,
+        ]
+        control_objname_list = [
+            "separator_label",
+            "separator_edit",
+            "encode_label",
+            "encod_edit",
+            "parse_button",
+        ]
 
         # 设置通用属性
-        _ = [control.setFont(QFont(self.font)) for control in self.date_func_control_list]
-        _ = [control.setObjectName(name) for control, name in zip(self.date_func_control_list, control_objname_list)]
+        _ = [
+            control.setFont(QFont(self.font)) for control in self.date_func_control_list
+        ]
+        _ = [
+            control.setObjectName(name)
+            for control, name in zip(self.date_func_control_list, control_objname_list)
+        ]
 
         # 设置单独属性
         separator_label.setFixedWidth(39)
@@ -169,7 +193,10 @@ class TextImportPage:
         _ = [control.setHidden(True) for control in self.date_func_control_list]
 
         # 添加到布局
-        _ = [layout.addWidget(i, 0, num, 1, 1) for num, i in enumerate(self.date_func_control_list)]
+        _ = [
+            layout.addWidget(i, 0, num, 1, 1)
+            for num, i in enumerate(self.date_func_control_list)
+        ]
 
         layout.setContentsMargins(20, 0, 20, 0)
 
@@ -181,8 +208,7 @@ class TextImportPageClassCreator(AbstractCreator, ABC):
     # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
     targets = (
         CreateTargetInfo(
-            "Ui.OtherWidget.BulkImportWidget.TextImportPage",
-            "TextImportPage"
+            "Ui.OtherWidget.BulkImportWidget.TextImportPage", "TextImportPage"
         ),
     )
 

@@ -1,19 +1,28 @@
 import datetime
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QFont, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QWidget, QGridLayout, QLabel, QCheckBox, QPushButton, \
-    QAction, QMenu, QMessageBox
+from PyQt5.QtGui import QFont, QIcon, QPixmap
+from PyQt5.QtWidgets import (
+    QAction,
+    QCheckBox,
+    QGridLayout,
+    QLabel,
+    QMainWindow,
+    QMenu,
+    QMessageBox,
+    QPushButton,
+    QWidget,
+)
 from creart import create
 
+from Ui.OtherWidget import FixLoginWidget, SteamSettingWidget
 from core.event_judgment import login_widget_size_button_checked_event
 from core.file_operation import FileOperation
 from core.network_threads import SteamLoginThread
-from Ui.OtherWidget import SteamSettingWidget, FixLoginWidget
 
 
 def account_info_widget_right_size_btn(
-        widget, add_account_widget, server_status_widget
+    widget, add_account_widget, server_status_widget
 ) -> QCheckBox:
     """
     设置右侧的放大/缩小控件
@@ -26,12 +35,11 @@ def account_info_widget_right_size_btn(
 
     # 单独设置属性
     # 放大_缩小按钮设置, 绑定事件
-    size_button.setObjectName('size_button')
+    size_button.setObjectName("size_button")
     size_button.setFixedSize(32, 32)
     # int类型 当选中时为2,未选中时为0
     size_button.stateChanged.connect(
-        lambda state:
-        login_widget_size_button_checked_event(
+        lambda state: login_widget_size_button_checked_event(
             state, widget, add_account_widget, server_status_widget
         )
     )
@@ -53,8 +61,7 @@ def account_info_widget_right_dw_btn() -> QCheckBox:
 
     # 信号绑定
     dw_button.stateChanged.connect(
-        lambda:
-        create(SteamSettingWidget).page.setCurrentIndex(4)
+        lambda: create(SteamSettingWidget).page.setCurrentIndex(4)
     )
 
     return dw_button
@@ -74,15 +81,13 @@ def account_info_widget_right_repair_btn() -> QCheckBox:
 
     # 信号绑定
     repair_button.stateChanged.connect(
-        lambda:
-        create(FixLoginWidget).page.setCurrentIndex(3)
+        lambda: create(FixLoginWidget).page.setCurrentIndex(3)
     )
 
     return repair_button
 
 
 class CardWidget:
-
     def __init__(self, font: str, refresh: callable, parent: QWidget):
         self.font = font
         self.parent = parent
@@ -91,7 +96,7 @@ class CardWidget:
 
     @staticmethod
     def __account_info_widget_right_size_btn(
-            widget, add_account_widget, server_status_widget
+        widget, add_account_widget, server_status_widget
     ) -> QCheckBox:
         """
         设置右侧的放大/缩小控件
@@ -104,12 +109,11 @@ class CardWidget:
 
         # 单独设置属性
         # 放大_缩小按钮设置, 绑定事件
-        size_button.setObjectName('size_button')
+        size_button.setObjectName("size_button")
         size_button.setFixedSize(32, 32)
         # int类型 当选中时为2,未选中时为0
         size_button.stateChanged.connect(
-            lambda state:
-            login_widget_size_button_checked_event(
+            lambda state: login_widget_size_button_checked_event(
                 state, widget, add_account_widget, server_status_widget
             )
         )
@@ -153,20 +157,22 @@ class CardWidget:
 
         # 创建控件
         label = QLabel()
-        name_label = QLabel(account_info['cammy_user'])
+        name_label = QLabel(account_info["cammy_user"])
 
         # 设置窗体属性
         widget.setFixedSize(300, 20)
 
         # 设置图标属性
         label.setFixedSize(16, 16)
-        label.setObjectName('account_img_label')
-        label.setPixmap(QPixmap("./img/icon/LoginWidget/account_info/account_name_icon.svg"))
+        label.setObjectName("account_img_label")
+        label.setPixmap(
+            QPixmap("./img/icon/LoginWidget/account_info/account_name_icon.svg")
+        )
         label.setScaledContents(True)
 
         # 设置名字属性
         name_label.setFixedSize(name_label.width(), 20)
-        name_label.setObjectName('account_name_label')
+        name_label.setObjectName("account_name_label")
         name_label.setFont(QFont(self.font, 11))
 
         # 添加到控件
@@ -186,12 +192,13 @@ class CardWidget:
         widget = QWidget()  # 承载窗体
         layout = QGridLayout(widget)  # 创建布局
 
-        if not account_info['Timestamp']:
+        if not account_info["Timestamp"]:
             time = "暂未登录"
         else:
             # 时间戳转换
             time = datetime.datetime.fromtimestamp(
-                float(account_info['Timestamp'])).strftime("%Y-%m-%d %H:%M:%S")
+                float(account_info["Timestamp"])
+            ).strftime("%Y-%m-%d %H:%M:%S")
 
         # 创建控件
         img = QLabel()
@@ -203,13 +210,13 @@ class CardWidget:
 
         # 设置图标属性
         img.setFixedSize(14, 14)
-        img.setObjectName('logged_time')
+        img.setObjectName("logged_time")
         img.setPixmap(QPixmap("./img/icon/LoginWidget/account_info/time_icon.svg"))
         img.setScaledContents(True)
 
         # 设置名字属性
         label.setFixedSize(155, 14)
-        label.setObjectName('logged_time')
+        label.setObjectName("logged_time")
         label.setFont(QFont(self.font, 8))
 
         # 添加到控件
@@ -231,7 +238,7 @@ class CardWidget:
         btn = QPushButton()
         btn.setIcon(QIcon("./img/icon/LoginWidget/account_info/other_btn_icon.svg"))
         btn.setFixedSize(24, 24)
-        btn.setObjectName('other_btn')
+        btn.setObjectName("other_btn")
 
         # 创建菜单
         menu = QMenu(btn)
@@ -239,19 +246,27 @@ class CardWidget:
         menu.setFixedSize(115, 105)
 
         # 创建菜单项
-        menu_login_btn = QAction(QIcon('./img/icon/LoginWidget/account_info/action_login_btn.svg'), "登录账号", menu)
-        menu_delete_btn = QAction(QIcon('./img/icon/LoginWidget/account_info/action_delete_btn.svg'), "删除账号", menu)
-        menu_skip_email_btn = QAction(QIcon('./img/icon/LoginWidget/account_info/unchecked.svg'), "跳过验证", menu)
+        menu_login_btn = QAction(
+            QIcon("./img/icon/LoginWidget/account_info/action_login_btn.svg"),
+            "登录账号",
+            menu,
+        )
+        menu_delete_btn = QAction(
+            QIcon("./img/icon/LoginWidget/account_info/action_delete_btn.svg"),
+            "删除账号",
+            menu,
+        )
+        menu_skip_email_btn = QAction(
+            QIcon("./img/icon/LoginWidget/account_info/unchecked.svg"), "跳过验证", menu
+        )
 
         # 菜单项列表
-        menu_list = [
-            menu_login_btn,
-            menu_delete_btn,
-            menu_skip_email_btn
-        ]
+        menu_list = [menu_login_btn, menu_delete_btn, menu_skip_email_btn]
 
         # 设置菜单
-        menu.setWindowFlags(menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint)
+        menu.setWindowFlags(
+            menu.windowFlags() | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint
+        )
         menu.setAttribute(Qt.WA_TranslucentBackground)
         # 设置菜单项可选
         menu_skip_email_btn.setCheckable(True)
@@ -276,7 +291,7 @@ class CardWidget:
         )
 
         # 设置控件对象名称
-        menu.setObjectName('other_btn_menu')
+        menu.setObjectName("other_btn_menu")
 
         # 设置按钮菜单
         btn.setMenu(menu)
@@ -288,16 +303,16 @@ class CardWidget:
         # 登录线程
         self.login = SteamLoginThread(account_info, self.parent)
         self.login.login_state.connect(
-            lambda state, msg:
-            QMessageBox.warning(self.parent, "登录失败", msg)
-            if not state else None
+            lambda state, msg: QMessageBox.warning(self.parent, "登录失败", msg)
+            if not state
+            else None
         )
         self.login.start()
         # 刷新卡密信息
         cammy = self.__file_operation.read_cammy_json()
         for cammy_item in cammy:
-            if cammy_item['cammy_user'] == account_info['cammy_user']:
-                cammy_item['Timestamp'] = str(datetime.datetime.now().timestamp())
+            if cammy_item["cammy_user"] == account_info["cammy_user"]:
+                cammy_item["Timestamp"] = str(datetime.datetime.now().timestamp())
         self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
         self.__refresh_widget()
 
@@ -307,11 +322,13 @@ class CardWidget:
         cammy_list = self.__file_operation.read_cammy_json()
         # 遍历卡密列表删除卡密
         for cammy in cammy_list:
-            if cammy['cammy_user'] == account_info['cammy_user']:
+            if cammy["cammy_user"] == account_info["cammy_user"]:
                 cammy_list.remove(cammy)
                 break
         # 写入卡密文件
-        self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy_list)
+        self.__file_operation.write_json(
+            self.__file_operation.cammy_data_path, cammy_list
+        )
         # 刷新窗体
         self.__refresh_widget()
 
@@ -319,16 +336,16 @@ class CardWidget:
         """其他按钮的菜单跳过验证选项行为槽函数"""
         cammy = self.__file_operation.read_cammy_json()
         if action.isChecked():
-            action.setIcon(QIcon('./img/icon/LoginWidget/account_info/check.svg'))
+            action.setIcon(QIcon("./img/icon/LoginWidget/account_info/check.svg"))
             for cammy_item in cammy:
-                if cammy_item['cammy_user'] == account_info['cammy_user']:
-                    cammy_item['skip_email'] = True
+                if cammy_item["cammy_user"] == account_info["cammy_user"]:
+                    cammy_item["skip_email"] = True
                     break
         else:
-            action.setIcon(QIcon('./img/icon/LoginWidget/account_info/unchecked.svg'))
+            action.setIcon(QIcon("./img/icon/LoginWidget/account_info/unchecked.svg"))
             for cammy_item in cammy:
-                if cammy_item['cammy_user'] == account_info['cammy_user']:
-                    cammy_item['skip_email'] = False
+                if cammy_item["cammy_user"] == account_info["cammy_user"]:
+                    cammy_item["skip_email"] = False
                     break
         self.__file_operation.write_json(self.__file_operation.cammy_data_path, cammy)
         self.__refresh_widget()
@@ -337,16 +354,22 @@ class CardWidget:
         """读取卡密设置"""
         cammy_list = self.__file_operation.read_cammy_json()
         for cammy in cammy_list:
-            if cammy['cammy_user'] == account_info['cammy_user']:
-                if cammy['skip_email']:
+            if cammy["cammy_user"] == account_info["cammy_user"]:
+                if cammy["skip_email"]:
                     action_list.setChecked(True)
-                    action_list.setIcon(QIcon('./img/icon/LoginWidget/account_info/check.svg'))
+                    action_list.setIcon(
+                        QIcon("./img/icon/LoginWidget/account_info/check.svg")
+                    )
                 else:
                     action_list.setChecked(False)
-                    action_list.setIcon(QIcon('./img/icon/LoginWidget/account_info/unchecked.svg'))
+                    action_list.setIcon(
+                        QIcon("./img/icon/LoginWidget/account_info/unchecked.svg")
+                    )
 
 
-def scroll_widget_card_setup(account: dict, font: str, refresh: callable, ui: QMainWindow):
+def scroll_widget_card_setup(
+    account: dict, font: str, refresh: callable, ui: QMainWindow
+):
     """卡片"""
     card = CardWidget(font, refresh, ui)
     return card.scroll_widget_card_setup(account)

@@ -37,18 +37,18 @@ class PingServerThread(QThread):
     end_signal = True
 
     def __init__(
-            self,
-            server_icon_label: QLabel,  # 服务器图标
-            server_state_label: QLabel,  # 服务器状态图标
-            state_label: QLabel,  # 状态标签
-            online_state_icon_path: str,  # 服务器在线状态图标路径
-            offline_state_icon_path: str,  # 服务器离线状态图标路径
-            online_icon_path: str,  # 在线图标路径
-            offline_icon_path: str,  # 离线图标路径
-            ip: str,  # 服务器
-            port: int = 80,  # 端口
-            *args,
-            **kwargs
+        self,
+        server_icon_label: QLabel,  # 服务器图标
+        server_state_label: QLabel,  # 服务器状态图标
+        state_label: QLabel,  # 状态标签
+        online_state_icon_path: str,  # 服务器在线状态图标路径
+        offline_state_icon_path: str,  # 服务器离线状态图标路径
+        online_icon_path: str,  # 在线图标路径
+        offline_icon_path: str,  # 离线图标路径
+        ip: str,  # 服务器
+        port: int = 80,  # 端口
+        *args,
+        **kwargs,
     ):
         super(PingServerThread, self).__init__(*args, **kwargs)
         self.server_icon_label: QLabel = server_icon_label
@@ -66,7 +66,7 @@ class PingServerThread(QThread):
             self.sleep(1)
             ping = Ping(self.ip, self.port, 0.5)
             ping.ping(1)
-            if '0 successed' in ping.result.raw:
+            if "0 successed" in ping.result.raw:
                 # 判断是否能ping通,不能则修改为离线状态
                 self.modify_to_offline()
             else:
@@ -75,7 +75,7 @@ class PingServerThread(QThread):
         return
 
     def modify_to_online(self):
-        if self.state_label.text() == '在线':
+        if self.state_label.text() == "在线":
             # 判断是否要改变,不需要则直接返回
             return
         else:
@@ -86,10 +86,10 @@ class PingServerThread(QThread):
             self.server_state_label.setPixmap(QPixmap(self.online_icon_path))
             self.server_state_label.setScaledContents(True)
             # 服务器状态标签
-            self.state_label.setText('在线')
+            self.state_label.setText("在线")
 
     def modify_to_offline(self):
-        if self.state_label.text() == '离线':
+        if self.state_label.text() == "离线":
             # 判断是否要改变,不需要则直接返回
             return
         else:
@@ -100,17 +100,16 @@ class PingServerThread(QThread):
             self.server_state_label.setPixmap(QPixmap(self.offline_icon_path))
             self.server_state_label.setScaledContents(True)
             # 服务器状态标签
-            self.state_label.setText('离线')
+            self.state_label.setText("离线")
 
 
 class SteamLoginThread(QThread):
     """登录线程"""
+
     msg = pyqtSignal(str)
     login_state = pyqtSignal(bool, str)
 
-    def __init__(
-            self, cammy: dict, ui: QMainWindow, *args, **kwargs
-    ):
+    def __init__(self, cammy: dict, ui: QMainWindow, *args, **kwargs):
         """
         登录线程,cammy参数文档:
             cammy['cammy_user'] - 账号
@@ -120,16 +119,16 @@ class SteamLoginThread(QThread):
         """
         super(SteamLoginThread, self).__init__(*args, **kwargs)
         self.file_path = create(FileOperation)  # 设置文件路径
-        self.user: str = cammy['cammy_user']
-        self.pwd: str = cammy['cammy_pwd']
-        self.ssfn: str = cammy['cammy_ssfn']
-        self.skip_email: bool = cammy['skip_email']
+        self.user: str = cammy["cammy_user"]
+        self.pwd: str = cammy["cammy_pwd"]
+        self.ssfn: str = cammy["cammy_ssfn"]
+        self.skip_email: bool = cammy["skip_email"]
         self.parent: QMainWindow = ui
 
     def run(self):
         if not self.file_path.steam_install_state:
             # 如果没有安装steam,则提示
-            self.msg.emit('请先安装steam')
+            self.msg.emit("请先安装steam")
         else:
             try:
                 self.__kill_steam()
@@ -137,7 +136,8 @@ class SteamLoginThread(QThread):
                 self.__download_ssfn()
                 logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
                 logger.info(
-                    f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}")
+                    f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}"
+                )
                 self.__login()
             except Exception as e:
                 logger.error(f"登录失败:\n {e}")
@@ -147,12 +147,16 @@ class SteamLoginThread(QThread):
         try:
             subprocess.run(
                 f"{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}",
-                cwd=self.file_path.steam_path
+                cwd=self.file_path.steam_path,
             )
         except FileNotFoundError as e:
-            self.login_state.emit(False, f"Steam路径错误,请检查\n当前启动路径:{self.file_path.steam_exe_path}")
+            self.login_state.emit(
+                False, f"Steam路径错误,请检查\n当前启动路径:{self.file_path.steam_exe_path}"
+            )
         except PermissionError:
-            self.login_state.emit(False, "上号器无权访问Steam\n请检查: \n - 杀软是否关闭\n - Steam.exe所在文件夹权限")
+            self.login_state.emit(
+                False, "上号器无权访问Steam\n请检查: \n - 杀软是否关闭\n - Steam.exe所在文件夹权限"
+            )
         except Exception as e:
             self.login_state.emit(False, f"{e}")
 
@@ -167,7 +171,7 @@ class SteamLoginThread(QThread):
                 # 获取进程名称
                 process_name = proc.name()
                 # 判断进程是否为Steam
-                if process_name == 'steam.exe':
+                if process_name == "steam.exe":
                     # 结束进程
                     proc.kill()
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
@@ -180,22 +184,26 @@ class SteamLoginThread(QThread):
         """
         if self.ssfn:
             self.file_path.remove_ssfn()  # 删除SSFN
-            with open(Path(self.file_path.steam_path) / self.ssfn, 'wb') as f:
-                f.write(requests.get(f"http://1.15.97.14:8848/ssfn/{self.ssfn}").content)
+            with open(Path(self.file_path.steam_path) / self.ssfn, "wb") as f:
+                f.write(
+                    requests.get(f"http://1.15.97.14:8848/ssfn/{self.ssfn}").content
+                )
         else:
             pass
 
     def __determine_login_method(self):
         # 定义要修改的键路径、键名
-        key_path = r'Software\Valve\Steam'
-        key_name = 'StartupMode'
+        key_path = r"Software\Valve\Steam"
+        key_name = "StartupMode"
         if self.skip_email:
             # 跳过令牌模式登录
             key_value = 4
         else:
             # 正常模式登录
             key_value = 0
-        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS)  # 打开注册表键
+        key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS
+        )  # 打开注册表键
         winreg.SetValueEx(key, key_name, 0, winreg.REG_DWORD, key_value)  # 修改键值
         winreg.CloseKey(key)  # 关闭注册表键
         logger.info(f"已修改 StartupMode 为： {key_value}")

@@ -2,12 +2,12 @@ import shutil
 from pathlib import Path
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QMainWindow, QGridLayout, QMessageBox, QLabel, QPushButton
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QMessageBox, QPushButton
 from creart import create
 
-from core.file_operation import FileOperation
 from Ui.Share import shadow_setup
+from core.file_operation import FileOperation
 
 
 def fix_63_layout(font: str, ui: QMainWindow):
@@ -41,7 +41,7 @@ def fix_63_btn_trough(ui: QMainWindow):
     """一键修复的槽函数"""
     try:
         # 删除steam根目录下的config文件夹
-        config_path = Path(create(FileOperation).steam_path) / 'config'
+        config_path = Path(create(FileOperation).steam_path) / "config"
         if config_path.exists() and config_path.is_dir():
             shutil.rmtree(config_path.__str__())
         QMessageBox.information(ui, "修复成功", "操作完成,请登录验证是否成功!")

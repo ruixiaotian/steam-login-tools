@@ -2,16 +2,22 @@ from abc import ABC
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, \
-    QSizePolicy, QScrollArea, QStackedWidget
-from creart import exists_module, add_creator
+from PyQt5.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QMainWindow,
+    QScrollArea,
+    QSizePolicy,
+    QStackedWidget,
+    QWidget,
+)
+from creart import add_creator, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Ui.OtherWidget.SteamSettingWidget.path_page import path_page
 
 
 class SteamSettingWidget:
-
     def __init__(self):
         pass
 
@@ -37,9 +43,9 @@ class SteamSettingWidget:
         widget.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         # 添加控件
-        self.dw_title_label = QLabel('Steam设置')
+        self.dw_title_label = QLabel("Steam设置")
         self.dw_title_label.setFont(QFont(self.font, 16))
-        self.dw_title_label.setObjectName('title_label')
+        self.dw_title_label.setObjectName("title_label")
         layout.addWidget(self.dw_title_label, 0, 0, 1, 1, Qt.AlignLeft)
         layout.setContentsMargins(10, 0, 0, 0)
 
@@ -56,7 +62,7 @@ class SteamSettingWidget:
 
         # 设置属性
         widget.resize(390, 500)
-        widget.setObjectName('dw_widget')
+        widget.setObjectName("dw_widget")
 
         # 添加到布局
         layout.addWidget(self.dw_title(), 1, 0, 1, 1, Qt.AlignLeft)
@@ -79,7 +85,7 @@ class SteamSettingWidget:
         layout = QGridLayout(scroll_widget_content)
 
         # 创建滚动窗体内窗体
-        scroll_widget_content.setObjectName('scroll_widget_content')
+        scroll_widget_content.setObjectName("scroll_widget_content")
         scroll_widget_content.resize(380, 490)
 
         # 设置滚动窗体
@@ -105,7 +111,9 @@ class SteamSettingWidget:
 class SteamSettingWidgetClassCreator(AbstractCreator, ABC):
     # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
     # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
-    targets = (CreateTargetInfo("Ui.OtherWidget.SteamSettingWidget", "SteamSettingWidget"),)
+    targets = (
+        CreateTargetInfo("Ui.OtherWidget.SteamSettingWidget", "SteamSettingWidget"),
+    )
 
     # 静态方法available()，用于检查模块"SteamSettingWidget"是否存在，返回值为布尔型。
     @staticmethod

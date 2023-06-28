@@ -17,11 +17,12 @@
 """
 from PyQt5.Qt import *
 
-from core.event_animation import \
-    login_account_animation_max, \
-    login_account_animation_min, \
-    setting_account_animation_max, \
-    setting_account_animation_min
+from core.event_animation import (
+    login_account_animation_max,
+    login_account_animation_min,
+    setting_account_animation_max,
+    setting_account_animation_min,
+)
 
 
 def list_widget_icon_color(current: QListWidgetItem, previous: QListWidgetItem) -> None:
@@ -35,39 +36,39 @@ def list_widget_icon_color(current: QListWidgetItem, previous: QListWidgetItem) 
     icon_path_list = [
         "./img/icon/LoginWidget/item_icon/user.svg",
         "./img/icon/LoginWidget/item_icon/net_acceleration.svg",
-        "./img/icon/LoginWidget/item_icon/fun_setting.svg"
-]
+        "./img/icon/LoginWidget/item_icon/fun_setting.svg",
+    ]
     icon_select_list = [
         "./img/icon/LoginWidget/item_icon/user_select.svg",
         "./img/icon/LoginWidget/item_icon/net_acceleration_select.svg",
-        "./img/icon/LoginWidget/item_icon/fun_setting_select.svg"
+        "./img/icon/LoginWidget/item_icon/fun_setting_select.svg",
     ]
 
     try:
         # 判断现在
-        if current.text() == '账号登录':
+        if current.text() == "账号登录":
             current.setIcon(QIcon(icon_select_list[0]))
-        if current.text() == '网络加速':
+        if current.text() == "网络加速":
             current.setIcon(QIcon(icon_select_list[1]))
-        if current.text() == '功能设置':
+        if current.text() == "功能设置":
             current.setIcon(QIcon(icon_select_list[2]))
 
         # 判断以前
-        if previous.text() == '账号登录':
+        if previous.text() == "账号登录":
             previous.setIcon(QIcon(icon_path_list[0]))
-        if previous.text() == '网络加速':
+        if previous.text() == "网络加速":
             previous.setIcon(QIcon(icon_path_list[1]))
-        if previous.text() == '功能设置':
+        if previous.text() == "功能设置":
             previous.setIcon(QIcon(icon_path_list[2]))
     except AttributeError:
         return
 
 
 def login_widget_size_button_checked_event(
-        button_state: int,
-        info_widget: QWidget,
-        account_widget: QWidget,
-        status_widget: QWidget
+    button_state: int,
+    info_widget: QWidget,
+    account_widget: QWidget,
+    status_widget: QWidget,
 ) -> None:
     """
     设置按钮图标,隐藏或显示其他控件
@@ -87,9 +88,9 @@ def login_widget_size_button_checked_event(
 
 
 def setting_widget_size_button_checked_event(
-        button_state: int,
-        info_widget: QWidget,
-        setting_widget: QWidget,
+    button_state: int,
+    info_widget: QWidget,
+    setting_widget: QWidget,
 ) -> None:
     """
     设置按钮图标,隐藏或显示其他控件

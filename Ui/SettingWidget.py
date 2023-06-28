@@ -5,9 +5,10 @@
 from pathlib import Path
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QPixmap, QColor
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, QGraphicsDropShadowEffect, QSpacerItem, \
-    QSizePolicy, QVBoxLayout, QListWidget, QListWidgetItem, QCheckBox
+from PyQt5.QtGui import QColor, QFont, QPixmap
+from PyQt5.QtWidgets import (QCheckBox, QGraphicsDropShadowEffect, QGridLayout,
+                             QLabel, QListWidget, QListWidgetItem, QMainWindow,
+                             QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
 
 from core.event_judgment import setting_widget_size_button_checked_event
 

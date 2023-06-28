@@ -7,13 +7,25 @@
 from abc import ABC
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, QSizePolicy, QScrollArea, QSpacerItem
-from creart import exists_module, add_creator, create
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QMainWindow,
+    QScrollArea,
+    QSizePolicy,
+    QSpacerItem,
+    QWidget,
+)
+from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
-from Ui.LoginWidget.act_info_wgt_set import scroll_widget_card_setup, account_info_widget_right_size_btn, \
-    account_info_widget_right_dw_btn, account_info_widget_right_repair_btn
+from Ui.LoginWidget.act_info_wgt_set import (
+    account_info_widget_right_dw_btn,
+    account_info_widget_right_repair_btn,
+    account_info_widget_right_size_btn,
+    scroll_widget_card_setup,
+)
 from Ui.LoginWidget.add_act_wgt_set import add_account_widget_setup
 from Ui.LoginWidget.server_status_wgt_set import server_status_widget_setup
 from Ui.Share import shadow_setup
@@ -41,13 +53,15 @@ class LoginWidget:
 
         # 设置属性
         widget.resize(400, 500)
-        widget.setObjectName('LoginWidget')
+        widget.setObjectName("LoginWidget")
 
         # 获取控件
         title_widget = self.__title_widget_setup()
         add_account_widget = add_account_widget_setup(self.font, self.refresh_widget)
         server_status_widget = server_status_widget_setup(self.font, ui, self.pings)
-        account_info_widget = self.__account_info_widget_setup(add_account_widget, server_status_widget)
+        account_info_widget = self.__account_info_widget_setup(
+            add_account_widget, server_status_widget
+        )
         # 添加控件
         layout.addWidget(title_widget, 0, 0, 1, 2)
         layout.addWidget(add_account_widget, 1, 0, 1, 1)
@@ -71,17 +85,15 @@ class LoginWidget:
         widget.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         # 添加控件
-        label = QLabel('Login')
+        label = QLabel("Login")
         label.setFont(QFont(self.font, 16))
-        label.setObjectName('title_label')
+        label.setObjectName("title_label")
         layout.addWidget(label, 0, 0, 1, 1, Qt.AlignLeft)
         layout.setContentsMargins(0, 0, 0, 0)
 
         return widget
 
-    def __account_info_widget_setup(
-            self, add_account_widget, server_status_widget
-    ):
+    def __account_info_widget_setup(self, add_account_widget, server_status_widget):
         """
         设置账号信息的控件
 
@@ -105,7 +117,7 @@ class LoginWidget:
 
         # 设置控件属性
         widget.resize(540, 230)
-        widget.setObjectName('account_info_widget')
+        widget.setObjectName("account_info_widget")
 
         # 添加控件
         layout.addWidget(self.scroll_widget, 0, 0, 3, 1)
@@ -113,7 +125,9 @@ class LoginWidget:
         layout.addWidget(fix_button, 1, 1, 1, 1, Qt.AlignTop)
         # layout.addWidget(dw_button, 1, 1, 1, 1, Qt.AlignTop)
 
-        layout.addItem(QSpacerItem(1, 500, QSizePolicy.Minimum, QSizePolicy.Maximum), 2, 1, 1, 1)
+        layout.addItem(
+            QSpacerItem(1, 500, QSizePolicy.Minimum, QSizePolicy.Maximum), 2, 1, 1, 1
+        )
 
         layout.setVerticalSpacing(10)
         layout.setContentsMargins(10, 10, 10, 10)
@@ -126,12 +140,12 @@ class LoginWidget:
         """设置又侧的滚动窗体控件"""
         # 创建滚动窗体
         self.scroll_widget = QScrollArea()
-        self.scroll_widget.setObjectName('scroll_widget')
+        self.scroll_widget.setObjectName("scroll_widget")
         self.scroll_widget.setWidgetResizable(True)
 
         # 创建滚动窗体内窗体
         self.scroll_widget_content = self.__loop_add_widget()
-        self.scroll_widget_content.setObjectName('scroll_widget_content')
+        self.scroll_widget_content.setObjectName("scroll_widget_content")
         self.scroll_widget_content.resize(535, 220)
 
         self.scroll_widget.setWidget(self.scroll_widget_content)
@@ -147,12 +161,23 @@ class LoginWidget:
         account: list = self.__file_operation.read_cammy_json()  # 读取账号信息
         for i, num in zip(account, range(len(account))):
             # 循环创建控件
-            layout.addWidget(scroll_widget_card_setup(i, self.font, self.refresh_widget, self.parent), num, 0, 1, 1,
-                             Qt.AlignTop)
+            layout.addWidget(
+                scroll_widget_card_setup(
+                    i, self.font, self.refresh_widget, self.parent
+                ),
+                num,
+                0,
+                1,
+                1,
+                Qt.AlignTop,
+            )
 
         layout.addItem(
             QSpacerItem(1000, 1000, QSizePolicy.Expanding, QSizePolicy.Expanding),
-            len(account) + 1, 0, 1, 1
+            len(account) + 1,
+            0,
+            1,
+            1,
         )
 
         layout.setContentsMargins(10, 0, 0, 0)
@@ -166,7 +191,7 @@ class LoginWidget:
         :return:
         """
         self.scroll_widget_content = self.__loop_add_widget()
-        self.scroll_widget_content.setObjectName('scroll_widget_content')
+        self.scroll_widget_content.setObjectName("scroll_widget_content")
         self.scroll_widget_content.resize(540, 220)
         self.scroll_widget.setWidget(self.scroll_widget_content)
 

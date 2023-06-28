@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout
+from PyQt5.QtGui import QColor, QFont
+from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QWidget
 
 from Ui.OtherWidget.FixLoginWidget.FixPage.fix_63 import fix_63_layout
 from Ui.Share import shadow_setup
@@ -49,9 +49,7 @@ def fix_page(font: str, ui: QMainWindow) -> QWidget:
     fix_layout.setContentsMargins(30, 20, 30, 5)
 
     # 添加阴影
-    shadow_setup(
-        fix_wgt, (2, 2), 10, QColor(29, 190, 245, 60)
-    )
+    shadow_setup(fix_wgt, (2, 2), 10, QColor(29, 190, 245, 60))
 
     """添加到控件"""
     layout.addWidget(title_wgt, 0, 0, 1, 1)

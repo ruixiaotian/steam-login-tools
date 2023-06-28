@@ -8,11 +8,15 @@
 程序的主入口~
 """
 import cgitb
-import sys
 import os
+import sys
 from pathlib import Path
 
+from PyQt5.QtWidgets import QApplication
+from creart import create
 from loguru import logger
+
+from Ui import SteamLoginUI
 
 LOGO = r"""
 
@@ -29,7 +33,7 @@ def main():
     # rush_backtracking()
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
     app = QApplication(sys.argv)
-    win = SteamLoginUI()
+    win = create(SteamLoginUI)
     win.show()
     sys.exit(app.exec())
 
@@ -39,14 +43,13 @@ def rush_backtracking():
     奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志
     :return:
     """
-    log_dir = Path.home() / 'Desktop'
+    log_dir = Path.home() / "Desktop"
     if not log_dir.exists():
         log_dir.mkdir()
-    cgitb.enable(display=0, format='log', logdir=str(log_dir), context=10)
+    cgitb.enable(display=0, format="log", logdir=str(log_dir), context=10)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # 打印一个华丽的LOGO
     logger.opt(colors=True).info(f"<blue>{LOGO}</>")
-    from Ui import SteamLoginUI, QApplication
     main()

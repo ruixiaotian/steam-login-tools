@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QSize, QPoint, QEasingCurve
+from PyQt5.QtCore import QEasingCurve, QPoint, QSize
 from PyQt5.QtWidgets import QWidget
 
 from core.event_animation.AnimationObject import Animation
@@ -14,15 +14,17 @@ def setting_account_animation_max(info_widget: QWidget, setting_widget: QWidget)
     # 创建移动动画
     animation_obj = Animation(setting_widget)
     move_animation = animation_obj.setPos(
-        time=1200, easing_curve=QEasingCurve.OutBack,
+        time=1200,
+        easing_curve=QEasingCurve.OutBack,
         start_value=QPoint(setting_widget.x(), setting_widget.y()),
-        end_value=QPoint(setting_widget.x(), setting_widget.y() - 125)
+        end_value=QPoint(setting_widget.x(), setting_widget.y() - 125),
     )
     # 创建放大动画
     resize_animation = animation_obj.setSize(
-        time=1000, easing_curve=QEasingCurve.OutBack,
+        time=1000,
+        easing_curve=QEasingCurve.OutBack,
         start_value=QSize(setting_widget.width(), setting_widget.height()),
-        end_value=QSize(setting_widget.width(), setting_widget.height() + 125)
+        end_value=QSize(setting_widget.width(), setting_widget.height() + 125),
     )
     # 添加到串行动画组
     animation_group = animation_obj.addAnimationGroup(
@@ -34,7 +36,10 @@ def setting_account_animation_max(info_widget: QWidget, setting_widget: QWidget)
     animation_group.start()
 
 
-def setting_account_animation_min(info_widget: QWidget, setting_widget: QWidget, ):
+def setting_account_animation_min(
+    info_widget: QWidget,
+    setting_widget: QWidget,
+):
     """
     将账号信息控件最小化，其他控件隐藏
     :param info_widget: 账号信息控件
@@ -44,15 +49,17 @@ def setting_account_animation_min(info_widget: QWidget, setting_widget: QWidget,
     # 创建移动动画
     animation_obj = Animation(setting_widget)
     move_animation = animation_obj.setPos(
-        time=1200, easing_curve=QEasingCurve.OutBack,
+        time=1200,
+        easing_curve=QEasingCurve.OutBack,
         start_value=QPoint(setting_widget.x(), setting_widget.y()),
-        end_value=QPoint(setting_widget.x(), setting_widget.y() + 125)
+        end_value=QPoint(setting_widget.x(), setting_widget.y() + 125),
     )
     # 创建放大动画
     resize_animation = animation_obj.setSize(
-        time=1000, easing_curve=QEasingCurve.OutBack,
+        time=1000,
+        easing_curve=QEasingCurve.OutBack,
         start_value=QSize(setting_widget.width(), setting_widget.height()),
-        end_value=QSize(setting_widget.width(), setting_widget.height() - 125)
+        end_value=QSize(setting_widget.width(), setting_widget.height() - 125),
     )
     # 添加到串行动画组
     animation_group = animation_obj.addAnimationGroup(

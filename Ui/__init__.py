@@ -7,26 +7,36 @@
 """
 * 程序UI
 """
-
 import sys
+from abc import ABC
 from pathlib import Path
 
-from PyQt5.QtCore import Qt, QPropertyAnimation
-from PyQt5.QtGui import QIcon, QFontDatabase, QMouseEvent, QCloseEvent, QColor, QFont
-from PyQt5.QtWidgets import QWidget, QMainWindow, QStackedWidget, QApplication, QSizePolicy, QGridLayout, \
-    QGraphicsDropShadowEffect, QSpacerItem
-from creart import create
+from PyQt5.QtCore import QPropertyAnimation, Qt
+from PyQt5.QtGui import QCloseEvent, QColor, QFont, QFontDatabase, QIcon, QMouseEvent
+from PyQt5.QtWidgets import (
+    QApplication,
+    QGraphicsDropShadowEffect,
+    QGridLayout,
+    QMainWindow,
+    QSizePolicy,
+    QSpacerItem,
+    QStackedWidget,
+    QWidget,
+)
+from creart import add_creator, create, exists_module
+from creart.creator import AbstractCreator, CreateTargetInfo
 from loguru import logger
 
-from Ui.LeftWidget import top_icon_setup, left_button_setup, left_label_setup
+from Ui.LeftWidget import left_button_setup, left_label_setup, top_icon_setup
 from Ui.LoginWidget import LoginWidget
 from Ui.NetWidget import NetWidget
-from Ui.OtherWidget import SteamSettingWidget, FixLoginWidget, BulkImportWidget
+from Ui.OtherWidget import BulkImportWidget, FixLoginWidget, SteamSettingWidget
 from Ui.SettingWidget import SettingWidget
 
 
 class SteamLoginUI(QMainWindow):
     """程序UI的绘制"""
+
     close_state = True
 
     def __init__(self) -> None:
@@ -55,7 +65,9 @@ class SteamLoginUI(QMainWindow):
         :return: None
         """
         qss_path = Path("./QSS/UiQss")
-        qss_content = "".join([f.read_text(encoding="utf-8") for f in qss_path.rglob("*") if f.is_file()])
+        qss_content = "".join(
+            [f.read_text(encoding="utf-8") for f in qss_path.rglob("*") if f.is_file()]
+        )
         self.setStyleSheet(qss_content)
 
     def setup_font(self) -> None:
@@ -64,7 +76,8 @@ class SteamLoginUI(QMainWindow):
         :return: None
         """
         self.font_name = QFontDatabase.applicationFontFamilies(
-            QFontDatabase.addApplicationFont(r"./font/W03.ttf"))[0]
+            QFontDatabase.addApplicationFont(r"./font/W03.ttf")
+        )[0]
 
     def setup_form(self) -> None:
         """窗体设定
@@ -111,11 +124,26 @@ class SteamLoginUI(QMainWindow):
         widget.setObjectName("left_widget")
 
         # 添加到布局中
-        layout.addWidget(top_icon_setup(QFont(self.font_name, 12)), 0, 0, 1, 1, Qt.AlignTop)
-        layout.addItem(QSpacerItem(10, 50, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 0, 1, 1)
-        layout.addWidget(left_button_setup(QFont(self.font_name, 13), self.page_widget), 2, 0, 1, 1, Qt.AlignTop)
-        layout.addItem(QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Minimum), 3, 0, 1, 1)
-        layout.addWidget(left_label_setup(self.font_name, self), 4, 0, 1, 1, Qt.AlignBottom)
+        layout.addWidget(
+            top_icon_setup(QFont(self.font_name, 12)), 0, 0, 1, 1, Qt.AlignTop
+        )
+        layout.addItem(
+            QSpacerItem(10, 50, QSizePolicy.Minimum, QSizePolicy.Minimum), 1, 0, 1, 1
+        )
+        layout.addWidget(
+            left_button_setup(QFont(self.font_name, 13), self.page_widget),
+            2,
+            0,
+            1,
+            1,
+            Qt.AlignTop,
+        )
+        layout.addItem(
+            QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Minimum), 3, 0, 1, 1
+        )
+        layout.addWidget(
+            left_label_setup(self.font_name, self), 4, 0, 1, 1, Qt.AlignBottom
+        )
 
         return widget
 
@@ -153,8 +181,12 @@ class SteamLoginUI(QMainWindow):
         dw_widget = set_wgt.dw_widget_setup()
 
         wgt_list = [
-            login_widget, net_widget, setting_widget,
-            fix_widget, bulk_widget, dw_widget
+            login_widget,
+            net_widget,
+            setting_widget,
+            fix_widget,
+            bulk_widget,
+            dw_widget,
         ]
         for i in wgt_list:
             # 循环加入QStackedWidget
@@ -227,7 +259,25 @@ class SteamLoginUI(QMainWindow):
         animation.start()
 
 
-if __name__ == '__main__':
+class SteamLoginUIClassCreator(AbstractCreator, ABC):
+    # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
+    # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
+    targets = (CreateTargetInfo("Ui", "SteamLoginUI"),)
+
+    # 静态方法available()，用于检查模块"SteamLoginUI"是否存在，返回值为布尔型。
+    @staticmethod
+    def available() -> bool:
+        return exists_module("Ui")
+
+    # 静态方法create()，用于创建SteamLoginUI类的实例，返回值为SteamLoginUI对象。
+    @staticmethod
+    def create(create_type: [SteamLoginUI]) -> SteamLoginUI:
+        return SteamLoginUI()
+
+
+add_creator(SteamLoginUIClassCreator)
+
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = SteamLoginUI()
     win.show()

@@ -2,9 +2,18 @@ from abc import ABC
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
-from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QGridLayout, \
-    QSizePolicy, QScrollArea, QStackedWidget, QSpacerItem, QPushButton
-from creart import exists_module, add_creator
+from PyQt5.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QMainWindow,
+    QPushButton,
+    QScrollArea,
+    QSizePolicy,
+    QSpacerItem,
+    QStackedWidget,
+    QWidget,
+)
+from creart import add_creator, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Ui.OtherWidget.FixLoginWidget.FixPage import fix_page as fix_page_widget
@@ -12,7 +21,6 @@ from Ui.OtherWidget.FixLoginWidget.info_page import info_page as info_page_widge
 
 
 class FixLoginWidget:
-
     def __init__(self):
         pass
 
@@ -32,7 +40,7 @@ class FixLoginWidget:
 
         # 设置属性
         widget.resize(390, 500)
-        widget.setObjectName('other_page_widget')
+        widget.setObjectName("other_page_widget")
 
         # 添加到布局
         layout.addWidget(self.fix_title(), 1, 0, 1, 1, Qt.AlignLeft)
@@ -59,12 +67,14 @@ class FixLoginWidget:
         widget.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         # 添加控件
-        self.title_label = QLabel('修复登录错误')
+        self.title_label = QLabel("修复登录错误")
         self.title_label.setFont(QFont(self.font, 16))
-        self.title_label.setObjectName('title_label')
+        self.title_label.setObjectName("title_label")
 
         self.return_btn = QPushButton()
-        self.return_btn.setIcon(QIcon("./img/OtherWidget/share/other_page_return_btn.svg"))
+        self.return_btn.setIcon(
+            QIcon("./img/OtherWidget/share/other_page_return_btn.svg")
+        )
         self.return_btn.setObjectName("other_page_return_btn")
         self.return_btn.clicked.connect(lambda: self.page.setCurrentIndex(0))
 
@@ -87,7 +97,7 @@ class FixLoginWidget:
         layout = QGridLayout(scroll_widget_content)
 
         # 创建滚动窗体内窗体
-        scroll_widget_content.setObjectName('scroll_widget_content')
+        scroll_widget_content.setObjectName("scroll_widget_content")
         scroll_widget_content.resize(380, 490)
 
         # 设置滚动窗体
@@ -105,7 +115,9 @@ class FixLoginWidget:
         # 添加控件
         layout.addWidget(info_page, 0, 0, 1, 1)
         layout.addWidget(fix_page, 1, 0, 1, 1)
-        layout.addItem(QSpacerItem(1, 1000, QSizePolicy.Minimum, QSizePolicy.Maximum), 2, 0, 1, 1)
+        layout.addItem(
+            QSpacerItem(1, 1000, QSizePolicy.Minimum, QSizePolicy.Maximum), 2, 0, 1, 1
+        )
 
         # 设置边距
         layout.setContentsMargins(0, 10, 10, 10)

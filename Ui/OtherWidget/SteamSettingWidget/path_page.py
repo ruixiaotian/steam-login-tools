@@ -1,10 +1,10 @@
 from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QIcon, QFont, QColor
-from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QLineEdit, QGridLayout
+from PyQt5.QtGui import QColor, QFont, QIcon
+from PyQt5.QtWidgets import QGridLayout, QLabel, QLineEdit, QPushButton, QWidget
 from creart import create
 
-from core.file_operation import FileOperation
 from Ui.Share import shadow_setup
+from core.file_operation import FileOperation
 
 
 def path_page(font: str) -> QWidget:
@@ -50,9 +50,7 @@ def path_page(font: str) -> QWidget:
     path_layout.setContentsMargins(15, 20, 5, 10)
 
     # 添加阴影
-    shadow_setup(
-        path_info_wgt, (2, 2), 10, QColor(29, 190, 245, 60)
-    )
+    shadow_setup(path_info_wgt, (2, 2), 10, QColor(29, 190, 245, 60))
 
     """添加到控件"""
     layout.addWidget(title_wgt, 0, 0, 1, 1)
@@ -79,10 +77,7 @@ def dw_info_widget_steam_path(font: str):
     # 创建子控件
     label = QLabel("新版Steam路径：")
     edit = QLineEdit("未检测到路径")
-    button = QPushButton(
-        QIcon("./img/OtherWidget/dw/choose_file.svg"),
-        "手动选择"
-    )
+    button = QPushButton(QIcon("./img/OtherWidget/dw/choose_file.svg"), "手动选择")
 
     # 创建子控件列表
     widget_list = [label, edit, button]

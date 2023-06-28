@@ -1,30 +1,45 @@
 """
 启动器,承载着程序的更新以及启动功能
 """
-# 导入QT5
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QGridLayout, QLabel, QGraphicsDropShadowEffect, \
-    QProgressBar
-from PyQt5.QtGui import QIcon, QFont, QColor, QPalette, QPixmap, QBrush, QMouseEvent, QCloseEvent, QFontDatabase
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-
 # 导入其他库
 import cgitb
-import zipfile
 import hashlib
-import requests
-import shutil
 import json
+import shutil
+import subprocess
 import sys
 import winreg
-import subprocess
-from threading import Thread
-from queue import Queue
-from loguru import logger
+import zipfile
 from pathlib import Path
+from queue import Queue
+from threading import Thread
+
+import requests
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtGui import (
+    QCloseEvent,
+    QColor,
+    QFont,
+    QFontDatabase,
+    QIcon,
+    QMouseEvent,
+    QPixmap,
+)
+
+# 导入QT5
+from PyQt5.QtWidgets import (
+    QApplication,
+    QGraphicsDropShadowEffect,
+    QGridLayout,
+    QLabel,
+    QMainWindow,
+    QProgressBar,
+    QWidget,
+)
+from loguru import logger
 
 
 class Launcher(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.setup_window()
@@ -49,7 +64,7 @@ class Launcher(QMainWindow):
         """读取QSS文件
         :return: None
         """
-        with open('./QSS/launcher.qss', 'r', encoding='utf-8') as file:
+        with open("./QSS/launcher.qss", "r", encoding="utf-8") as file:
             self.setStyleSheet(file.read())
 
     def setup_font(self) -> None:
@@ -57,7 +72,8 @@ class Launcher(QMainWindow):
         :return: None
         """
         self.font_name = QFontDatabase.applicationFontFamilies(
-            QFontDatabase.addApplicationFont(r"font/W03.ttf"))[0]
+            QFontDatabase.addApplicationFont(r"font/W03.ttf")
+        )[0]
 
     def setup_form(self) -> None:
         """窗体设定
@@ -143,14 +159,20 @@ class Launcher(QMainWindow):
         """初始化所有必要路径"""
         try:
             # 获取系统文档路径
-            shell_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
+            shell_path = (
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
+            )
             winreg_key = winreg.HKEY_CURRENT_USER
             open_reg = winreg.OpenKeyEx(winreg_key, shell_path)
-            self.document_path = Path(winreg.QueryValueEx(open_reg, 'Personal')[0])
+            self.document_path = Path(winreg.QueryValueEx(open_reg, "Personal")[0])
             self.bridge_club_path = Path(self.document_path) / "Bridge Club"
             self.tmp_path = Path(self.document_path) / "Bridge Club" / "tmp"
-            self.steam_login_data_path = Path(self.document_path) / "Bridge Club" / "steam_login_data"
-            self.steam_login_tools_path = Path(self.document_path) / "Bridge Club" / "steam_login_tools"
+            self.steam_login_data_path = (
+                Path(self.document_path) / "Bridge Club" / "steam_login_data"
+            )
+            self.steam_login_tools_path = (
+                Path(self.document_path) / "Bridge Club" / "steam_login_tools"
+            )
 
         except Exception as e:
             logger.error(f"路径获取失败: {e}")
@@ -174,11 +196,15 @@ class Launcher(QMainWindow):
 
     def update_steam_login_data(self) -> None:
         """检测是否更新Steam Login Tools"""
-        with open(self.bridge_club_path / "steam_login_tools_data.json", "r", encoding="utf-8") as f:
+        with open(
+            self.bridge_club_path / "steam_login_tools_data.json", "r", encoding="utf-8"
+        ) as f:
             json_data = json.load(f)
         self.label_widget.setText("检测更新...")
 
-        res = requests.get("https://wp.qiao.icu/api/raw/?path=/web/BridgeClub/SteamLoginTool/steam_login_tools.json").json()
+        res = requests.get(
+            "https://wp.qiao.icu/api/raw/?path=/web/BridgeClub/SteamLoginTool/steam_login_tools.json"
+        ).json()
 
         if json_data["ver"] != res["ver"]:
             self.label_widget.setText("检测到有新版本,开始下载...")
@@ -261,9 +287,7 @@ class Download(QThread):
 
     download_state = pyqtSignal(bool)
 
-    def __init__(
-            self, file_path: Path, tmp_path: Path, label: QLabel
-    ):
+    def __init__(self, file_path: Path, tmp_path: Path, label: QLabel):
         """初始化
         file_path_edit: 文件路径 (不包含文件名
         tmp_path: 临时文件路径
@@ -304,10 +328,10 @@ class Download(QThread):
         response = requests.get(json_url).json()
 
         # 解析json文件到变量
-        self.ver = response['ver']
-        self.url = response['url']
-        self.hash = response['hash']
-        self.update_log = response['update_log']
+        self.ver = response["ver"]
+        self.url = response["url"]
+        self.hash = response["hash"]
+        self.update_log = response["update_log"]
         self.label.setText("json文件解析完成")
 
         # 完成操作,拉起下一步
@@ -317,7 +341,7 @@ class Download(QThread):
         """解析下载文件大小"""
         self.label.setText("解析下载文件大小...")
         with requests.get(self.url, stream=True, allow_redirects=True) as response:
-            self.file_size = int(response.headers['Content-Length'])
+            self.file_size = int(response.headers["Content-Length"])
             self.redirects_url = response.url
 
         self.label.setText(f"文件大小: {self.file_size} 字节")
@@ -416,10 +440,10 @@ class Download(QThread):
         # 创建一个hash对象，使用SHA-256哈希算法
         hash_256 = hashlib.sha256()
         # 以二进制读取文件
-        with open(self.contain_name_path, 'rb') as file:
+        with open(self.contain_name_path, "rb") as file:
             # 循环读取文件内容
             chunk = 0
-            while chunk != b'':
+            while chunk != b"":
                 # 每次读取65536个字节（64KB）
                 chunk = file.read(65536)
                 # 更新hash对象
@@ -442,7 +466,7 @@ class Download(QThread):
         """解压文件"""
         self.label.setText("解压文件...")
         # 解压文件
-        with zipfile.ZipFile(self.contain_name_path, 'r') as zip_f:
+        with zipfile.ZipFile(self.contain_name_path, "r") as zip_f:
             zip_f.extractall(self.file_path)
         self.contain_name_path.unlink()
         self.label.setText("解压文件完成")
@@ -452,11 +476,13 @@ class Download(QThread):
 
     def write_data(self):
         """写入版本信息"""
-        with open(self.file_path / "steam_login_tools_data.json", "w", encoding="utf-8") as file:
+        with open(
+            self.file_path / "steam_login_tools_data.json", "w", encoding="utf-8"
+        ) as file:
             json_data = {
                 "ver": self.ver,
                 "hash": self.hash,
-                "update_log": self.update_log
+                "update_log": self.update_log,
             }
             json.dump(json_data, file, ensure_ascii=False, indent=4)
 
@@ -486,7 +512,7 @@ class DownloadThread(Thread):
             bytes_range = self.bytes_queue.get()  # 读取范围信息
             headers = {
                 "User-Agent": r"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36 Edg/92.0.902.84",
-                "Range": "bytes={}".format(bytes_range[1])  # Range 设置
+                "Range": "bytes={}".format(bytes_range[1]),  # Range 设置
             }
             response = requests.get(self.url, headers=headers)  # 请求发送
             with open("{}/{}.tmp".format(self.tmp_path, bytes_range[0]), "wb") as f:
@@ -499,13 +525,13 @@ def rush_backtracking():
     奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志
     :return:
     """
-    log_dir = Path.home() / 'Desktop'
+    log_dir = Path.home() / "Desktop"
     if not log_dir.exists():
         log_dir.mkdir(parents=True, exist_ok=True)
-    cgitb.enable(display=0, format='log', logdir=str(log_dir), context=10)
+    cgitb.enable(display=0, format="log", logdir=str(log_dir), context=10)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     rush_backtracking()
     app = QApplication(sys.argv)
     window = Launcher()

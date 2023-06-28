@@ -7,9 +7,17 @@ from abc import ABC
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QFont
-from PyQt5.QtWidgets import QWidget, QGridLayout, QTableWidget, QHeaderView, \
-    QAbstractItemView, QSizePolicy, QLabel, QPushButton, QSpacerItem
-from creart import exists_module, add_creator, create
+from PyQt5.QtWidgets import (
+    QAbstractItemView,
+    QGridLayout,
+    QHeaderView,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QTableWidget,
+    QWidget,
+)
+from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Ui.Share import shadow_setup
@@ -17,7 +25,6 @@ from core.file_operation import FileOperation
 
 
 class TextImportTabelCard:
-
     def __init__(self):
         self.widget = QWidget()
         self.data_table = QTableWidget(0, 3)
@@ -93,7 +100,9 @@ class TextImportTabelCard:
         self.data_table.setFont(QFont(self.font))
         self.data_table.setFixedHeight(200)  # 固定大小
         self.data_table.setHorizontalHeaderLabels(["账号", "密码", "SSFN"])  # 设置表头
-        self.data_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # 设置表头自适应
+        self.data_table.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Stretch
+        )  # 设置表头自适应
         self.data_table.horizontalHeader().setSectionsClickable(False)  # 禁止点击表头
         self.data_table.verticalHeader().setVisible(False)  # 隐藏行表头
         self.data_table.setShowGrid(False)  # 隐藏分割线
@@ -122,9 +131,17 @@ class TextImportTabelCard:
 
         # 设置通用属性
         _ = [control.setFont(QFont(self.font)) for control in control_list]
-        _ = [control.setObjectName(name) for control, name in zip(control_list, control_name_list)]
-        _ = [shadow_setup(btn, (1, 1), 5, QColor(29, 190, 245, 40)) for btn in [self.clear_button, self.import_button]]
-        _ = [btn.setFixedSize(65, 20) for btn in [self.clear_button, self.import_button]]
+        _ = [
+            control.setObjectName(name)
+            for control, name in zip(control_list, control_name_list)
+        ]
+        _ = [
+            shadow_setup(btn, (1, 1), 5, QColor(29, 190, 245, 40))
+            for btn in [self.clear_button, self.import_button]
+        ]
+        _ = [
+            btn.setFixedSize(65, 20) for btn in [self.clear_button, self.import_button]
+        ]
 
         # 单独设置属性
         self.count_label.setFixedWidth(320)
@@ -133,12 +150,10 @@ class TextImportTabelCard:
         self.clear_button.clicked.connect(
             lambda: (
                 self.data_table.setRowCount(0),
-                self.count_label.setText("已清空所有数据")
+                self.count_label.setText("已清空所有数据"),
             )
         )
-        self.import_button.clicked.connect(
-            lambda: self.import_data()
-        )
+        self.import_button.clicked.connect(lambda: self.import_data())
 
         # 添加到布局
         layout.addWidget(self.count_label, 0, 0, 1, 1, Qt.AlignLeft)
@@ -152,7 +167,7 @@ class TextImportTabelCard:
 
     def import_data(self):
         """导入卡密文件"""
-        exist_data = [i['cammy_user'] for i in create(FileOperation).read_cammy_json()]
+        exist_data = [i["cammy_user"] for i in create(FileOperation).read_cammy_json()]
         num_duplicates = 0
         for row in range(self.data_table.rowCount()):
             # 循环导入
@@ -165,8 +180,7 @@ class TextImportTabelCard:
             cammy["cammy_pwd"] = self.data_table.item(row, 1).text()
             cammy["cammy_ssfn"] = self.data_table.item(row, 2).text()
             create(FileOperation).modify_json(
-                create(FileOperation).cammy_data_path,
-                cammy, add=True
+                create(FileOperation).cammy_data_path, cammy, add=True
             )
         self.count_label.setText(
             f"成功导入 {self.data_table.rowCount() - num_duplicates} 组数据 "
@@ -174,6 +188,7 @@ class TextImportTabelCard:
         )
         self.data_table.setRowCount(0)  # 清除列表
         from Ui.LoginWidget import LoginWidget
+
         create(LoginWidget).refresh_widget()  # 刷新
 
 
@@ -183,7 +198,7 @@ class TextImportTabelCardCreator(AbstractCreator, ABC):
     targets = (
         CreateTargetInfo(
             "Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard",
-            "TextImportTabelCard"
+            "TextImportTabelCard",
         ),
     )
 

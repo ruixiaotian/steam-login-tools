@@ -3,14 +3,20 @@
 # @FileName :AnimationObject.py
 # @Time :2023-6-10 下午 10:44
 # @Author :Qiao
-from typing import Tuple, List
+from typing import List, Tuple
 
-from PyQt5.QtCore import QSize, QPoint, QPropertyAnimation, QEasingCurve, \
-    QSequentialAnimationGroup, QParallelAnimationGroup, QAnimationGroup
+from PyQt5.QtCore import (
+    QAnimationGroup,
+    QEasingCurve,
+    QParallelAnimationGroup,
+    QPoint,
+    QPropertyAnimation,
+    QSequentialAnimationGroup,
+    QSize,
+)
 
 
 class Animation:
-
     def __init__(self, target):
         """
         初始化对象
@@ -27,12 +33,15 @@ class Animation:
         self.animation_group = None
 
     def setSize(
-            self, time: int, easing_curve: QEasingCurve,
-            start_value: Tuple[int, int] | QSize, end_value: Tuple[int, int] | QSize
+        self,
+        time: int,
+        easing_curve: QEasingCurve,
+        start_value: Tuple[int, int] | QSize,
+        end_value: Tuple[int, int] | QSize,
     ) -> QPropertyAnimation:
         """设置控件大小"""
         # 创建放大动画对象
-        widget_resize_animation = QPropertyAnimation(self.target, b'size', self.target)
+        widget_resize_animation = QPropertyAnimation(self.target, b"size", self.target)
         # 设置动画持续时间
         widget_resize_animation.setDuration(time)
         # 设置初始位置和结束位置
@@ -43,12 +52,15 @@ class Animation:
         return widget_resize_animation
 
     def setPos(
-            self, time: int, easing_curve: QEasingCurve,
-            start_value: Tuple[int, int] | QPoint, end_value: Tuple[int, int] | QPoint
+        self,
+        time: int,
+        easing_curve: QEasingCurve,
+        start_value: Tuple[int, int] | QPoint,
+        end_value: Tuple[int, int] | QPoint,
     ) -> QPropertyAnimation:
         """设置控件位置"""
         # 创建放大动画对象
-        widget_resize_animation = QPropertyAnimation(self.target, b'pos', self.target)
+        widget_resize_animation = QPropertyAnimation(self.target, b"pos", self.target)
         # 设置动画持续时间
         widget_resize_animation.setDuration(time)
         # 设置初始位置和结束位置
@@ -60,8 +72,10 @@ class Animation:
 
     @staticmethod
     def setAnimationValue(
-            target: QPropertyAnimation, animation_type: str,
-            start_value: Tuple[int, int] | QSize | QPoint, end_value: Tuple[int, int] | QSize | QPoint
+        target: QPropertyAnimation,
+        animation_type: str,
+        start_value: Tuple[int, int] | QSize | QPoint,
+        end_value: Tuple[int, int] | QSize | QPoint,
     ) -> None:
         """
         设置动画的开始和结束的值
@@ -70,10 +84,18 @@ class Animation:
         :param start_value: 动画初始位置
         :param end_value: 动画结束位置
         """
-        if isinstance(start_value, tuple) and isinstance(end_value, tuple) and animation_type == "size":
+        if (
+            isinstance(start_value, tuple)
+            and isinstance(end_value, tuple)
+            and animation_type == "size"
+        ):
             target.setStartValue(QSize(start_value[0], start_value[1]))
             target.setEndValue(QSize(end_value[0], end_value[1]))
-        elif isinstance(start_value, tuple) and isinstance(end_value, tuple) and animation_type == "pos":
+        elif (
+            isinstance(start_value, tuple)
+            and isinstance(end_value, tuple)
+            and animation_type == "pos"
+        ):
             target.setStartValue(QPoint(start_value[0], start_value[1]))
             target.setEndValue(QPoint(end_value[0], end_value[1]))
         else:
@@ -81,8 +103,10 @@ class Animation:
             target.setEndValue(end_value)
 
     def addAnimationGroup(
-            self, animation: QPropertyAnimation | List[QPropertyAnimation],
-            parallel_mod: bool = False, sequential_mod: bool = False
+        self,
+        animation: QPropertyAnimation | List[QPropertyAnimation],
+        parallel_mod: bool = False,
+        sequential_mod: bool = False,
     ) -> QAnimationGroup:
         """
         添加到动画组中
@@ -109,6 +133,8 @@ class Animation:
         elif isinstance(animation, QPropertyAnimation):
             self.animation_group.addAnimation(animation)
         else:
-            raise TypeError("animation 的值应该为 QPropertyAnimation 或 List[QPropertyAnimation]")
+            raise TypeError(
+                "animation 的值应该为 QPropertyAnimation 或 List[QPropertyAnimation]"
+            )
 
         return self.animation_group
