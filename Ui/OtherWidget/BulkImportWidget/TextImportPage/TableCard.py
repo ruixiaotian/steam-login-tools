@@ -175,7 +175,7 @@ class TextImportTabelCard:
                 # 去除重复
                 num_duplicates += 1
                 continue
-            cammy = FileOperation.cammy_template
+            cammy = create(BaseConfig).AccountDataDictTemplate
             cammy["cammy_user"] = self.data_table.item(row, 0).text()
             cammy["cammy_pwd"] = self.data_table.item(row, 1).text()
             cammy["cammy_ssfn"] = self.data_table.item(row, 2).text()

@@ -17,6 +17,7 @@ from creart.creator import AbstractCreator, CreateTargetInfo
 from Core.file_operation import FileOperation
 from Ui.OtherWidget.BulkImportWidget import BulkImportWidget
 from Ui.Share import shadow_setup
+from Config import BaseConfig
 
 
 class AddUserCard:
@@ -171,7 +172,7 @@ class AddUserCard:
         保存按钮槽函数
         :return:
         """
-        config = FileOperation.cammy_template
+        config = create(BaseConfig).AccountDataDictTemplate
         config["cammy_user"] = self.user_edit.text()
         config["cammy_pwd"] = self.password_edit.text()
         config["cammy_ssfn"] = self.ssfn_edit.text()

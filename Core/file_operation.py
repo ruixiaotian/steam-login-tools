@@ -12,43 +12,15 @@ import winreg
 from abc import ABC
 from pathlib import Path
 
-from creart import exists_module, add_creator
+from creart import exists_module, add_creator, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 from loguru import logger
+
+from Config import BaseConfig
 
 
 class FileOperation:
     """文件各类文件操作"""
-
-    __cammy = []  # 卡密模板
-
-    __config = {  # 通用设置
-        "common_set": {
-            "auto_update": True,
-            "boot_auto_start": False,
-            "minimize_on_startup": False,
-            "tray_icon": False,
-        },
-        "server_set": {  # 授权服务器设置
-            "server1": "",
-            "server1_port": "",
-            "server2": "",
-            "server2_port": "",
-            "server3": "",
-            "server3_port": "",
-            "ping_info": False,
-            "ping_time": 0.5,
-        },
-        "steam_set": {"path": None},
-    }
-
-    cammy_template = {  # 文件模板
-        "cammy_user": "",
-        "cammy_pwd": "",
-        "cammy_ssfn": "",
-        "Timestamp": "",
-        "skip_email": False,
-    }
 
     def __init__(self):
         """初始化对象"""
@@ -63,8 +35,7 @@ class FileOperation:
         """
         # 获取系统文档路径
         shell_path = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
-        winreg_key = winreg.HKEY_CURRENT_USER
-        open_reg = winreg.OpenKeyEx(winreg_key, shell_path)
+        open_reg = winreg.OpenKeyEx(winreg.HKEY_CURRENT_USER, shell_path)
         self.document_path = Path(winreg.QueryValueEx(open_reg, "Personal")[0])
 
         # 获取软件数据存放路径
@@ -81,10 +52,8 @@ class FileOperation:
             if self.config_data["steam_set"]["path"] is None:
                 # 打开Steam注册表键
                 key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "SOFTWARE\\Valve\\Steam")
-                # 读取Steam安装路径的值
-                value = winreg.QueryValueEx(key, "SteamPath")
                 # Steam根目录
-                self.steam_path = Path(value[0])
+                self.steam_path = Path(winreg.QueryValueEx(key, "SteamPath")[0])
                 # 写入config文件夹
                 self.config_data["steam_set"]["path"] = self.steam_path.__str__()
                 self.write_json(self.config_data_path, self.config_data)
@@ -92,10 +61,19 @@ class FileOperation:
                 self.steam_path = Path(self.config_data["steam_set"]["path"])
 
             self.steam_exe_path = self.steam_path / "steam.exe"
-
             # 设置安装状态
             self.steam_install_state = True
-            logger.info(f"监测到Steam路径:{self.steam_path}")
+            logger.info(f"找到到Steam路径:{self.steam_path}")
+        except KeyError:
+            # 重新写入配置文件
+            self.write_json(self.config_data_path, create(BaseConfig).ConfigTemplate)
+            # 重新调用该函数
+            self.__get_steam_path()
+        except TypeError:
+            # 重新写入配置文件
+            self.write_json(self.config_data_path, create(BaseConfig).ConfigTemplate)
+            # 重新调用该函数
+            self.__get_steam_path()
         except Exception as e:
             # 设置安装状态
             self.steam_install_state = False
@@ -109,13 +87,20 @@ class FileOperation:
         # 卡密数据json创建
         if not self.cammy_data_path.exists():  # 如果卡密文件不存在就创建
             with open(self.cammy_data_path, "w", encoding="utf-8") as f:
-                json.dump(self.__cammy, f, ensure_ascii=False, indent=4)
+                json.dump(
+                    create(BaseConfig).AccountDataDictTemplate,
+                    f,
+                    ensure_ascii=False,
+                    indent=4,
+                )
         if not self.config_data_path.exists():  # 如果配置文件不存在，则创建配置文件
             with open(self.config_data_path, "w", encoding="utf-8") as f:
-                json.dump(self.__config, f, ensure_ascii=False, indent=4)
+                json.dump(
+                    create(BaseConfig).ConfigTemplate, f, ensure_ascii=False, indent=4
+                )
 
     @staticmethod
-    def read_json_file(path: str | Path):
+    def read_json_file(path: str | Path) -> list | dict:
         """读取json文件"""
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -124,12 +109,12 @@ class FileOperation:
         """读取卡密json文件"""
         return self.read_json_file(self.cammy_data_path)
 
-    def read_config_json(self):
+    def read_config_json(self) -> dict:
         """读取配置文件,方便外部访问"""
         return self.read_json_file(self.config_data_path)
 
     @staticmethod
-    def write_json(file_path, data):
+    def write_json(file_path, data) -> list | dict:
         """写入json文件"""
         with open(file_path, "w", encoding="utf-8") as f:
             # 编码为utf-8, 否则会报错, 会导致json解析失败, 所以需要使用ensure_ascii=False

@@ -4,17 +4,6 @@
 # @Author  : 桥话语权
 # @File    : network_threads.py
 # @Software: PyCharm
-"""
- *            佛曰:
- *                   写字楼里写字间，写字间里程序员；
- *                   程序人员写程序，又拿程序换酒钱。
- *                   酒醒只在网上坐，酒醉还来网下眠；
- *                   酒醉酒醒日复日，网上网下年复年。
- *                   但愿老死电脑间，不愿鞠躬老板前；
- *                   奔驰宝马贵者趣，公交自行程序员。
- *                   别人笑我忒疯癫，我笑自己命太贱；
- *                   不见满街漂亮妹，哪个归得程序员？
-"""
 
 import subprocess
 import winreg
@@ -29,50 +18,35 @@ from creart import create
 from loguru import logger
 
 from Core.file_operation import FileOperation
-from Core.tcping import Ping
 
 
 class PingServerThread(QThread):
     sever_signal = pyqtSignal(str)
     end_signal = True
 
-    def __init__(
-        self,
-        server_icon_label: QLabel,  # 服务器图标
-        server_state_label: QLabel,  # 服务器状态图标
-        state_label: QLabel,  # 状态标签
-        online_state_icon_path: str,  # 服务器在线状态图标路径
-        offline_state_icon_path: str,  # 服务器离线状态图标路径
-        online_icon_path: str,  # 在线图标路径
-        offline_icon_path: str,  # 离线图标路径
-        ip: str,  # 服务器
-        port: int = 80,  # 端口
-        *args,
-        **kwargs,
-    ):
-        super(PingServerThread, self).__init__(*args, **kwargs)
-        self.server_icon_label: QLabel = server_icon_label
-        self.server_state_label: QLabel = server_state_label
-        self.state_label: QLabel = state_label
-        self.online_state_icon_path: str = online_state_icon_path
-        self.offline_state_icon_path: str = offline_state_icon_path
-        self.online_icon_path: str = online_icon_path
-        self.offline_icon_path: str = offline_icon_path
-        self.ip: str = ip
-        self.port: int = port
+    def __init__(self, num: int, parameter_list: list, *args):
+        from Ui.LoginWidget.ServerStateCard import ServerStateCard
+
+        super(PingServerThread, self).__init__(*args)
+        self.server_icon_label: QLabel = parameter_list[0][num]
+        self.server_state_label: QLabel = parameter_list[1][num]
+        self.state_label: QLabel = parameter_list[2][num]
+        self.ip: str = parameter_list[3][num]
+        self.online_state_icon_path: str = create(ServerStateCard).online_icon[0]
+        self.offline_state_icon_path: str = create(ServerStateCard).online_icon[1]
+        self.online_icon_path: str = create(ServerStateCard).offline_icon[0]
+        self.offline_icon_path: str = create(ServerStateCard).offline_icon[1]
 
     def run(self):
         while self.end_signal:
             self.sleep(1)
-            ping = Ping(self.ip, self.port, 0.5)
-            ping.ping(1)
-            if "0 successed" in ping.result.raw:
-                # 判断是否能ping通,不能则修改为离线状态
-                self.modify_to_offline()
-            else:
-                # 能ping通则修改为在线状态
-                self.modify_to_online()
+            # 判断是否能ping通,不能则修改为离线状态
+            self.modify_to_online() if self.ping() else self.modify_to_offline()
         return
+
+    def ping(self):
+        command = ["ping", "-n", "1", "-w", "5000", self.ip]
+        return subprocess.run(command, stdout=subprocess.PIPE).returncode == 0
 
     def modify_to_online(self):
         if self.state_label.text() == "在线":

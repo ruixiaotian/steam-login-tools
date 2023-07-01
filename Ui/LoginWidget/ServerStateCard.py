@@ -10,6 +10,17 @@ from Ui.Share import shadow_setup
 
 
 class ServerStateCard:
+    def __init__(self):
+        # 图标路径
+        self.online_icon = [
+            "./img/icon/LoginWidget/server_status/server_normal.svg",  # 服务器在线图标
+            "./img/icon/LoginWidget/server_status/online.png",  # 在线状态图标
+        ]
+        self.offline_icon = [
+            "./img/icon/LoginWidget/server_status/server_error.svg",  # 服务器离线图标
+            "./img/icon/LoginWidget/server_status/offline.png",  # 离线状态图标
+        ]
+
     def initialize(self, parent, font: str, pings: list) -> None:
         """初始化"""
         self.parent = parent
@@ -28,27 +39,8 @@ class ServerStateCard:
         widget.resize(400, 500)
         widget.setObjectName("server_status_widget")
 
-        # 图标路径
-        online_icon = [
-            "./img/icon/LoginWidget/server_status/server_normal.svg",  # 服务器在线图标
-            "./img/icon/LoginWidget/server_status/online.png",  # 在线状态图标
-        ]
-        offline_icon = [
-            "./img/icon/LoginWidget/server_status/server_error.svg",  # 服务器离线图标
-            "./img/icon/LoginWidget/server_status/offline.png",  # 离线状态图标
-        ]
-
-        # 添加图标
-        online_server_icon, online_icon_list = [online_icon[0] for _ in range(3)], [
-            online_icon[1] for _ in range(3)
-        ]
-        offline_server_icon, offline_icon_list = [offline_icon[0] for _ in range(3)], [
-            offline_icon[1] for _ in range(3)
-        ]
-
         # 服务器IP列表
         server_ip_list = ["1.15.97.14", "wp.qiao.icu", "wp.qiao.icu"]
-        port_list = [8848, 80, 80]
 
         # 创建控件列表
         server_icon_label_list = [QLabel() for _ in range(3)]
@@ -60,7 +52,7 @@ class ServerStateCard:
 
         for label in server_icon_label_list:
             # 设置图标
-            label.setPixmap(QPixmap(online_icon[0]))  # 服务器在线图标
+            label.setPixmap(QPixmap(self.online_icon[0]))  # 服务器在线图标
 
         for num, label in enumerate(server_num_label_list, 1):
             # 设置服务器编号和字体
@@ -71,7 +63,7 @@ class ServerStateCard:
             # 设置大小
             label.setFixedSize(14, 14)
             # 设置图标
-            label.setPixmap(QPixmap(online_icon[1]))  # 在线图标
+            label.setPixmap(QPixmap(self.online_icon[1]))  # 在线图标
             # 设置自动缩放
             label.setScaledContents(True)
 
@@ -81,18 +73,13 @@ class ServerStateCard:
             label.setFont(QFont(self.font, 10))
 
         """功能实现"""
-        zip_list = zip(  # zip函数单独取出来增加可读性
+        ping_parameter_list = [  # zip函数单独取出来增加可读性
             server_icon_label_list,
             server_status_icon_list,
             server_status_label_list,
-            online_server_icon,
-            offline_server_icon,
-            online_icon_list,
-            offline_icon_list,
             server_ip_list,
-            port_list,
-        )
-        self.__start_pings(zip_list)
+        ]
+        self.__start_pings(ping_parameter_list)
 
         """布局实现"""
         self.__add_layout(
@@ -110,32 +97,11 @@ class ServerStateCard:
 
         return widget
 
-    def __start_pings(self, zip_list: zip):
+    def __start_pings(self, ping_parameter_list: list):
         """循环启动线程"""
-        for (
-            server_label_icon,
-            server_state_label,
-            state_label,
-            online_state_icon,
-            offline_state_icon,
-            online_icon,
-            offline_icon,
-            ip,
-            port,
-        ) in zip_list:
+        for i in range(3):
             # 循环启动Ping线程
-            ping = PingServerThread(
-                server_label_icon,
-                server_state_label,
-                state_label,
-                online_state_icon,
-                offline_state_icon,
-                online_icon,
-                offline_icon,
-                ip,
-                port,
-                self.parent,
-            )
+            ping = PingServerThread(i, ping_parameter_list, self.parent)
             ping.start()
             self.pings.append(ping)
 

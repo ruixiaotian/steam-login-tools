@@ -132,7 +132,7 @@ class LeftWidget:
 
         # 创建控件
         button = QPushButton("退出软件")
-        label = QLabel("3.0.0.8_Beta")
+        label = QLabel("3.0.0.9_Beta")
         # 设置属性
         button.setFont(QFont(self.font, 8))
         label.setFont(QFont(self.font, 6))
