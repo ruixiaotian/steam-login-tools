@@ -46,7 +46,16 @@ class PingServerThread(QThread):
 
     def ping(self):
         command = ["ping", "-n", "1", "-w", "5000", self.ip]
-        return subprocess.run(command, stdout=subprocess.PIPE).returncode == 0
+        # 创建启动信息对象并设置标志位
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        # 执行ping命令并返回
+        return (
+            subprocess.run(
+                command, startupinfo=startupinfo, stdout=subprocess.PIPE
+            ).returncode
+            == 0
+        )
 
     def modify_to_online(self):
         if self.state_label.text() == "在线":
