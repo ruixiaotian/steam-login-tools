@@ -33,8 +33,8 @@ class PingServerThread(QThread):
         self.state_label: QLabel = parameter_list[2][num]
         self.ip: str = parameter_list[3][num]
         self.online_state_icon_path: str = create(ServerStateCard).online_icon[0]
-        self.offline_state_icon_path: str = create(ServerStateCard).online_icon[1]
-        self.online_icon_path: str = create(ServerStateCard).offline_icon[0]
+        self.online_icon_path: str = create(ServerStateCard).online_icon[1]
+        self.offline_state_icon_path: str = create(ServerStateCard).offline_icon[0]
         self.offline_icon_path: str = create(ServerStateCard).offline_icon[1]
 
     def run(self):
