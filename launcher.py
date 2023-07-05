@@ -328,10 +328,10 @@ class Download(QThread):
         response = requests.get(json_url).json()
 
         # 解析json文件到变量
-        self.ver = response["ver"]
-        self.url = response["url"]
-        self.hash = response["hash"]
-        self.update_log = response["update_log"]
+        self.ver: str = response["ver"]
+        self.url: str = response["url"]
+        self.hash: str = response["hash"]
+        self.update_log: str = response["update_log"]
         self.label.setText("json文件解析完成")
 
         # 完成操作,拉起下一步
@@ -450,7 +450,7 @@ class Download(QThread):
                 hash_256.update(chunk)
 
         # 哈希计算完成,校验是否一致
-        if self.hash != hash_256.hexdigest():
+        if self.hash.lower() != hash_256.hexdigest().lower():
             self.label.setText("哈希校验失败")
             # 删除文件重新下载
             self.contain_name_path.unlink()

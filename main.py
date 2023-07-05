@@ -30,7 +30,7 @@ LOGO = r"""
 
 
 def main():
-    # rush_backtracking()
+    rush_backtracking()
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
     app = QApplication(sys.argv)
     win = create(SteamLoginUI)
@@ -39,10 +39,7 @@ def main():
 
 
 def rush_backtracking():
-    """
-    奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志
-    :return:
-    """
+    """奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志"""
     log_dir = Path.home() / "Desktop"
     if not log_dir.exists():
         log_dir.mkdir()

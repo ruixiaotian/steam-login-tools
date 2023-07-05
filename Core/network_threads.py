@@ -51,10 +51,10 @@ class PingServerThread(QThread):
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         # 执行ping命令并返回
         return (
-            subprocess.run(
-                command, startupinfo=startupinfo, stdout=subprocess.PIPE
-            ).returncode
-            == 0
+                subprocess.run(
+                    command, startupinfo=startupinfo, stdout=subprocess.PIPE
+                ).returncode
+                == 0
         )
 
     def modify_to_online(self):
@@ -119,7 +119,7 @@ class SteamLoginThread(QThread):
                 self.__download_ssfn()
                 logger.info(f"账号: {self.user} 密码: {self.pwd} SSFN: {self.ssfn} 正在登录")
                 logger.info(
-                    f"登录参数：{self.file_path.steam_exe_path} -Windowed -noreactlogin -login {self.user} {self.pwd}"
+                    f"登录参数：{self.file_path.steam_exe_path} -Windowed -login {self.user} {self.pwd}"
                 )
                 self.__login()
             except Exception as e:
@@ -146,19 +146,13 @@ class SteamLoginThread(QThread):
     @staticmethod
     def __kill_steam():
         """结束steam进程"""
-        # 获取所有进程列表
-        processes = psutil.process_iter()
         # 遍历所有进程
-        for proc in processes:
+        for proc in psutil.process_iter():
             try:
-                # 获取进程名称
-                process_name = proc.name()
-                # 判断进程是否为Steam
-                if process_name == "steam.exe":
-                    # 结束进程
-                    proc.kill()
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
+                # 判断进程是否为Steam, 如果是就直接结束
+                proc.kill() if proc.name() == "steam.exe" else None
+            except Exception as e:
+                logger.error(e)
 
     def __download_ssfn(self):
         """
@@ -171,22 +165,17 @@ class SteamLoginThread(QThread):
                 f.write(
                     requests.get(f"http://1.15.97.14:8848/ssfn/{self.ssfn}").content
                 )
-        else:
-            pass
 
     def __determine_login_method(self):
-        # 定义要修改的键路径、键名
-        key_path = r"Software\Valve\Steam"
-        key_name = "StartupMode"
+        # 判断登录模式
         if self.skip_email:
-            # 跳过令牌模式登录
             key_value = 4
         else:
-            # 正常模式登录
             key_value = 0
+        # 打开注册表键
         key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER, key_path, 0, winreg.KEY_ALL_ACCESS
-        )  # 打开注册表键
-        winreg.SetValueEx(key, key_name, 0, winreg.REG_DWORD, key_value)  # 修改键值
+            winreg.HKEY_CURRENT_USER, r"Software\Valve\Steam", 0, winreg.KEY_ALL_ACCESS
+        )
+        winreg.SetValueEx(key, "StartupMode", 0, winreg.REG_DWORD, key_value)  # 修改键值
         winreg.CloseKey(key)  # 关闭注册表键
         logger.info(f"已修改 StartupMode 为： {key_value}")
