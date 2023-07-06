@@ -33,8 +33,7 @@ def main():
     rush_backtracking()
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
     app = QApplication(sys.argv)
-    win = create(SteamLoginUI)
-    win.show()
+    create(SteamLoginUI).show()
     sys.exit(app.exec())
 
 
@@ -42,7 +41,7 @@ def rush_backtracking():
     """奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志"""
     log_dir = Path.home() / "Desktop"
     if not log_dir.exists():
-        log_dir.mkdir()
+        log_dir.mkdir(parents=True, exist_ok=True)
     cgitb.enable(display=0, format="log", logdir=str(log_dir), context=10)
 
 
