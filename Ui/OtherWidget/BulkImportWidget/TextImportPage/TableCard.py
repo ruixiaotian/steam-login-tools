@@ -25,14 +25,14 @@ from Core.file_operation import FileOperation
 
 
 class TextImportTabelCard:
-    def __init__(self):
+    def __init__(self) -> None:
         self.widget = QWidget()
         self.data_table = QTableWidget(0, 3)
         self.count_label = QLabel()
         self.clear_button = QPushButton("清空")
         self.import_button = QPushButton("导入")
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         """接收参数和初始化"""
         # 创建变量
         self.font = font
@@ -120,7 +120,7 @@ class TextImportTabelCard:
 
         return layout
 
-    def table_func(self):
+    def table_func(self) -> QGridLayout:
         """表格功能"""
         # 创建布局
         layout = QGridLayout()
@@ -165,7 +165,7 @@ class TextImportTabelCard:
 
         return layout
 
-    def import_data(self):
+    def import_data(self) -> None:
         """导入卡密文件"""
         exist_data = [i["cammy_user"] for i in create(FileOperation).read_cammy_json()]
         num_duplicates = 0

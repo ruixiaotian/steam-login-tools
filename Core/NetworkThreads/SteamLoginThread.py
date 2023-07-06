@@ -23,7 +23,7 @@ class SteamLoginThread(QThread):
     msg = pyqtSignal(str)
     login_state = pyqtSignal(bool, str)
 
-    def __init__(self, cammy: dict, ui: QMainWindow, *args, **kwargs):
+    def __init__(self, cammy: dict, ui: QMainWindow, *args, **kwargs) -> None:
         """
         登录线程,cammy参数文档:
             cammy['cammy_user'] - 账号
@@ -39,7 +39,7 @@ class SteamLoginThread(QThread):
         self.skip_email: bool = cammy["skip_email"]
         self.parent: QMainWindow = ui
 
-    def run(self):
+    def run(self) -> None:
         if not self.file_path.steam_install_state:
             # 如果没有安装steam,则提示
             self.msg.emit("请先安装steam")
@@ -56,7 +56,7 @@ class SteamLoginThread(QThread):
             except Exception as e:
                 logger.error(f"登录失败:\n {e}")
 
-    def __login(self):
+    def __login(self) -> None:
         """登录Steam"""
         try:
             subprocess.run(
@@ -75,7 +75,7 @@ class SteamLoginThread(QThread):
             self.login_state.emit(False, f"{e}")
 
     @staticmethod
-    def __kill_steam():
+    def __kill_steam() -> None:
         """结束steam进程"""
         # 遍历所有进程
         for proc in psutil.process_iter():
@@ -85,7 +85,7 @@ class SteamLoginThread(QThread):
             except Exception as e:
                 logger.error(e)
 
-    def __download_ssfn(self):
+    def __download_ssfn(self) -> None:
         """
         下载SSFN
         :return:
@@ -97,7 +97,7 @@ class SteamLoginThread(QThread):
                     requests.get(f"http://1.15.97.14:8848/ssfn/{self.ssfn}").content
                 )
 
-    def __determine_login_method(self):
+    def __determine_login_method(self) -> None:
         # 判断登录模式
         if self.skip_email:
             key_value = 4

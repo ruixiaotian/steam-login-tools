@@ -10,7 +10,7 @@ from Core.EventAnimation.AnimationObject import Animation
 class TextImportPageAnimation:
     """从TXT导入页面动画设置"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.page_state = True
 
         # 获取控件
@@ -23,7 +23,7 @@ class TextImportPageAnimation:
         self.data_func_control_list = create(TextImportPage).date_func_control_list
         self.table_wgt = create(TextImportTabelCard).widget
 
-    def card_max_size(self):
+    def card_max_size(self) -> None:
         """放大控件"""
         # 判断状态
         if self.page_state:
@@ -48,7 +48,7 @@ class TextImportPageAnimation:
             # 设置状态
             self.page_state = False
 
-    def card_min_size(self):
+    def card_min_size(self) -> None:
         """缩小控件"""
         # 判断状态
         if not self.page_state:
@@ -69,12 +69,12 @@ class TextImportPageAnimation:
             # 设置状态
             self.page_state = True
 
-    def table_enter_move(self):
+    def table_enter_move(self) -> None:
         """QTableWidget入场动画"""
         if self.page_state:
             self.table_wgt.setHidden(False)  # 显示表格
 
-    def table_exit_move(self):
+    def table_exit_move(self) -> None:
         """QTableWidget出场"""
         self.table_wgt.setHidden(True)  # 显示表格
 

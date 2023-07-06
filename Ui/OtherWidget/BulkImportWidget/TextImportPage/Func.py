@@ -15,7 +15,7 @@ from Core.EventAnimation.other_page.bulk_page import TextImportPageAnimation
 
 
 class FilePathFunc:
-    def __init__(self):
+    def __init__(self) -> None:
         from Ui.OtherWidget.BulkImportWidget.TextImportPage import TextImportPage
 
         self.card_wgt = create(TextImportPage).widget
@@ -66,7 +66,7 @@ class FilePathFunc:
 class DataParsingFunc:
     """数据解析控件功能"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         from Ui.OtherWidget.BulkImportWidget.TextImportPage import TextImportPage
         from Ui.OtherWidget.BulkImportWidget.TextImportPage.TableCard import (
             TextImportTabelCard,
@@ -81,7 +81,7 @@ class DataParsingFunc:
         self.import_btn = create(TextImportTabelCard).import_button
         self.font = create(TextImportPage).font
 
-    def parse_button_trough(self):
+    def parse_button_trough(self) -> None:
         """解析数据槽函数"""
         # 解析数据
         data_list = [["无数据"]] if not self.data_parse() else self.data_parse()

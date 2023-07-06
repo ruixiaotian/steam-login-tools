@@ -32,7 +32,7 @@ class NetWidget:
         widget.setObjectName("net_widget")
 
         # 获取控件
-        img_path = Path("./img/icon/net/under_development.png")
+        img_path = Path("./img/icon/NetWidget/under_development.png")
         pixmap = QPixmap(128, 128)
         pixmap.load(str(img_path))
 

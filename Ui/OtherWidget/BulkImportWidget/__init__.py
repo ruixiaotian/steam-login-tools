@@ -30,11 +30,8 @@ class BulkImportWidget:
         self.font = font
         self.page = page
 
-    def bulk_import_widget_setup(self):
-        """
-        设置页面
-        :return:
-        """
+    def bulk_import_widget_setup(self) -> QWidget:
+        """设置页面"""
         # 创建页面
         widget = QWidget()
         layout = QGridLayout(widget)
@@ -85,7 +82,7 @@ class BulkImportWidget:
 
         return widget
 
-    def loop_widget(self):
+    def loop_widget(self) -> QWidget:
         """
         滚动内容
         :return:

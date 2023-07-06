@@ -21,15 +21,15 @@ from Ui.OtherWidget.FixLoginWidget.info_page import info_page as info_page_widge
 
 
 class FixLoginWidget:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def initialize(self, parent: QMainWindow, font: str, page: QStackedWidget):
+    def initialize(self, parent: QMainWindow, font: str, page: QStackedWidget) -> None:
         self.parent = parent
         self.font = font
         self.page = page
 
-    def fix_widget_setup(self):
+    def fix_widget_setup(self) -> QWidget:
         """
         设置页面
         :return:
@@ -84,7 +84,7 @@ class FixLoginWidget:
 
         return widget
 
-    def loop_widget(self):
+    def loop_widget(self) -> QWidget:
         """
         滚动内容
         :return:

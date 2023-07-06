@@ -21,18 +21,15 @@ from Ui.Share import shadow_setup
 
 
 class SettingWidget:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def initialize(self, parent: QMainWindow, font: str):
+    def initialize(self, parent: QMainWindow, font: str) -> None:
         self.parent = parent
         self.font = font
 
-    def setting_widget_setup(self):
-        """
-        设置界面
-        :return:
-        """
+    def setting_widget_setup(self) -> QWidget:
+        """设置界面"""
         widget = QWidget()
         layout = QGridLayout(widget)
 
@@ -51,7 +48,7 @@ class SettingWidget:
 
         return widget
 
-    def software_info(self):
+    def software_info(self) -> QWidget:
         """
         软件信息控件
         :return:
@@ -89,7 +86,7 @@ class SettingWidget:
         return self.soft_info_widget
 
     @staticmethod
-    def __software_info_widget_img():
+    def __software_info_widget_img() -> QLabel:
         """设置软件头像"""
         __img_path = Path("./img/SettingWidget/github.svg")
         __pixmap = QPixmap(64, 64)
@@ -103,7 +100,7 @@ class SettingWidget:
 
         return img
 
-    def __software_info_widget_title(self):
+    def __software_info_widget_title(self) -> QLabel:
         """软件名字"""
         title = QLabel("Steam Login Tool")
         title.setObjectName("software_info_title")
@@ -111,7 +108,7 @@ class SettingWidget:
 
         return title
 
-    def __software_info_widget_msg(self):
+    def __software_info_widget_msg(self) -> QLabel:
         """软件信息"""
         a = "<a style='text-decoration: none; color: #1DBEF5' href='https://github.com/ruixiaotian/steam-login-tools'>GitHub</a>"
         msg = QLabel(f"这是一个来自于 {a} 的开源项目 ")
@@ -121,11 +118,8 @@ class SettingWidget:
 
         return msg
 
-    def software_setting(self):
-        """
-        软件设置控件
-        :return:
-        """
+    def software_setting(self) -> QWidget:
+        """软件设置控件"""
         # 创建基础控件，并设置属性
         self.soft_setting_widget = QWidget(self.parent)
         layout = QGridLayout(self.soft_setting_widget)
@@ -139,18 +133,15 @@ class SettingWidget:
         """创建子控件"""
 
         """添加到控件"""
-        layout.addWidget(self.net_widget_setup(), 0, 0, 1, 1)
+        layout.addWidget(self.soft_widget_setup(), 0, 0, 1, 1)
 
         # 添加阴影
         shadow_setup(self.soft_setting_widget, (2, 3), 25, QColor(29, 190, 245, 80))
 
         return self.soft_setting_widget
 
-    def net_widget_setup(self):
-        """
-        网络界面
-        :return:
-        """
+    def soft_widget_setup(self) -> QWidget:
+        """设置卡片"""
         widget = QWidget()
         layout = QGridLayout(widget)
 

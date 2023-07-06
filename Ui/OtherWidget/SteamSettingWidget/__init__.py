@@ -18,10 +18,10 @@ from Ui.OtherWidget.SteamSettingWidget.path_page import path_page
 
 
 class SteamSettingWidget:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def initialize(self, parent: QMainWindow, font: str, page: QStackedWidget):
+    def initialize(self, parent: QMainWindow, font: str, page: QStackedWidget) -> None:
         self.parent = parent
         self.font = font
         self.page = page
@@ -51,7 +51,7 @@ class SteamSettingWidget:
 
         return widget
 
-    def dw_widget_setup(self):
+    def dw_widget_setup(self) -> QWidget:
         """
         设置界面
         :return:
@@ -72,7 +72,7 @@ class SteamSettingWidget:
 
         return widget
 
-    def loop_widget(self):
+    def loop_widget(self) -> QWidget:
         """
         滚动内容
         :return:

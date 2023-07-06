@@ -4,7 +4,9 @@ from PyQt5.QtWidgets import QWidget
 from Core.EventAnimation.AnimationObject import Animation
 
 
-def setting_account_animation_max(info_widget: QWidget, setting_widget: QWidget):
+def setting_account_animation_max(
+    info_widget: QWidget, setting_widget: QWidget
+) -> None:
     """
     将账号信息控件最大化，其他控件隐藏
     :param info_widget: 账号信息控件
@@ -39,7 +41,7 @@ def setting_account_animation_max(info_widget: QWidget, setting_widget: QWidget)
 def setting_account_animation_min(
     info_widget: QWidget,
     setting_widget: QWidget,
-):
+) -> None:
     """
     将账号信息控件最小化，其他控件隐藏
     :param info_widget: 账号信息控件

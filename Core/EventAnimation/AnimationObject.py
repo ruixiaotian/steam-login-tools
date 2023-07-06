@@ -17,7 +17,7 @@ from PyQt5.QtCore import (
 
 
 class Animation:
-    def __init__(self, target):
+    def __init__(self, target) -> None:
         """
         初始化对象
         :param target: 需要操作的控件

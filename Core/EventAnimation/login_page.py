@@ -6,7 +6,7 @@ from Core.EventAnimation.AnimationObject import Animation
 
 def login_account_animation_max(
     info_widget: QWidget, account_widget: QWidget, status_widget: QWidget
-):
+) -> None:
     """
     将账号信息控件最大化，其他控件隐藏
     :param info_widget: 账号信息控件
@@ -42,7 +42,7 @@ def login_account_animation_max(
 
 def login_account_animation_min(
     info_widget: QWidget, account_widget: QWidget, status_widget: QWidget
-):
+) -> None:
     """
     将账号信息控件最小化，其他控件显示
     :param info_widget: 账号信息控件

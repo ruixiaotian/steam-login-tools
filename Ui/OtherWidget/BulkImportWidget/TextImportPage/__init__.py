@@ -21,11 +21,11 @@ from Ui.Share import shadow_setup
 
 
 class TextImportPage:
-    def __init__(self):
+    def __init__(self) -> None:
         """初始化方法"""
         self.widget = QWidget()
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         """接收参数"""
         self.font = font
 
@@ -48,7 +48,7 @@ class TextImportPage:
 
         return self.widget
 
-    def title_control(self):
+    def title_control(self) -> QWidget:
         """标题控件"""
         # 创建控件
         title_wgt = QWidget()
@@ -66,7 +66,7 @@ class TextImportPage:
 
         return title_wgt
 
-    def card_control(self):
+    def card_control(self) -> QWidget:
         """卡片控件"""
         # 创建卡片控件，并设置属性
         card_wgt = QWidget()

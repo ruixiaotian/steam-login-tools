@@ -29,7 +29,7 @@ LOGO = r"""
 """
 
 
-def main():
+def main() -> None:
     # rush_backtracking()
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
     app = QApplication(sys.argv)
@@ -37,7 +37,7 @@ def main():
     sys.exit(app.exec())
 
 
-def rush_backtracking():
+def rush_backtracking() -> None:
     """奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志"""
     log_dir = Path.home() / "Desktop"
     if not log_dir.exists():

@@ -7,8 +7,7 @@
 from abc import ABC
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QFont, QIcon, QPainter, QPixmap
-from PyQt5.QtSvg import QSvgRenderer
+from PyQt5.QtGui import QFont, QIcon, QPixmap
 from PyQt5.QtWidgets import (
     QGridLayout,
     QLabel,
@@ -33,29 +32,16 @@ class LeftWidget:
         self.base_widget = base_widget
 
     def top_icon_setup(self) -> QWidget:
-        """
-        用于设置左上方Logo的函数
-        :return: QWidget
-        """
+        """用于设置左上方Logo的函数"""
         widget = QWidget()
         layout = QGridLayout(widget)
         # 窗体设置
         widget.setFixedSize(150, 100)
 
-        # 创建 QSvgRenderer 对象并传入svg路径
-        svg = QSvgRenderer("./img/icon/steam.svg")
-
-        # 设置 QPixmap
-        pixmap = QPixmap(42, 42)
-        pixmap.fill(Qt.transparent)
-        painter = QPainter(pixmap)
-        svg.render(painter)
-        # 需要删除 painter 否则会引发 QPaintDevice: Cannot destroy paint device that is being painted 错误
-        del painter
-
-        # 把 QPixmap 贴到 QLabel 上
+        # 加载 Logo
         logo_label = QLabel()
-        logo_label.setPixmap(pixmap)
+        logo_label.setPixmap(QPixmap("./img/icon/steam.svg"))
+        logo_label.setScaledContents(True)
         logo_label.setAlignment(Qt.AlignHCenter)
 
         # 设置文字 QLabel 内容
@@ -72,11 +58,7 @@ class LeftWidget:
         return widget
 
     def left_button_setup(self) -> QWidget:
-        """
-        设置左方窗体的切换按钮等设置
-
-        :return: QWidget
-        """
+        """设置左方窗体的切换按钮等设置"""
         widget = QWidget()  # 创建承载控件
         layout = QGridLayout(widget)
 
@@ -132,7 +114,7 @@ class LeftWidget:
 
         # 创建控件
         button = QPushButton("退出软件")
-        label = QLabel("3.0.0.9_Beta")
+        label = QLabel("3.0.0.10_Beta")
         # 设置属性
         button.setFont(QFont(self.font, 8))
         label.setFont(QFont(self.font, 6))

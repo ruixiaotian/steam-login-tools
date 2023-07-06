@@ -40,7 +40,7 @@ from loguru import logger
 
 
 class Launcher(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setup_window()
         self.setup_font()
@@ -155,7 +155,7 @@ class Launcher(QMainWindow):
 
         return self.bar_widget
 
-    def get_path(self):
+    def get_path(self) -> None:
         """初始化所有必要路径"""
         try:
             # 获取系统文档路径
@@ -223,7 +223,7 @@ class Launcher(QMainWindow):
         )
         sys.exit(0)
 
-    def download_run(self):
+    def download_run(self) -> None:
         """下载steam登录工具"""
         # 初始化下载对象
         self.download_thread = Download(
@@ -287,7 +287,7 @@ class Download(QThread):
 
     download_state = pyqtSignal(bool)
 
-    def __init__(self, file_path: Path, tmp_path: Path, label: QLabel):
+    def __init__(self, file_path: Path, tmp_path: Path, label: QLabel) -> None:
         """初始化
         file_path_edit: 文件路径 (不包含文件名
         tmp_path: 临时文件路径
@@ -305,7 +305,7 @@ class Download(QThread):
         self.label.setText("正在下载必要文件")
         self.path_check()
 
-    def path_check(self):
+    def path_check(self) -> None:
         """路径检查"""
         self.label.setText("文件路径检查...")
 
@@ -320,7 +320,7 @@ class Download(QThread):
         # 检查完成,拉起下一步
         self.get_download_url()
 
-    def get_download_url(self):
+    def get_download_url(self) -> None:
         """读取json文件，获取下载地址"""
         self.label.setText("读取json文件...")
         # 读取json文件
@@ -337,7 +337,7 @@ class Download(QThread):
         # 完成操作,拉起下一步
         self.get_download_size()
 
-    def get_download_size(self):
+    def get_download_size(self) -> None:
         """解析下载文件大小"""
         self.label.setText("解析下载文件大小...")
         with requests.get(self.url, stream=True, allow_redirects=True) as response:
@@ -349,7 +349,7 @@ class Download(QThread):
         # 解析完成,拉起下一步
         self.get_download_block_size()
 
-    def get_download_block_size(self):
+    def get_download_block_size(self) -> None:
         """解析下载块大小"""
         self.label.setText("解析下载块大小...")
 
@@ -381,7 +381,7 @@ class Download(QThread):
         # 创建完成,拉起下一步
         self.create_thread()
 
-    def create_thread(self):
+    def create_thread(self) -> None:
         """创建下载线程"""
         self.label.setText("创建下载线程...")
 
@@ -411,7 +411,7 @@ class Download(QThread):
         # 下载完成,拉起下一步
         self.merge_files()
 
-    def merge_files(self):
+    def merge_files(self) -> None:
         """合并文件"""
         self.label.setText("合并文件...")
         # 如果文件存在 先移除
@@ -433,7 +433,7 @@ class Download(QThread):
         # 合并完成,拉起下一步
         self.hash_check()
 
-    def hash_check(self):
+    def hash_check(self) -> None:
         """验证哈希"""
         self.label.setText("验证SHA256")
 
@@ -462,7 +462,7 @@ class Download(QThread):
         # 校验完成,拉起下一步
         self.unzip_file()
 
-    def unzip_file(self):
+    def unzip_file(self) -> None:
         """解压文件"""
         self.label.setText("解压文件...")
         # 解压文件
@@ -474,7 +474,7 @@ class Download(QThread):
         # 解压完成,拉起下一步
         self.write_data()
 
-    def write_data(self):
+    def write_data(self) -> None:
         """写入版本信息"""
         with open(
             self.file_path / "steam_login_tools_data.json", "w", encoding="utf-8"
@@ -494,18 +494,18 @@ class Download(QThread):
 class DownloadThread(Thread):
     """下载线程"""
 
-    def __init__(self, bytes_queue: Queue, url: str, tmp_path: Path):
+    def __init__(self, bytes_queue: Queue, url: str, tmp_path: Path) -> None:
         super().__init__(daemon=True)
         self.bytes_queue: Queue = bytes_queue
         self.url: str = url
         self.tmp_path: Path = tmp_path
 
-    def path_check(self):
+    def path_check(self) -> None:
         """路径检查"""
         if not self.tmp_path.exists():
             self.tmp_path.mkdir(parents=True, exist_ok=True)
 
-    def run(self):
+    def run(self) -> None:
         """下载线程"""
         self.path_check()  # 检查路径
         while not self.bytes_queue.empty():  # 如果字节队列不为空
@@ -520,7 +520,7 @@ class DownloadThread(Thread):
                 f.write(response.content)
 
 
-def rush_backtracking():
+def rush_backtracking() -> None:
     """
     奔溃回溯,如果程序引发了崩溃,将会在桌面生成崩溃日志
     :return:

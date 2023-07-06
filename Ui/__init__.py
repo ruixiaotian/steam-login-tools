@@ -177,7 +177,7 @@ class SteamLoginUI(QMainWindow):
         return self.page_widget
 
     @staticmethod
-    def thread_exits():
+    def thread_exits() -> None:
         """退出线程函数,让子线程安全的退出"""
         # 结束所有ping线程
         logger.info(f"准备退出子线程 - 当前退出：Ping")

@@ -22,13 +22,13 @@ from Config import BaseConfig
 class FileOperation:
     """文件各类文件操作"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """初始化对象"""
         self.__get_path()
         self.__init_file()
         self.__get_steam_path()
 
-    def __get_path(self):
+    def __get_path(self) -> None:
         """
         获取重新需要用到的路径
         :return:
@@ -44,7 +44,7 @@ class FileOperation:
         self.cammy_data_path = self.login_data_path / "cammy.json"
         self.config_data_path = self.login_data_path / "config.json"
 
-    def __get_steam_path(self):
+    def __get_steam_path(self) -> None:
         try:
             # 初始化配置文件
             self.config_data = self.read_config_json()
@@ -79,7 +79,7 @@ class FileOperation:
             self.steam_install_state = False
             logger.error(f"未能获取到Steam安装路径：{e}\n")
 
-    def __init_file(self):
+    def __init_file(self) -> None:
         """判断文件是否存在,不存在则创建"""
         # 程序目录判断
         self.ridge_club_path.mkdir(exist_ok=True, parents=True)
@@ -127,7 +127,7 @@ class FileOperation:
         insert: bool = False,
         add: bool = False,
         remove: bool = False,
-    ):
+    ) -> None:
         """
         修改json文件, 主要操作为插入/追加/删除某个值
         传入格式:
@@ -158,7 +158,7 @@ class FileOperation:
             config.pop(data)  # 删除数据
             self.write_json(file_path, config)  # 写入入json文件
 
-    def remove_ssfn(self):
+    def remove_ssfn(self) -> None:
         """删除SSFN"""
         try:
             # 遍历文件夹中的所有文件

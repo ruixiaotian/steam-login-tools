@@ -11,10 +11,10 @@ from creart.creator import AbstractCreator, CreateTargetInfo
 
 
 class BaseConfig:
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def createTemplate(self):
+    def createTemplate(self) -> None:
         self.AccountDataListTemplate = []
         self.AccountDataDictTemplate = {  # 文件模板
             "cammy_user": "",

@@ -60,7 +60,7 @@ def path_page(font: str) -> QWidget:
     return widget
 
 
-def dw_info_widget_steam_path(font: str):
+def dw_info_widget_steam_path(font: str) -> QWidget:
     """
     旧版steam路径
     :return:

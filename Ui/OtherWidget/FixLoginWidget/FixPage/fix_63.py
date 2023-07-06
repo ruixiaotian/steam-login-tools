@@ -6,11 +6,11 @@ from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QMessageBox, QPushButton
 from creart import create
 
-from Ui.Share import shadow_setup
 from Core.file_operation import FileOperation
+from Ui.Share import shadow_setup
 
 
-def fix_63_layout(font: str, ui: QMainWindow):
+def fix_63_layout(font: str, ui: QMainWindow) -> QGridLayout:
     """修复登录错误63"""
     # 创建布局
     layout = QGridLayout()
@@ -37,7 +37,7 @@ def fix_63_layout(font: str, ui: QMainWindow):
     return layout
 
 
-def fix_63_btn_trough(ui: QMainWindow):
+def fix_63_btn_trough(ui: QMainWindow) -> None:
     """一键修复的槽函数"""
     try:
         # 删除steam根目录下的config文件夹

@@ -15,7 +15,7 @@ class PingServerThread(QThread):
     sever_signal = pyqtSignal(str)
     end_signal = True
 
-    def __init__(self, num: int, parameter_list: list, *args):
+    def __init__(self, num: int, parameter_list: list, *args) -> None:
         from Ui.LoginWidget.ServerStateCard import ServerStateCard
 
         super(PingServerThread, self).__init__(*args)
@@ -28,14 +28,13 @@ class PingServerThread(QThread):
         self.offline_state_icon_path: str = create(ServerStateCard).offline_icon[0]
         self.offline_icon_path: str = create(ServerStateCard).offline_icon[1]
 
-    def run(self):
+    def run(self) -> None:
         while self.end_signal:
             self.sleep(1)
             # 判断是否能ping通,不能则修改为离线状态
             self.modify_to_online() if self.ping() else self.modify_to_offline()
-        return
 
-    def ping(self):
+    def ping(self) -> bool:
         command = ["ping", "-n", "1", "-w", "5000", self.ip]
         # 创建启动信息对象并设置标志位
         startupinfo = subprocess.STARTUPINFO()
@@ -48,7 +47,7 @@ class PingServerThread(QThread):
             == 0
         )
 
-    def modify_to_online(self):
+    def modify_to_online(self) -> None:
         if self.state_label.text() == "在线":
             # 判断是否要改变,不需要则直接返回
             return
@@ -62,7 +61,7 @@ class PingServerThread(QThread):
             # 服务器状态标签
             self.state_label.setText("在线")
 
-    def modify_to_offline(self):
+    def modify_to_offline(self) -> None:
         if self.state_label.text() == "离线":
             # 判断是否要改变,不需要则直接返回
             return
