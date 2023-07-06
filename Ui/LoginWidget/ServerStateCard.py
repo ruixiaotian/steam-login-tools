@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QGridLayout, QLabel, QWidget
 from creart import add_creator, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
-from Core.network_threads import PingServerThread
+from Core.NetworkThreads import PingServerThread
 from Ui.Share import shadow_setup
 
 

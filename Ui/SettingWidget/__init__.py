@@ -1,21 +1,30 @@
 """
 设置页面页面
 """
-
+from abc import ABC
 from pathlib import Path
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QFont, QPixmap
-from PyQt5.QtWidgets import (QCheckBox, QGraphicsDropShadowEffect, QGridLayout,
-                             QLabel, QListWidget, QListWidgetItem, QMainWindow,
-                             QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (
+    QGridLayout,
+    QLabel,
+    QMainWindow,
+    QSizePolicy,
+    QSpacerItem,
+    QWidget,
+)
+from creart import add_creator, exists_module
+from creart.creator import AbstractCreator, CreateTargetInfo
 
-from Core.EventJudgment import setting_widget_size_button_checked_event
+from Ui.Share import shadow_setup
 
 
 class SettingWidget:
+    def __init__(self):
+        pass
 
-    def __init__(self, parent: QMainWindow, font: str):
+    def initialize(self, parent: QMainWindow, font: str):
         self.parent = parent
         self.font = font
 
@@ -29,7 +38,7 @@ class SettingWidget:
 
         # 设置属性
         widget.resize(400, 500)
-        widget.setObjectName('SettingWidget')
+        widget.setObjectName("SettingWidget")
 
         # 获取控件
         software_info_widget = self.software_info()
@@ -65,13 +74,17 @@ class SettingWidget:
         """添加到控件"""
         layout.setContentsMargins(30, 20, 30, 15)
         layout.addWidget(img, 0, 0, 4, 1, Qt.AlignLeft)
-        layout.addItem(QSpacerItem(10, 5, QSizePolicy.Minimum, QSizePolicy.Minimum), 0, 0, 1, 1)
+        layout.addItem(
+            QSpacerItem(10, 5, QSizePolicy.Minimum, QSizePolicy.Minimum), 0, 0, 1, 1
+        )
         layout.addWidget(title, 1, 1, 1, 1, Qt.AlignRight)
         layout.addWidget(msg, 2, 1, 1, 1, Qt.AlignRight)
-        layout.addItem(QSpacerItem(10, 5, QSizePolicy.Minimum, QSizePolicy.Minimum), 3, 0, 1, 1)
+        layout.addItem(
+            QSpacerItem(10, 5, QSizePolicy.Minimum, QSizePolicy.Minimum), 3, 0, 1, 1
+        )
 
         # 添加阴影
-        self.shadow_setup(self.soft_info_widget)
+        shadow_setup(self.soft_info_widget, (2, 3), 25, QColor(29, 190, 245, 80))
 
         return self.soft_info_widget
 
@@ -101,9 +114,7 @@ class SettingWidget:
     def __software_info_widget_msg(self):
         """软件信息"""
         a = "<a style='text-decoration: none; color: #1DBEF5' href='https://github.com/ruixiaotian/steam-login-tools'>GitHub</a>"
-        msg = QLabel(
-            f"这是一个来自于 {a} 的开源项目 "
-        )
+        msg = QLabel(f"这是一个来自于 {a} 的开源项目 ")
         msg.setOpenExternalLinks(True)
         msg.setObjectName("software_info_msg")
         msg.setFont(QFont(self.font, 10))
@@ -112,9 +123,9 @@ class SettingWidget:
 
     def software_setting(self):
         """
-                软件设置控件
-                :return:
-                """
+        软件设置控件
+        :return:
+        """
         # 创建基础控件，并设置属性
         self.soft_setting_widget = QWidget(self.parent)
         layout = QGridLayout(self.soft_setting_widget)
@@ -126,60 +137,14 @@ class SettingWidget:
         self.soft_setting_widget.setObjectName("software_setting_widget")
 
         """创建子控件"""
-        right_widget = self.__right_widget()
 
         """添加到控件"""
-        layout.addLayout(right_widget, 0, 1, 1, 1)
         layout.addWidget(self.net_widget_setup(), 0, 0, 1, 1)
 
         # 添加阴影
-        self.shadow_setup(self.soft_setting_widget)
+        shadow_setup(self.soft_setting_widget, (2, 3), 25, QColor(29, 190, 245, 80))
 
         return self.soft_setting_widget
-
-    def __right_widget(self):
-        """右侧按钮控件"""
-        layout = QVBoxLayout()
-
-        # 添加到控件
-        layout.addWidget(self.__right_size_widget())
-
-        return layout
-
-    def __right_size_widget(self):
-        """右侧按钮设置"""
-        size_button = QCheckBox()
-
-        # 单独设置属性
-        # 放大_缩小按钮设置, 绑定事件
-        size_button.setObjectName('size_button')
-        size_button.setFixedSize(32, 32)
-        size_button.setChecked(False)
-        # int类型 当选中时为0,未选中时为2
-        size_button.stateChanged.connect(
-            lambda state: setting_widget_size_button_checked_event(state, self.soft_info_widget,
-                                                                   self.soft_setting_widget))
-
-        return size_button
-
-    def __server_setting(self):
-        """服务器设置"""
-        # 创建布局
-        layout = QVBoxLayout()
-
-        # 创建控件
-        title = QLabel("授权服务器设置")
-        list_widget = QListWidget()
-
-        # 设置控件属性
-        title.setObjectName("server_setting_title")
-        list_widget.setObjectName("server_setting_list_widget")
-
-        """创建选项"""
-
-        # 授权服务器1
-        item1 = QListWidgetItem("授权服务器 1 号")
-        item1_widget = QWidget()
 
     def net_widget_setup(self):
         """
@@ -190,7 +155,7 @@ class SettingWidget:
         layout = QGridLayout(widget)
 
         # 设置属性
-        widget.setObjectName('net_widget')
+        widget.setObjectName("setting_widget")
 
         # 获取控件
         img_path = Path("./img/SettingWidget/settings.svg")
@@ -211,11 +176,21 @@ class SettingWidget:
 
         return widget
 
+
+class SettingWidgetClassCreator(AbstractCreator, ABC):
+    # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
+    # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
+    targets = (CreateTargetInfo("Ui.SettingWidget", "SettingWidget"),)
+
+    # 静态方法available()，用于检查模块"Ui.SettingWidget"是否存在，返回值为布尔型。
     @staticmethod
-    def shadow_setup(target: QWidget):
-        # 设置阴影
-        effect_shadow = QGraphicsDropShadowEffect(target)  # 创建阴影效果对象
-        effect_shadow.setOffset(2, 3)  # 阴影的偏移量
-        effect_shadow.setBlurRadius(25)  # 阴影的模糊程度
-        effect_shadow.setColor(QColor(29, 190, 245, 80))  # 阴影的颜色
-        target.setGraphicsEffect(effect_shadow)  # 设置阴影效果
+    def available() -> bool:
+        return exists_module("Ui.SettingWidget")
+
+    # 静态方法create()，用于创建SettingWidget类的实例，返回值为SettingWidget对象。
+    @staticmethod
+    def create(create_type: [SettingWidget]) -> SettingWidget:
+        return SettingWidget()
+
+
+add_creator(SettingWidgetClassCreator)

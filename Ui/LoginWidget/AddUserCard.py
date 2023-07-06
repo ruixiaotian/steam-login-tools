@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import List
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor, QFont, QIcon
@@ -14,10 +13,10 @@ from PyQt5.QtWidgets import (
 from creart import add_creator, exists_module, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 
+from Config import BaseConfig
 from Core.file_operation import FileOperation
 from Ui.OtherWidget.BulkImportWidget import BulkImportWidget
 from Ui.Share import shadow_setup
-from Config import BaseConfig
 
 
 class AddUserCard:
@@ -70,14 +69,14 @@ class AddUserCard:
 
         # 编辑框设置
         self.password_edit.setEchoMode(QLineEdit.PasswordEchoOnEdit)  # 设置密码输入模式
-        # 设置可见与不可见切换和联想器
-        self.__pwd_edit_toggles_visible_state()
+        # 设置联想器
         self.__ssfn_edit_completer()
+        # 设置密码框行为
+        self.__pwd_edit_visible_state()
 
         # 循环设置对象名称
         for edit, name in zip(edit_list, edit_obj_name_list):
             edit.setObjectName(name)  # 设置对象名称
-            edit.setClearButtonEnabled(True)  # 设置清除按钮
 
         # 循环设置属性
         for edit, text in zip(edit_list, place_text_list):
@@ -98,11 +97,12 @@ class AddUserCard:
         )
 
         # 添加到布局
-        self.__add_layout(
-            layout,
-            edit_list,
-            [Qt.AlignHCenter for _ in range(3)],
-        )
+        for num, edit, policy in zip(
+            range(edit_list.__len__()), edit_list, [Qt.AlignHCenter for _ in range(3)]
+        ):
+            layout.addWidget(edit, num, 0, 1, 2, policy)
+
+        layout.setContentsMargins(0, 35, 0, 20)
         layout.addWidget(save_button, 3, 0, 1, 1, Qt.AlignRight)
         layout.addWidget(bulk_import_btn, 3, 1, 1, 1, Qt.AlignLeft)
         layout.setHorizontalSpacing(20)
@@ -122,17 +122,7 @@ class AddUserCard:
                 for edit in [self.user_edit, self.password_edit, self.ssfn_edit]
             ]
 
-    @staticmethod
-    def __add_layout(
-        layout: QGridLayout, widget: List[QLineEdit], layout_policy: List[Qt]
-    ) -> None:
-        """添加到布局"""
-        layout.setContentsMargins(0, 35, 0, 20)
-
-        for num, edit, policy in zip(range(widget.__len__()), widget, layout_policy):
-            layout.addWidget(edit, num, 0, 1, 2, policy)
-
-    def __pwd_edit_toggles_visible_state(self) -> None:
+    def __pwd_edit_visible_state(self) -> None:
         """密码编辑框模式切换槽函数"""
 
         def judgement():
@@ -153,7 +143,7 @@ class AddUserCard:
         action.setIcon(QIcon("./img/icon/LoginWidget/add_account/visible.svg"))
         action.triggered.connect(judgement)
 
-        # 添加到输入框
+        # 添加到行为
         self.password_edit.addAction(action, QLineEdit.TrailingPosition)
 
     def __ssfn_edit_completer(self) -> None:

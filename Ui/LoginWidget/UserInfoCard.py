@@ -19,7 +19,7 @@ from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Core.EventJudgment import userInfoSizeBtnTrough
 from Core.file_operation import FileOperation
-from Core.network_threads import SteamLoginThread
+from Core.NetworkThreads import SteamLoginThread
 from Ui.OtherWidget import FixLoginWidget
 
 

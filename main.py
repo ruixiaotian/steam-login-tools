@@ -30,7 +30,7 @@ LOGO = r"""
 
 
 def main():
-    rush_backtracking()
+    # rush_backtracking()
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
     app = QApplication(sys.argv)
     create(SteamLoginUI).show()

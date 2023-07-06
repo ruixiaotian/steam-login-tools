@@ -141,30 +141,26 @@ class SteamLoginUI(QMainWindow):
         # 登录页面
         create(LoginWidget).initialize(self, self.font_name)
         login_widget = create(LoginWidget).login_widget_setup()
-        self.pings = create(LoginWidget).pings
 
         # 网络加速页面
-        net = NetWidget(self, self.font_name)
-        net_widget = net.net_widget_setup()
+        create(NetWidget).initialize(self, self.font_name)
+        net_widget = create(NetWidget).net_widget_setup()
 
         # 设置页面
-        setting = SettingWidget(self, self.font_name)
-        setting_widget = setting.setting_widget_setup()
+        create(SettingWidget).initialize(self, self.font_name)
+        setting_widget = create(SettingWidget).setting_widget_setup()
 
         # 修复登录页面
-        fix_wgt = create(FixLoginWidget)
-        fix_wgt.initialize(self, self.font_name, self.page_widget)
-        fix_widget = fix_wgt.fix_widget_setup()
+        create(FixLoginWidget).initialize(self, self.font_name, self.page_widget)
+        fix_widget = create(FixLoginWidget).fix_widget_setup()
 
         # 批量导入页面
-        bulk_wgt = create(BulkImportWidget)
-        bulk_wgt.initialize(self, self.font_name, self.page_widget)
-        bulk_widget = bulk_wgt.bulk_import_widget_setup()
+        create(BulkImportWidget).initialize(self, self.font_name, self.page_widget)
+        bulk_widget = create(BulkImportWidget).bulk_import_widget_setup()
 
         # Steam设置页面
-        set_wgt = create(SteamSettingWidget)
-        set_wgt.initialize(self, self.font_name, self.page_widget)
-        dw_widget = set_wgt.dw_widget_setup()
+        create(SteamSettingWidget).initialize(self, self.font_name, self.page_widget)
+        dw_widget = create(SteamSettingWidget).dw_widget_setup()
 
         widget_list = [
             login_widget,
@@ -174,22 +170,22 @@ class SteamLoginUI(QMainWindow):
             bulk_widget,
             dw_widget,
         ]
-
         _ = [self.page_widget.addWidget(widget) for widget in widget_list]
 
         self.page_widget.resize(500, 400)
 
         return self.page_widget
 
-    def thread_exits(self):
+    @staticmethod
+    def thread_exits():
         """退出线程函数,让子线程安全的退出"""
         # 结束所有ping线程
         logger.info(f"准备退出子线程 - 当前退出：Ping")
-        for ping in self.pings:
+        for ping in create(LoginWidget).pings:
             # 结束ping线程
             ping.end_signal = False
             logger.info(f"正在结束ping线程 {ping}")
-        for ping in self.pings:
+        for ping in create(LoginWidget).pings:
             # 等待线程安全退出
             ping.quit()
             logger.info(f"{ping} 线程安全退出")
