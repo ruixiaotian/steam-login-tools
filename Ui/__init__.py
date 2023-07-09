@@ -24,6 +24,7 @@ from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 from loguru import logger
 
+from Ui.Share import shadow_setup
 from Ui.LeftWidget import LeftWidget
 from Ui.LoginWidget import LoginWidget
 from Ui.NetWidget import NetWidget
@@ -46,10 +47,7 @@ class SteamLoginUI(QMainWindow):
         self.read_qss_file()
 
     def setup_window(self) -> None:
-        """设定窗体各类参数
-
-        :return: None
-        """
+        """设定窗体各类参数"""
         self.setFixedSize(750, 500)  # 设定窗体大小
         self.setWindowTitle("Steam上号器 - 测试版 - Qiao")  # 设定窗口名
         self.setWindowIcon(QIcon("./img/icon/icon.ico"))  # 设定窗体图标
@@ -57,30 +55,21 @@ class SteamLoginUI(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)  # 隐藏框架,并且设置为主窗体
 
     def read_qss_file(self) -> None:
-        """读取QSS文件
-
-        :return: None
-        """
+        """读取QSS文件"""
         qss_path = Path("./QSS/UiQss")
-        qss_content = "".join(
+        self.qss_content = "".join(
             [f.read_text(encoding="utf-8") for f in qss_path.rglob("*") if f.is_file()]
         )
-        self.setStyleSheet(qss_content)
+        self.setStyleSheet(self.qss_content)
 
     def setup_font(self) -> None:
-        """窗体字体获取
-
-        :return: None
-        """
+        """窗体字体获取"""
         self.font_name = QFontDatabase.applicationFontFamilies(
             QFontDatabase.addApplicationFont(r"./font/W03.ttf")
         )[0]
 
     def setup_form(self) -> None:
-        """窗体设定
-
-        :return: None
-        """
+        """窗体设定"""
         # 透明窗体
         self.base_widget = QWidget()  # 创建透明窗口
         self.base_widget.setObjectName("base_widget")  # 设置对象名称
@@ -96,11 +85,7 @@ class SteamLoginUI(QMainWindow):
         self.setCentralWidget(self.base_widget)  # 设置窗口主部件
 
         # 添加阴影
-        effect_shadow = QGraphicsDropShadowEffect(self)
-        effect_shadow.setOffset(0, 1)  # 偏移
-        effect_shadow.setBlurRadius(12)  # 阴影半径
-        effect_shadow.setColor(QColor("#1DBEF5"))  # 阴影颜色
-        self.main_widget.setGraphicsEffect(effect_shadow)  # 将设置套用到widget窗口中
+        shadow_setup(self.main_widget, (0, 1), 12, QColor("#1DBEF5"))
 
     def setup_layout(self) -> None:
         """设定窗体内布局"""
@@ -158,17 +143,12 @@ class SteamLoginUI(QMainWindow):
         create(BulkImportWidget).initialize(self, self.font_name, self.page_widget)
         bulk_widget = create(BulkImportWidget).bulk_import_widget_setup()
 
-        # Steam设置页面
-        create(SteamSettingWidget).initialize(self, self.font_name, self.page_widget)
-        dw_widget = create(SteamSettingWidget).dw_widget_setup()
-
         widget_list = [
             login_widget,
             net_widget,
             setting_widget,
             fix_widget,
             bulk_widget,
-            dw_widget,
         ]
         _ = [self.page_widget.addWidget(widget) for widget in widget_list]
 
@@ -191,11 +171,7 @@ class SteamLoginUI(QMainWindow):
             logger.info(f"{ping} 线程安全退出")
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
-        """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置
-
-        :param event:
-        :return: None
-        """
+        """重构鼠标按下事件函数,进行鼠标跟踪以及获取相对位置"""
         if event.button() == Qt.LeftButton:
             # 如果按下按钮为左键
             self._mouse_flag = True  # 设置鼠标跟踪开关为True
@@ -203,22 +179,14 @@ class SteamLoginUI(QMainWindow):
             event.accept()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        """重构鼠标移动事件函数,进行监控鼠标移动并且判断是否拖动窗口
-
-        :param event:
-        :return: None
-        """
+        """重构鼠标移动事件函数,进行监控鼠标移动并且判断是否拖动窗口"""
         if Qt.LeftButton and self._mouse_flag and self.close_state:
             # 如果是左键按下鼠标且跟踪打开, 不处于关闭状态,则可以拖动窗口
             self.move(event.globalPos() - self.m_pos)  # 更改窗口位置
             event.accept()
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
-        """重构鼠标松开事件函数,进行监控鼠标状态
-
-        :param event:
-        :return: None
-        """
+        """重构鼠标松开事件函数,进行监控鼠标状态"""
         self._mouse_flag = False  # 设置鼠标跟踪为关
 
     def closeEvent(self, event: QCloseEvent) -> None:

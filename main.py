@@ -30,6 +30,7 @@ LOGO = r"""
 
 
 def main() -> None:
+    """程序入口"""
     # rush_backtracking()
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "0"
     app = QApplication(sys.argv)

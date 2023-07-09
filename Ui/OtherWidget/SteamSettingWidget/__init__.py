@@ -126,4 +126,4 @@ class SteamSettingWidgetClassCreator(AbstractCreator, ABC):
         return SteamSettingWidget()
 
 
-add_creator(SteamSettingWidgetClassCreator)
+# add_creator(SteamSettingWidgetClassCreator)

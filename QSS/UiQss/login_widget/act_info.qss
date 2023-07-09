@@ -179,9 +179,9 @@ QMenu#other_btn_menu {
     /*设置颜色*/
     color: #BEBEBE;
     /*设置背景颜色*/
-    background-color: #E4EEF8;
+    background-color: #FAF7FF;
     /*设置边框*/
-    border: 3px solid #FAF7FF;
+    border: 3px solid #E4EEF8;
     /*设置圆角*/
     border-radius: 8px;
     /*设置边距*/

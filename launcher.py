@@ -48,7 +48,7 @@ class Launcher(QMainWindow):
         self.setup_layout()
         self.read_qss_file()
         self.show()
-        self.download_steam_login_tools()  # 下载steam登录工具
+        self.download_steam_login_tools()
 
     def setup_window(self) -> None:
         """设定窗体各类参数
@@ -61,24 +61,18 @@ class Launcher(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)  # 隐藏框架,并且设置为主窗体
 
     def read_qss_file(self) -> None:
-        """读取QSS文件
-        :return: None
-        """
+        """读取QSS文件"""
         with open("./QSS/launcher.qss", "r", encoding="utf-8") as file:
             self.setStyleSheet(file.read())
 
     def setup_font(self) -> None:
-        """窗体字体获取
-        :return: None
-        """
+        """窗体字体获取"""
         self.font_name = QFontDatabase.applicationFontFamilies(
             QFontDatabase.addApplicationFont(r"font/W03.ttf")
         )[0]
 
     def setup_form(self) -> None:
-        """窗体设定
-        :return: None
-        """
+        """窗体设定"""
         # 透明窗体
         self.base_widget = QWidget()  # 创建透明窗口
         self.base_widget.setObjectName("base_widget")  # 设置对象名称

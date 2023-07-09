@@ -32,10 +32,7 @@ class UserInfoCard:
         self.server_state_card = server_state_card
 
     def size_btn(self) -> QCheckBox:
-        """
-        设置右侧的放大/缩小控件
-        :return:
-        """
+        """设置右侧的放大/缩小控件"""
         size_button = QCheckBox()
 
         # 单独设置属性
@@ -51,10 +48,7 @@ class UserInfoCard:
 
     @staticmethod
     def repair_btn() -> QCheckBox:
-        """
-        设置右侧修复登录按钮
-        :return:
-        """
+        """设置右侧修复登录按钮"""
         # 创建按钮
         repair_button = QCheckBox()
 
@@ -77,12 +71,7 @@ class CardWidget:
         self.__refresh_widget = refresh
 
     def scroll_widget_card_setup(self, account: dict) -> QWidget:
-        """
-        设置滚动窗体内卡片控件
-
-        :param account:
-        :return:
-        """
+        """设置滚动窗体内卡片控件"""
         widget = QWidget()
         layout = QGridLayout(widget)
         # 设置控件属性
@@ -141,10 +130,7 @@ class CardWidget:
         return widget
 
     def __scroll_widget_card_time(self, account_info: dict) -> QWidget:
-        """
-        设置登录时间的控件
-        :return:
-        """
+        """设置登录时间的控件 """
         widget = QWidget()  # 承载窗体
         layout = QGridLayout(widget)  # 创建布局
 
@@ -185,11 +171,7 @@ class CardWidget:
         return widget
 
     def __scroll_widget_card_other_btn(self, account_info: dict) -> QPushButton:
-        """
-        设置卡片上的其他按钮
-        :param account_info:
-        :return:
-        """
+        """设置卡片上的其他按钮"""
         # 创建控件
         btn = QPushButton()
         btn.setIcon(QIcon("./img/icon/LoginWidget/account_info/other_btn_icon.svg"))
