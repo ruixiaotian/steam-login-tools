@@ -9,7 +9,7 @@ QWidget#author_info_widget {
     /*设置边距*/
     margin: 10px 10px 0px 15px;
     /*设置圆角*/
-    border-radius: 12px;
+    border-radius: 24px;
 }
 
 QWidget#software_setting_widget {

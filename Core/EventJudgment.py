@@ -9,8 +9,6 @@ from PyQt5.Qt import *
 from Core.EventAnimation import (
     login_account_animation_max,
     login_account_animation_min,
-    setting_account_animation_max,
-    setting_account_animation_min,
 )
 
 

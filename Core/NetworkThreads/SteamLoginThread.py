@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QMainWindow
 from creart import create
 from loguru import logger
 
-from Core.file_operation import FileOperation
+from Core.FileOperation import FileOperation
 
 
 class SteamLoginThread(QThread):

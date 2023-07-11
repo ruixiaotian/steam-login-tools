@@ -6,7 +6,7 @@ from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import QGridLayout, QLabel, QMainWindow, QMessageBox, QPushButton
 from creart import create
 
-from Core.file_operation import FileOperation
+from Core.FileOperation import FileOperation
 from Ui.Share import shadow_setup
 
 

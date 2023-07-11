@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2023/1/25 11:08
 # @Author  : 桥话语权
-# @File    : file_operation.py
+# @File    : FileOperation.py
 # @Software: PyCharm
 """
  *  用于文件的增删改查操作
@@ -12,6 +12,7 @@ import winreg
 from abc import ABC
 from pathlib import Path
 
+from PyQt5.QtGui import QFontDatabase
 from creart import exists_module, add_creator, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 from loguru import logger
@@ -27,6 +28,7 @@ class FileOperation:
         self.__get_path()
         self.__init_file()
         self.__get_steam_path()
+        self.__read_qss_file()
 
     def __get_path(self) -> None:
         """
@@ -98,6 +100,13 @@ class FileOperation:
                 json.dump(
                     create(BaseConfig).ConfigTemplate, f, ensure_ascii=False, indent=4
                 )
+
+    def __read_qss_file(self) -> None:
+        """读取QSS文件"""
+        qss_path = Path("./QSS/UiQss")
+        self.qss_content = "".join(
+            [f.read_text(encoding="utf-8") for f in qss_path.rglob("*") if f.is_file()]
+        )
 
     @staticmethod
     def read_json_file(path: str | Path) -> list | dict:
@@ -174,12 +183,12 @@ class FileOperation:
 class FileOperationClassCreator(AbstractCreator, ABC):
     # 定义类方法targets，该方法返回一个元组，元组中包含了一个CreateTargetInfo对象，
     # 该对象描述了创建目标的相关信息，包括应用程序名称和类名。
-    targets = (CreateTargetInfo("Core.file_operation", "FileOperation"),)
+    targets = (CreateTargetInfo("Core.FileOperation", "FileOperation"),)
 
     # 静态方法available()，用于检查模块"Core"是否存在，返回值为布尔型。
     @staticmethod
     def available() -> bool:
-        return exists_module("Core.file_operation")
+        return exists_module("Core.FileOperation")
 
     # 静态方法create()，用于创建FileOperation类的实例，返回值为FileOperation对象。
     @staticmethod

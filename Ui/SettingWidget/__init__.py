@@ -13,11 +13,18 @@ from PyQt5.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QWidget,
-    QPushButton
 )
 from creart import add_creator, exists_module, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 
+from Ui.SettingWidget.Card import (
+    CommonCard,
+    LoginCard,
+    AuthorizationCard,
+    AboutCard,
+    QQCard,
+    AddCard,
+)
 from Ui.Share import shadow_setup
 
 
@@ -45,7 +52,7 @@ class SettingWidget:
         # 添加控件
         layout.addWidget(software_info_widget, 0, 0, 1, 1)
         layout.addWidget(software_setting_widget, 1, 0, 1, 1)
-        # layout.addItem(QSpacerItem(10, 100, QSizePolicy.Expanding, QSizePolicy.Expanding), 1, 0, 1, 1)
+        # layout.addItem(QSpacerItem(10, 100, QSizePolicy.Expanding, QSizePolicy.Expanding), 2, 0, 1, 1)
 
         return widget
 
@@ -56,7 +63,7 @@ class SettingWidget:
         layout = QGridLayout(self.soft_info_widget)
 
         # 设置最大高度
-        self.soft_info_widget.setFixedHeight(120)
+        self.soft_info_widget.setFixedHeight(160)
 
         # 设置对象名称，用于QSS定位
         self.soft_info_widget.setObjectName("author_info_widget")
@@ -97,7 +104,7 @@ class SettingWidget:
         )
 
         # 添加阴影
-        shadow_setup(self.soft_info_widget, (2, 3), 25, QColor(29, 190, 245, 80))
+        shadow_setup(self.soft_info_widget, (2, 2), 20, QColor(29, 190, 245, 60))
 
         return self.soft_info_widget
 
@@ -107,22 +114,33 @@ class SettingWidget:
         self.soft_setting_widget = QWidget(self.parent)
         layout = QGridLayout(self.soft_setting_widget)
         # 设置最大高度
-        self.soft_setting_widget.setMinimumHeight(330)
+        self.soft_setting_widget.setFixedHeight(290)
         # 设置对象名称，用于QSS定位
         self.soft_setting_widget.setObjectName("software_setting_widget")
+
         """创建子控件"""
+        create(CommonCard).initialize(self.font)
+        create(LoginCard).initialize(self.font)
+        create(AuthorizationCard).initialize(self.font)
+        create(AboutCard).initialize(self.font)
+        create(QQCard).initialize(self.font)
+        create(AddCard).initialize(self.font)
 
         """添加到控件"""
-        # layout.addWidget(self.soft_widget_setup(), 0, 0, 1, 1)
+        layout.addWidget(create(CommonCard), 0, 0, 1, 1)
+        layout.addWidget(create(LoginCard), 0, 1, 1, 1)
+        layout.addWidget(create(AuthorizationCard), 0, 2, 1, 1)
+        layout.addWidget(create(AboutCard), 0, 3, 1, 1)
+        layout.addWidget(create(QQCard), 1, 0, 1, 1)
+        layout.addWidget(create(AddCard), 1, 1, 1, 1)
+
+        layout.setHorizontalSpacing(0)
+        layout.setVerticalSpacing(0)
 
         # 添加阴影
-        shadow_setup(self.soft_setting_widget, (2, 3), 25, QColor(29, 190, 245, 80))
+        shadow_setup(self.soft_setting_widget, (2, 2), 20, QColor(29, 190, 245, 60))
 
         return self.soft_setting_widget
-
-    def common_settings_card(self) -> QWidget:
-        """通用设置卡片"""
-        pass
 
 
 class SettingWidgetClassCreator(AbstractCreator, ABC):

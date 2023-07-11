@@ -18,7 +18,7 @@ from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Core.EventJudgment import userInfoSizeBtnTrough
-from Core.file_operation import FileOperation
+from Core.FileOperation import FileOperation
 from Core.NetworkThreads import SteamLoginThread
 from Ui.OtherWidget import FixLoginWidget
 

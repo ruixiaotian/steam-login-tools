@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QGridLayout, QLabel, QLineEdit, QPushButton, QWidget
 from creart import create
 
 from Ui.Share import shadow_setup
-from Core.file_operation import FileOperation
+from Core.FileOperation import FileOperation
 
 
 def path_page(font: str) -> QWidget:
@@ -72,7 +72,7 @@ def dw_info_widget_steam_path(font: str) -> QWidget:
     layout = QGridLayout(widget)
 
     # 设置控件属性
-    # widget.setFixedSize(260, 25)
+    # textWidget.setFixedSize(260, 25)
 
     # 创建子控件
     label = QLabel("新版Steam路径：")

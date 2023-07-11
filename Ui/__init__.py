@@ -24,6 +24,7 @@ from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 from loguru import logger
 
+from Core.FileOperation import FileOperation
 from Ui.Share import shadow_setup
 from Ui.LeftWidget import LeftWidget
 from Ui.LoginWidget import LoginWidget
@@ -36,6 +37,7 @@ class SteamLoginUI(QMainWindow):
     """程序UI的绘制"""
 
     close_state = True
+    _mouse_flag = False
 
     def __init__(self) -> None:
         """初始化程序设定"""
@@ -43,8 +45,8 @@ class SteamLoginUI(QMainWindow):
         self.setup_window()
         self.setup_font()
         self.setup_form()
+        self.setup_qss()
         self.setup_layout()
-        self.read_qss_file()
 
     def setup_window(self) -> None:
         """设定窗体各类参数"""
@@ -54,13 +56,9 @@ class SteamLoginUI(QMainWindow):
         self.setAttribute(Qt.WA_TranslucentBackground)  # 设置窗体属性为透明
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Window)  # 隐藏框架,并且设置为主窗体
 
-    def read_qss_file(self) -> None:
+    def setup_qss(self) -> None:
         """读取QSS文件"""
-        qss_path = Path("./QSS/UiQss")
-        self.qss_content = "".join(
-            [f.read_text(encoding="utf-8") for f in qss_path.rglob("*") if f.is_file()]
-        )
-        self.setStyleSheet(self.qss_content)
+        self.setStyleSheet(create(FileOperation).qss_content)
 
     def setup_font(self) -> None:
         """窗体字体获取"""

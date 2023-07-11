@@ -14,7 +14,7 @@ from creart import add_creator, exists_module, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 
 from Config import BaseConfig
-from Core.file_operation import FileOperation
+from Core.FileOperation import FileOperation
 from Ui.OtherWidget.BulkImportWidget import BulkImportWidget
 from Ui.Share import shadow_setup
 
