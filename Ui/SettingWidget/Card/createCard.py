@@ -13,10 +13,10 @@ from Ui.SettingWidget.Card.CardBase import CardBase
 
 
 class CommonCard(CardBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         self.font = font
         self.icon_path = Path("./img/SettingWidget/Card/common_settings.svg")
         self.text_content = "通用设置"
@@ -24,10 +24,10 @@ class CommonCard(CardBase):
 
 
 class LoginCard(CardBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         self.font = font
         self.icon_path = Path("./img/SettingWidget/Card/login_settings.svg")
         self.text_content = "登录设置"
@@ -35,10 +35,10 @@ class LoginCard(CardBase):
 
 
 class AuthorizationCard(CardBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         self.font = font
         self.icon_path = Path("./img/SettingWidget/Card/authorization_settings.svg")
         self.text_content = "授权设置"
@@ -46,10 +46,10 @@ class AuthorizationCard(CardBase):
 
 
 class AboutCard(CardBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         self.font = font
         self.icon_path = Path("./img/SettingWidget/Card/about.svg")
         self.text_content = "关于软件"
@@ -57,10 +57,10 @@ class AboutCard(CardBase):
 
 
 class QQCard(CardBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         self.font = font
         self.icon_path = Path("./img/SettingWidget/Card/qq.svg")
         self.text_content = "交流反馈"
@@ -68,10 +68,10 @@ class QQCard(CardBase):
 
 
 class AddCard(CardBase):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
-    def initialize(self, font: str):
+    def initialize(self, font: str) -> None:
         self.font = font
         self.icon_path = Path("./img/SettingWidget/Card/add.svg")
         self.text_content = "敬请期待"

@@ -3,11 +3,10 @@
 # @FileName :CardBase.py
 # @Time :2023-7-11 上午 11:29
 # @Author :Qiao
-from abc import ABC
 from pathlib import Path
 
 from PyQt5.QtCore import QEvent, Qt, QEasingCurve, QPoint, QTimer, pyqtSignal
-from PyQt5.QtGui import QPixmap, QMouseEvent, QFont, QColor
+from PyQt5.QtGui import QPixmap, QMouseEvent, QFont
 from PyQt5.QtWidgets import (
     QGraphicsOpacityEffect,
     QGridLayout,
@@ -19,7 +18,6 @@ from creart import create
 
 from Core.EventAnimation.AnimationObject import Animation
 from Core.FileOperation import FileOperation
-from Ui.Share import shadow_setup
 
 
 class CardBase(QMainWindow):
@@ -67,7 +65,6 @@ class CardBase(QMainWindow):
         self.base_layout.addWidget(self.main_widget)  # 添加到布局
 
         self.setCentralWidget(self.base_widget)  # 设置窗口主部件
-
 
     def setupLayout(self) -> None:
         """设定窗体内布局"""
@@ -156,7 +153,7 @@ class CardBase(QMainWindow):
         # 启动动画
         animation_group.start()
 
-    def __test_show(self):
+    def __test_show(self) -> None:
         """显示label"""
         self.__num = 1
 
@@ -175,7 +172,7 @@ class CardBase(QMainWindow):
         self.timer.timeout.connect(timeout)  # 超时槽函数，每到达间隔时间，调用该函数
         self.timer.start()  # 计时器开始
 
-    def __test_hide(self):
+    def __test_hide(self) -> None:
         """显示label"""
         self.__num = 100
 
@@ -194,7 +191,7 @@ class CardBase(QMainWindow):
         self.timer.timeout.connect(timeout)  # 超时槽函数，每到达间隔时间，调用该函数
         self.timer.start()  # 计时器开始
 
-    def __setupAnimationState(self, state: bool):
+    def __setupAnimationState(self, state: bool) -> None:
         if state:
             self.animation_status = True
         else:
