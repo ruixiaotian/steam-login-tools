@@ -37,7 +37,7 @@ def info_page(font: str) -> QWidget:
     fix_info_wgt.setFixedHeight(185)
 
     # 设置对象名称，用于QSS定位
-    fix_info_wgt.setObjectName("author_info_widget")
+    fix_info_wgt.setObjectName("card_widget")
 
     # 创建子控件
     info_edit = QTextEdit()

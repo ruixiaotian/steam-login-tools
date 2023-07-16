@@ -20,8 +20,9 @@ from PyQt5.QtWidgets import (
 from creart import add_creator, create, exists_module
 from creart.creator import AbstractCreator, CreateTargetInfo
 
-from Ui.Share import shadow_setup
+from Config import BaseConfig
 from Core.FileOperation import FileOperation
+from Ui.Share import shadow_setup
 
 
 class TextImportTabelCard:
@@ -80,7 +81,7 @@ class TextImportTabelCard:
         layout = QGridLayout(card_wgt)
         # 设置最大高度和对象名称
         card_wgt.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        card_wgt.setObjectName("author_info_widget")
+        card_wgt.setObjectName("card_widget")
 
         # 添加到控件
         layout.addLayout(self.table_show(), 0, 0, 1, 1, Qt.AlignTop)

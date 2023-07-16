@@ -39,7 +39,7 @@ def fix_page(font: str, ui: QMainWindow) -> QWidget:
     fix_wgt.setFixedHeight(65)
 
     # 设置对象名称，用于QSS定位
-    fix_wgt.setObjectName("author_info_widget")
+    fix_wgt.setObjectName("card_widget")
 
     # 子控件
     fix_63 = fix_63_layout(font, ui)

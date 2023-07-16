@@ -90,7 +90,7 @@ class FileOperation:
         if not self.cammy_data_path.exists():  # 如果卡密文件不存在就创建
             with open(self.cammy_data_path, "w", encoding="utf-8") as f:
                 json.dump(
-                    create(BaseConfig).AccountDataDictTemplate,
+                    create(BaseConfig).AccountDataListTemplate,
                     f,
                     ensure_ascii=False,
                     indent=4,

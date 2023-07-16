@@ -52,7 +52,6 @@ class SettingWidget:
         # 添加控件
         layout.addWidget(software_info_widget, 0, 0, 1, 1)
         layout.addWidget(software_setting_widget, 1, 0, 1, 1)
-        # layout.addItem(QSpacerItem(10, 100, QSizePolicy.Expanding, QSizePolicy.Expanding), 2, 0, 1, 1)
 
         return widget
 

@@ -71,7 +71,7 @@ class TextImportPageAnimation:
 
     def table_enter_move(self) -> None:
         """QTableWidget入场动画"""
-        if self.page_state:
+        if not self.page_state:
             self.table_wgt.setHidden(False)  # 显示表格
 
     def table_exit_move(self) -> None:

@@ -30,10 +30,7 @@ class TextImportPage:
         self.font = font
 
     def txt_page(self) -> QWidget:
-        """
-        从txt导入控件
-        :return:
-        """
+        """ 从txt导入控件 """
         # 创建大控件
         layout = QGridLayout(self.widget)
 
@@ -74,14 +71,11 @@ class TextImportPage:
         # 设置最大高度
         card_wgt.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         # 设置对象名称，用于QSS定位
-        card_wgt.setObjectName("author_info_widget")
+        card_wgt.setObjectName("card_widget")
 
         # 添加到控件
         txt_layout.addLayout(self.file_choose(), 0, 0, 1, 1, Qt.AlignTop)
         txt_layout.addLayout(self.data_func(), 1, 0, 1, 1, Qt.AlignTop)
-        # txt_layout.setContentsMargins(3, 0, 0, 0)
-
-        # txt_layout.setVerticalSpacing(2)
 
         # 添加阴影
         shadow_setup(card_wgt, (2, 2), 10, QColor(29, 190, 245, 60))
@@ -89,10 +83,7 @@ class TextImportPage:
         return card_wgt
 
     def file_choose(self) -> QGridLayout:
-        """
-        txt导入,文件选择项
-        :return: QGridLayout
-        """
+        """txt导入,文件选择项"""
         # 创建布局
         layout = QGridLayout()
 

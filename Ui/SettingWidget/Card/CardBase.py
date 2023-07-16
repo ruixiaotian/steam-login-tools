@@ -161,7 +161,7 @@ class CardBase(QMainWindow):
             """超时函数：改变透明度"""
             self.text_label_opacity.setOpacity(self.__num / 100)
             self.text_label.setGraphicsEffect(self.text_label_opacity)  # 改变标签透明度
-            self.__num += 10
+            self.__num += 20
             if self.__num >= 100:
                 self.text_label_opacity.setOpacity(1)
                 self.timer.stop()  # 计时器停止
@@ -180,7 +180,7 @@ class CardBase(QMainWindow):
             """超时函数：改变透明度"""
             self.text_label_opacity.setOpacity(self.__num / 100)
             self.text_label.setGraphicsEffect(self.text_label_opacity)  # 改变标签透明度
-            self.__num -= 10
+            self.__num -= 20
             if self.__num <= 0:
                 self.text_label_opacity.setOpacity(0)
                 self.timer.stop()  # 计时器停止

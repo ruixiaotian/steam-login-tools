@@ -30,10 +30,7 @@ class FixLoginWidget:
         self.page = page
 
     def fix_widget_setup(self) -> QWidget:
-        """
-        设置页面
-        :return:
-        """
+        """设置页面"""
         # 创建页面
         widget = QWidget()
         layout = QGridLayout(widget)
@@ -51,10 +48,7 @@ class FixLoginWidget:
         return widget
 
     def fix_title(self) -> QWidget:
-        """
-        标题控件
-        :return:
-        """
+        """标题控件"""
         # 创建控件
         widget = QWidget()
         layout = QGridLayout(widget)
@@ -85,10 +79,7 @@ class FixLoginWidget:
         return widget
 
     def loop_widget(self) -> QWidget:
-        """
-        滚动内容
-        :return:
-        """
+        """滚动内容"""
         # 创建滚动窗体
         widget = QScrollArea()
 

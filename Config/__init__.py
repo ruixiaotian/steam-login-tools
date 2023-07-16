@@ -12,7 +12,7 @@ from creart.creator import AbstractCreator, CreateTargetInfo
 
 class BaseConfig:
     def __init__(self) -> None:
-        pass
+        self.createTemplate()
 
     def createTemplate(self) -> None:
         self.AccountDataListTemplate = []

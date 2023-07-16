@@ -37,7 +37,7 @@ class FilePathFunc:
 
         """文本框设置"""
         # 设置编辑框内容
-        self.file_path_edit.__setText()
+        self.file_path_edit.setText(file_path)
         # 放大卡片
         create(TextImportPageAnimation).card_max_size()
         # 添加Action
@@ -86,7 +86,7 @@ class DataParsingFunc:
         # 解析数据
         data_list = [["无数据"]] if not self.data_parse() else self.data_parse()
         self.table_wgt.setRowCount(0)  # 清理
-        self.count_label.__setText()
+        self.count_label.setText("")
         for data in data_list:
             row = self.table_wgt.rowCount()  # 获取行
             self.table_wgt.insertRow(row)  # 插入行
