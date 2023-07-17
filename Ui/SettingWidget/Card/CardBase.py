@@ -192,10 +192,7 @@ class CardBase(QMainWindow):
         self.timer.start()  # 计时器开始
 
     def __setupAnimationState(self, state: bool) -> None:
-        if state:
-            self.animation_status = True
-        else:
-            self.animation_status = False
+        self.animation_status = True if state else False
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """重写鼠标按下事件进行监听"""
