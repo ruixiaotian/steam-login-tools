@@ -25,8 +25,6 @@ from PyQt5.QtGui import (
     QMouseEvent,
     QPixmap,
 )
-
-# 导入QT5
 from PyQt5.QtWidgets import (
     QApplication,
     QGraphicsDropShadowEffect,

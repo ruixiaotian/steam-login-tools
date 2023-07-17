@@ -32,8 +32,9 @@ class SettingWidget:
     def __init__(self) -> None:
         pass
 
-    def initialize(self, parent: QMainWindow, font: str) -> None:
+    def initialize(self, parent: QMainWindow, font: str, page) -> None:
         self.parent = parent
+        self.page = page
         self.font = font
 
     def setting_widget_setup(self) -> QWidget:
@@ -117,13 +118,17 @@ class SettingWidget:
         # 设置对象名称，用于QSS定位
         self.soft_setting_widget.setObjectName("software_setting_widget")
 
-        """创建子控件"""
+        """设置子控件"""
         create(CommonCard).initialize(self.font)
         create(LoginCard).initialize(self.font)
         create(AuthorizationCard).initialize(self.font)
         create(AboutCard).initialize(self.font)
         create(QQCard).initialize(self.font)
         create(AddCard).initialize(self.font)
+
+        create(CommonCard).clicked.connect(lambda: self.page.setCurrentIndex(5))
+        create(LoginCard).clicked.connect(lambda: self.page.setCurrentIndex(6))
+        create(AuthorizationCard).clicked.connect(lambda: self.page.setCurrentIndex(7))
 
         """添加到控件"""
         layout.addWidget(create(CommonCard), 0, 0, 1, 1)

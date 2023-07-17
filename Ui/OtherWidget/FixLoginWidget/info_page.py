@@ -5,10 +5,7 @@ from Ui.Share import shadow_setup
 
 
 def info_page(font: str) -> QWidget:
-    """
-    修复错误介绍控件
-    :return:
-    """
+    """修复错误介绍控件"""
     # 创建大控件
     widget = QWidget()
     layout = QGridLayout(widget)

@@ -6,13 +6,11 @@
 # @Software: PyCharm
 import sys
 from abc import ABC
-from pathlib import Path
 
 from PyQt5.QtCore import QPropertyAnimation, Qt
 from PyQt5.QtGui import QCloseEvent, QColor, QFontDatabase, QIcon, QMouseEvent
 from PyQt5.QtWidgets import (
     QApplication,
-    QGraphicsDropShadowEffect,
     QGridLayout,
     QMainWindow,
     QSizePolicy,
@@ -25,12 +23,17 @@ from creart.creator import AbstractCreator, CreateTargetInfo
 from loguru import logger
 
 from Core.FileOperation import FileOperation
-from Ui.Share import shadow_setup
 from Ui.LeftWidget import LeftWidget
 from Ui.LoginWidget import LoginWidget
 from Ui.NetWidget import NetWidget
 from Ui.OtherWidget import BulkImportWidget, FixLoginWidget, SteamSettingWidget
 from Ui.SettingWidget import SettingWidget
+from Ui.SettingWidget.Page import (
+    CommonSettingPage,
+    LoginSettingPage,
+    AuthorizationSettingPage,
+)
+from Ui.Share import shadow_setup
 
 
 class SteamLoginUI(QMainWindow):
@@ -130,7 +133,7 @@ class SteamLoginUI(QMainWindow):
         net_widget = create(NetWidget).net_widget_setup()
 
         # 设置页面
-        create(SettingWidget).initialize(self, self.font_name)
+        create(SettingWidget).initialize(self, self.font_name, self.page_widget)
         setting_widget = create(SettingWidget).setting_widget_setup()
 
         # 修复登录页面
@@ -141,12 +144,29 @@ class SteamLoginUI(QMainWindow):
         create(BulkImportWidget).initialize(self, self.font_name, self.page_widget)
         bulk_widget = create(BulkImportWidget).bulk_import_widget_setup()
 
+        # 通用设置界面
+        create(CommonSettingPage).initialize(self, self.font_name, self.page_widget)
+        common_setting_page = create(CommonSettingPage)
+
+        # 登录设置界面
+        create(LoginSettingPage).initialize(self, self.font_name, self.page_widget)
+        login_setting_page = create(LoginSettingPage)
+
+        # 授权设置页面
+        create(AuthorizationSettingPage).initialize(
+            self, self.font_name, self.page_widget
+        )
+        authorization_setting_page = create(AuthorizationSettingPage)
+
         widget_list = [
             login_widget,
             net_widget,
             setting_widget,
             fix_widget,
             bulk_widget,
+            common_setting_page,
+            login_setting_page,
+            authorization_setting_page
         ]
         _ = [self.page_widget.addWidget(widget) for widget in widget_list]
 

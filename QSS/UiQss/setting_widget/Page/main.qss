@@ -1,0 +1,31 @@
+QWidget#setting_page_widget {
+    /*设置背景颜色*/
+    background-color: transparent;
+}
+
+QWidget#setting_page_title_widget {
+    /*设置边框*/
+    border-bottom: 2px solid rgba(190, 190, 190, 0.3);
+}
+
+QLabel#setting_page_min_title_label {
+    /*设置字体颜色*/
+    color: #53658B;
+    font-weight: lighter;
+}
+
+QScrollArea#setting_page_loop_widget {
+    /*设置边框*/
+    border: none;
+    /*设置背景颜色*/
+    background-color: transparent;
+}
+
+QPushButton#setting_page_return_btn {
+    /*设置颜色*/
+    color: #596B8F;
+    /*设置背景透明*/
+    background-color: transparent;
+    /*设置边框*/
+    border: none;
+}
