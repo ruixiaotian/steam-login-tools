@@ -1,1 +1,0 @@
-from Core.EventAnimation.other_page.bulk_page.txt_widget import TextImportPageAnimation

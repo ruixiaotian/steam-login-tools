@@ -1,8 +1,0 @@
-QTextEdit#fix_info_edit {
-    /*设置背景透明*/
-    background-color: transparent;
-    /*设置边框*/
-    border: none;
-}
-
-

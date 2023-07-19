@@ -1,4 +1,0 @@
-QWidget#login_widget {
-    /*设置背景颜色*/
-    background-color: transparent;
-}
