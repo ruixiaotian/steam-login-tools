@@ -1,0 +1,5 @@
+QWidget#switch_indicator_widget {
+    /*主要显示窗体设置*/
+    border-radius: 11px;
+    background-color: #FFF;
+}

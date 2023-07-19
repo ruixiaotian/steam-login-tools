@@ -1,20 +1,20 @@
 QWidget#base_widget {
     /*透明窗体设置*/
-    border-radius: 7px;
+    border-radius: 12px;
     background-color: #FFF;
 }
 
 QWidget#main_widget {
     /*主要显示窗体设置*/
-    border-radius: 16px;
+    border-radius: 12px;
     border: 3px solid #FAF7FF;
     background-color: #E4EEF8;
 }
 
 QWidget#left_widget {
     /*左方窗体设置*/
-    border-top-left-radius: 16px;
-    border-bottom-left-radius: 16px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
     background-color: transparent;
     border-right: 2px solid #CACCD2;
 }
@@ -65,8 +65,8 @@ QStackedWidget#page_widget {
     /*设置背景颜色*/
     background-color: transparent;
     /*设置圆角*/
-    border-top-right-radius: 16px;
-    border-bottom-right-radius: 16px;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
 }
 
 QLabel#title_label {

@@ -1,6 +1,6 @@
 QWidget#SettingPageBaseCard {
     background-color: #F0F5F9;
-    border-radius: 24px;
+    border-radius: 8px;
 }
 
 QLabel#card_test_label {
