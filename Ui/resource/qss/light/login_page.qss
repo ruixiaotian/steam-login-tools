@@ -1,0 +1,4 @@
+#AddAccountCard-title,
+#AccountListCard-title {
+    color: #202020;
+}

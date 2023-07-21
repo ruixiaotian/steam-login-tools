@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="MainWindow">
+        <file>image/MainWindow/Logo_black.svg</file>
+        <file>image/MainWindow/Logo_white.svg</file>
+        <file>image/MainWindow/AVATAR.jpg</file>
+    </qresource>
+    <qresource prefix="LoginPage">
+        <file>qss/dark/login_page.qss</file>
+        <file>qss/light/login_page.qss</file>
+        <file>image/LoginPage/Steam_black.svg</file>
+        <file>image/LoginPage/Steam_white.svg</file>
+        <file>image/LoginPage/Face_black.svg</file>
+        <file>image/LoginPage/Face_white.svg</file>
+        <file>image/LoginPage/List_black.svg</file>
+        <file>image/LoginPage/List_white.svg</file>
+        <file>image/LoginPage/PassWord_black.svg</file>
+        <file>image/LoginPage/PassWord_white.svg</file>
+        <file>image/LoginPage/SSFN_black.svg</file>
+        <file>image/LoginPage/SSFN_white.svg</file>
+        <file>image/LoginPage/User_black.svg</file>
+        <file>image/LoginPage/User_white.svg</file>
+    </qresource>
+</RCC>
