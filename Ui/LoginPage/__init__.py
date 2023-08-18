@@ -31,7 +31,7 @@ class LoginPage(QWidget):
         layout = QGridLayout()
         layout.addWidget(create(AddAccountCard), 0, 0, 1, 1)
         layout.addWidget(create(AccountListCard), 0, 1, 1, 1)
-        layout.setContentsMargins(20, 50, 20, 20)
+        layout.setContentsMargins(20, 20, 20, 20)
 
         self.setLayout(layout)
 

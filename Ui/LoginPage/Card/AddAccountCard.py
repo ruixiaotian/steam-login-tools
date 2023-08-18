@@ -4,6 +4,7 @@
 # @Time :2023-7-20 上午 10:58
 # @Author :Qiao
 from abc import ABC
+from copy import deepcopy
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
@@ -12,7 +13,7 @@ from PyQt5.QtWidgets import (
     QSpacerItem,
     QSizePolicy,
 )
-from creart import add_creator, exists_module
+from creart import add_creator, exists_module, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 from qfluentwidgets.common import FluentIcon
 from qfluentwidgets.components import (
@@ -26,17 +27,17 @@ from qfluentwidgets.components import (
     ToolTipPosition,
     InfoBar,
     InfoBarPosition,
-    InfoBarManager
 )
 
+from Core.FileFunction import Template, JsonFunc
 from Ui.Icon import LoginPageIcon
-from Ui.StyleSheet import LoginPageStylSheet
+from Ui.StyleSheet import LoginPageStyleSheet
 
 
 class AddAccountCard(CardWidget):
     def __init__(self):
         super().__init__()
-        LoginPageStylSheet.LOGIN_PAGE.apply(self)
+        LoginPageStyleSheet.LOGIN_PAGE.apply(self)
 
     def initialize(self, parent):
         """初始化"""
@@ -97,7 +98,7 @@ class AddAccountCard(CardWidget):
         self.title.setText(self.tr("Add Account"))
         self.user_edit.setPlaceholderText(self.tr("USER-UserName"))
         self.password_edit.setPlaceholderText(self.tr("PWD-PassWord"))
-        self.ssfn_edit.setPlaceholderText(self.tr("SSFN"))
+        self.ssfn_edit.setPlaceholderText(self.tr("SSFN-SentryFile"))
         self.login_button.setText(self.tr("Login"))
         self.save_button.setText(self.tr("Save"))
 
@@ -127,29 +128,71 @@ class AddAccountCard(CardWidget):
         # 设置宽高
         self.title.setMaximumHeight(22)
         self.icon.setMaximumHeight(20)
+        self.setMaximumWidth(400)
 
     def connectSignal(self):
         """连接信号"""
         self.login_button.clicked.connect(self.loginButtonTrough)
+        self.save_button.clicked.connect(self.saveButtonTrough)
 
     def loginButtonTrough(self):
         """登录按钮的槽函数"""
         if not self.user_edit.text() or not self.password_edit.text():
             # 如果用户未输入账号或者密码就弹出提示框
-            InfoBar.warning(
-                title=self.tr("Incomplete parameters"),
-                content=self.tr(
-                    "The account and password must be entered,\nplease check if they are complete"
-                ),
-                orient=Qt.Vertical,
-                isClosable=False,
-                position=InfoBarPosition.BOTTOM_RIGHT,
-                duration=3000,
-                parent=self.parentClass,
-            )
+            self.editTips()
             return
         if self.ssfn_edit.text() and self.ssfn_edit.text().startswith("ssfn"):
             # 如果输入了ssfn 且 格式正确
+            self.ssfnTips(True)
+        else:
+            # 没有输入或者不正确
+            self.ssfnTips(False)
+
+    def saveButtonTrough(self):
+        """保存按钮槽函数"""
+        # 拷贝一个数据模板
+        cammy_item = deepcopy(Template.cammy_item_template)
+
+        if not self.user_edit.text() or not self.password_edit.text():
+            # 如果用户未输入账号或者密码就弹出提示框
+            self.editTips()
+            return
+        if self.ssfn_edit.text() and self.ssfn_edit.text().startswith("ssfn"):
+            # 如果输入了ssfn 且 格式正确
+            self.ssfnTips(True)
+            cammy_item["SSFN"] = self.user_edit.text()
+        else:
+            # 没有输入或者不正确
+            self.ssfnTips(False)
+
+        # 添加数据
+        cammy_item["User"] = self.user_edit.text()
+        cammy_item["PassWord"] = self.user_edit.text()
+
+        # 读取数据文件并添加
+        cammyData: list = create(JsonFunc).readJson(create(JsonFunc).cammy_path)
+        cammyData.append(cammy_item)
+
+        # 写入数据文件
+        create(JsonFunc).writeJson(create(JsonFunc).cammy_path, cammyData)
+
+    def editTips(self):
+        """用户名或密码未输入提示"""
+        InfoBar.warning(
+            title=self.tr("Incomplete parameters"),
+            content=self.tr(
+                "The account and password must be entered,\nplease check if they are complete"
+            ),
+            orient=Qt.Vertical,
+            isClosable=False,
+            position=InfoBarPosition.BOTTOM_RIGHT,
+            duration=3000,
+            parent=self.parentClass,
+        )
+
+    def ssfnTips(self, isItCorrect: bool):
+        """SSFN提示"""
+        if isItCorrect:
             InfoBar.info(
                 title=self.tr("Tip"),
                 content=self.tr(
@@ -162,7 +205,6 @@ class AddAccountCard(CardWidget):
                 parent=self.parentClass,
             )
         else:
-            # 没有输入或者不正确
             InfoBar.info(
                 title=self.tr("Tip"),
                 content=self.tr(

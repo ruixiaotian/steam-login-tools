@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QApplication
 from Ui import MainWindow
 
 if __name__ == "__main__":
+
     #  适配高DPI
     QApplication.setHighDpiScaleFactorRoundingPolicy(
         Qt.HighDpiScaleFactorRoundingPolicy.PassThrough

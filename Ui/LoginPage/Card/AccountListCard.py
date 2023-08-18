@@ -21,7 +21,7 @@ from qfluentwidgets.components import (
     BodyLabel,
 )
 
-from Ui.StyleSheet import LoginPageStylSheet
+from Ui.StyleSheet import LoginPageStyleSheet
 
 
 class AccountListCard(CardWidget):
@@ -30,7 +30,7 @@ class AccountListCard(CardWidget):
         self.createControl()
         self.setupControl()
         self.setupLayout()
-        LoginPageStylSheet.LOGIN_PAGE.apply(self)
+        LoginPageStyleSheet.LOGIN_PAGE.apply(self)
 
     def setupLayout(self):
         """设置布局"""
@@ -43,13 +43,6 @@ class AccountListCard(CardWidget):
         # 网格布局
         layout = QGridLayout()
         layout.addLayout(h_layout_1, 0, 0, 1, 2, Qt.AlignTop)
-        layout.addItem(
-            QSpacerItem(100, 100, QSizePolicy.Expanding, QSizePolicy.Expanding),
-            1,
-            0,
-            1,
-            2,
-        )
 
         # 设置布局
         h_layout_1.setSpacing(10)

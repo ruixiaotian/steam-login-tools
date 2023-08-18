@@ -2,7 +2,14 @@
     <qresource prefix="MainWindow">
         <file>image/MainWindow/Logo_black.svg</file>
         <file>image/MainWindow/Logo_white.svg</file>
-        <file>image/MainWindow/AVATAR.jpg</file>
+    </qresource>
+    <qresource prefix="HomePage">
+        <file>qss/dark/home_widget.qss</file>
+        <file>qss/light/home_widget.qss</file>
+        <file>qss/dark/link_card.qss</file>
+        <file>qss/light/link_card.qss</file>
+        <file>image/HomePage/header_black.png</file>
+        <file>image/HomePage/header_white.png</file>
     </qresource>
     <qresource prefix="LoginPage">
         <file>qss/dark/login_page.qss</file>
@@ -19,5 +26,9 @@
         <file>image/LoginPage/SSFN_white.svg</file>
         <file>image/LoginPage/User_black.svg</file>
         <file>image/LoginPage/User_white.svg</file>
+    </qresource>
+    <qresource prefix="SetupPage">
+        <file>qss/dark/setup_page.qss</file>
+        <file>qss/light/setup_page.qss</file>
     </qresource>
 </RCC>

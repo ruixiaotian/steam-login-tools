@@ -16,12 +16,7 @@ class MainWindowIcon(FluentIconBase, Enum):
 
 
 class LoginPageIcon(FluentIconBase, Enum):
-    FACE = "Face"
-    LIST = "List"
-    PASSWORD = "PassWord"
-    SSFN = "SSFN"
     STEAM = "Steam"
-    USER = "User"
 
     def path(self, theme=Theme.AUTO) -> str:
         return f":LoginPage/image/LoginPage/{self.value}_{getIconColor(theme)}.svg"

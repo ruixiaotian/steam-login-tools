@@ -17,19 +17,19 @@ from qfluentwidgets.common import (
     FluentIcon,
 )
 from qfluentwidgets.components import (
-    NavigationAvatarWidget,
-    NavigationPushButton,
     NavigationItemPosition,
     MessageBox,
 )
-from qfluentwidgets.window import SplitFluentWindow
+from qfluentwidgets.window import MSFluentWindow
 
 from Ui.Icon import MainWindowIcon
-from Ui.LoginPage import LoginPage, AddAccountCard
+from Ui.LoginPage import LoginPage
+from Ui.HomePage import HomeWidget
+from Ui.SetupPage import SetupWidget
 from Ui.resource import resource
 
 
-class MainWindow(SplitFluentWindow):
+class MainWindow(MSFluentWindow):
     def __init__(self):
         super().__init__()
         self.setupWindow()
@@ -40,48 +40,49 @@ class MainWindow(SplitFluentWindow):
         self.setWindowTitle("Steam Login Tools")
         self.setWindowIcon(QIcon(MainWindowIcon.LOGO.path()))
         # 设置大小
-        self.setMinimumSize(750, 550)
+        self.setMinimumSize(960, 780)
+        # 设置窗体打开时居中
+        desktop = QApplication.desktop().availableGeometry()
+        w, h = desktop.width(), desktop.height()
+        self.move(w // 2 - self.width() // 2, h // 2 - self.height() // 2)
 
     def setupItem(self):
         """设置侧边栏"""
 
         # 初始化子页面
+        create(HomeWidget).initialize(self)
         create(LoginPage).initialize(self)
+        create(SetupWidget).initialize(self)
 
         # 添加子页面
         self.addSubInterface(
+            interface=create(HomeWidget),
+            icon=FluentIcon.HOME,
+            text=self.tr("Home"),
+            position=NavigationItemPosition.TOP,
+        )
+        self.addSubInterface(
             interface=create(LoginPage),
             icon=FluentIcon.ADD,
-            text=self.tr("Add Account"),
+            text=self.tr("Add"),
             position=NavigationItemPosition.TOP,
         )
 
-        # 添加主题切换
-        self.navigationInterface.addWidget(
-            routeKey="switch_theme",
-            widget=NavigationPushButton(
-                FluentIcon.CONSTRACT,
-                self.tr("Switch Themes"),
-                isSelectable=False,
-            ),
-            onClick=self.switchThemes,
+        # 添加设置
+        self.addSubInterface(
+            interface=create(SetupWidget),
+            icon=FluentIcon.SETTING,
+            text=self.tr("Setup"),
             position=NavigationItemPosition.BOTTOM,
         )
 
-        # 添加头像
-        self.navigationInterface.addWidget(
-            routeKey="avatar",
-            widget=NavigationAvatarWidget(
-                self.tr("Sponsorship"), ":MainWindow/image/MainWindow/AVATAR.jpg"
-            ),
-            onClick=self.showSponsorship,
-            position=NavigationItemPosition.BOTTOM,
-        )
-        # 添加设置
+        # 添加赞助
         self.navigationInterface.addItem(
-            routeKey="settings",
-            icon=FluentIcon.SETTING,
-            text=self.tr("Setting"),
+            routeKey="sponsor",
+            icon=FluentIcon.EXPRESSIVE_INPUT_ENTRY,
+            text="Sponsor",
+            onClick=self.showSponsorship,
+            selectable=False,
             position=NavigationItemPosition.BOTTOM,
         )
 
