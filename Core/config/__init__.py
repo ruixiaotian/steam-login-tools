@@ -61,7 +61,6 @@ class Config(QConfig):
         default=Language.AUTO,
         validator=OptionsValidator(Language),
         serializer=LanguageSerializer(),
-        restart=True
     )
 
 

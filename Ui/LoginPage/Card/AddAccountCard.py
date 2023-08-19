@@ -5,6 +5,7 @@
 # @Author :Qiao
 from abc import ABC
 from copy import deepcopy
+from json.decoder import JSONDecodeError
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
@@ -30,6 +31,7 @@ from qfluentwidgets.components import (
 )
 
 from Core.FileFunction import Template, JsonFunc
+from Core.share.ErrorHandling import JsonDecodingErrorDispose
 from Ui.Icon import LoginPageIcon
 from Ui.StyleSheet import LoginPageStyleSheet
 
@@ -139,49 +141,53 @@ class AddAccountCard(CardWidget):
         """登录按钮的槽函数"""
         if not self.user_edit.text() or not self.password_edit.text():
             # 如果用户未输入账号或者密码就弹出提示框
-            self.editTips()
+            self.__editTips()
             return
         if self.ssfn_edit.text() and self.ssfn_edit.text().startswith("ssfn"):
             # 如果输入了ssfn 且 格式正确
-            self.ssfnTips(True)
+            self.__ssfnTips(True)
         else:
             # 没有输入或者不正确
-            self.ssfnTips(False)
+            self.__ssfnTips(False)
 
     def saveButtonTrough(self):
         """保存按钮槽函数"""
         # 拷贝一个数据模板
         cammy_item = deepcopy(Template.cammy_item_template)
-
         if not self.user_edit.text() or not self.password_edit.text():
             # 如果用户未输入账号或者密码就弹出提示框
-            self.editTips()
+            self.__editTips()
             return
-        if self.ssfn_edit.text() and self.ssfn_edit.text().startswith("ssfn"):
-            # 如果输入了ssfn 且 格式正确
-            self.ssfnTips(True)
-            cammy_item["SSFN"] = self.user_edit.text()
-        else:
-            # 没有输入或者不正确
-            self.ssfnTips(False)
-
         # 添加数据
         cammy_item["User"] = self.user_edit.text()
         cammy_item["PassWord"] = self.user_edit.text()
+        try:
+            # 读取数据文件并添加
+            cammyData: list = create(JsonFunc).readJson(create(JsonFunc).cammy_path)
+            cammyData.append(cammy_item)
+            # 写入数据文件
+            create(JsonFunc).writeJson(create(JsonFunc).cammy_path, cammyData)
+            # 提示框判断
+            if self.ssfn_edit.text() and self.ssfn_edit.text().startswith("ssfn"):
+                # 如果输入了ssfn 且 格式正确
+                self.__ssfnTips(True)
+                cammy_item["SSFN"] = self.user_edit.text()
+            else:
+                # 没有输入或者不正确
+                self.__ssfnTips(False)
+        except JSONDecodeError:
+            # 如果写入Json时发生错误
+            JsonDecodingErrorDispose(
+                create(JsonFunc).cammy_path, self, self.parentClass
+            )
 
-        # 读取数据文件并添加
-        cammyData: list = create(JsonFunc).readJson(create(JsonFunc).cammy_path)
-        cammyData.append(cammy_item)
-
-        # 写入数据文件
-        create(JsonFunc).writeJson(create(JsonFunc).cammy_path, cammyData)
-
-    def editTips(self):
+    def __editTips(self):
         """用户名或密码未输入提示"""
         InfoBar.warning(
             title=self.tr("Incomplete parameters"),
             content=self.tr(
-                "The account and password must be entered,\nplease check if they are complete"
+                "The account and password must be entered,\n"
+                "please check if they are complete"
             ),
             orient=Qt.Vertical,
             isClosable=False,
@@ -190,13 +196,14 @@ class AddAccountCard(CardWidget):
             parent=self.parentClass,
         )
 
-    def ssfnTips(self, isItCorrect: bool):
+    def __ssfnTips(self, isItCorrect: bool):
         """SSFN提示"""
         if isItCorrect:
             InfoBar.info(
                 title=self.tr("Tip"),
                 content=self.tr(
-                    "You have entered SSFN and the format is correct.\nSkip mailbox verification will be enabled by default"
+                    "You have entered SSFN and the format is correct.\n"
+                    "Skip mailbox verification will be enabled by default"
                 ),
                 orient=Qt.Vertical,
                 isClosable=False,
@@ -208,7 +215,8 @@ class AddAccountCard(CardWidget):
             InfoBar.info(
                 title=self.tr("Tip"),
                 content=self.tr(
-                    "You did not enter SSFN or the format is incorrect.\nSkipping mailbox verification will be disabled by default"
+                    "You did not enter SSFN or the format is incorrect.\n"
+                    "Skipping mailbox verification will be disabled by default"
                 ),
                 orient=Qt.Vertical,
                 isClosable=False,

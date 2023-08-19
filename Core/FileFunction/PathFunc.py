@@ -20,7 +20,11 @@ class PathFunc:
 
     def __init__(self):
         """初始化"""
-        self.base_path = self.getBasePath()
+        self.system_base_path = self.getSystemPath()
+        self.desktop_path = self.system_base_path[0]
+        self.docs_path = self.system_base_path[1]
+
+        self.base_path = self.docs_path / "Bridge Club"
         self.exe_path = self.base_path / "steam_login_tools"
         self.data_path = self.base_path / "steam_login_data"
 
@@ -29,21 +33,25 @@ class PathFunc:
         self.steam_exe_path = self.steam_base_path[1]
 
     @staticmethod
-    def getBasePath() -> Path:
-        """获取软件路径"""
-        key = winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER,
-            r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders",
-        )
-        return Path(winreg.QueryValueEx(key, "Personal")[0]) / "Bridge Club"
-
-    @staticmethod
     def getSteamPath() -> List[Path]:
         """获取Steam路径"""
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Valve\Steam")
         return [
             Path(winreg.QueryValueEx(key, "SteamPath")[0]),
             Path(winreg.QueryValueEx(key, "SteamExe")[0]),
+        ]
+
+    @staticmethod
+    def getSystemPath() -> List[Path]:
+        """获取系统的一些路径"""
+        # 文档和桌面
+        key = winreg.OpenKey(
+            key=winreg.HKEY_CURRENT_USER,
+            sub_key=r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders",
+        )
+        return [
+            Path(winreg.QueryValueEx(key, "Desktop")[0]),
+            Path(winreg.QueryValueEx(key, "Personal")[0])
         ]
 
 
