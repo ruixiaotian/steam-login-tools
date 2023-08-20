@@ -40,7 +40,7 @@ class MainWindow(MSFluentWindow):
         self.setWindowTitle("Steam Login Tools")
         self.setWindowIcon(QIcon(MainWindowIcon.LOGO.path()))
         # 设置大小
-        self.setMinimumSize(960, 780)
+        self.setMinimumSize(1080, 780)
         # 设置窗体打开时居中
         desktop = QApplication.desktop().availableGeometry()
         w, h = desktop.width(), desktop.height()

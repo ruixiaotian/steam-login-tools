@@ -22,6 +22,7 @@ class LoginPageStyleSheet(StyleSheetBase, Enum):
     """登录页面样式表"""
 
     LOGIN_PAGE = "login_page"
+    ACCOUNT_LIST_VIEW = "account_card"
 
     def path(self, theme=Theme.AUTO):
         theme = qconfig.theme if theme == Theme.AUTO else theme

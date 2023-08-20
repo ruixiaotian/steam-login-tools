@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
     QSpacerItem,
     QSizePolicy,
 )
-from creart import add_creator, exists_module
+from creart import add_creator, exists_module, create
 from creart.creator import AbstractCreator, CreateTargetInfo
 from qfluentwidgets.common import FluentIcon
 from qfluentwidgets.components import (
@@ -21,6 +21,8 @@ from qfluentwidgets.components import (
     BodyLabel,
 )
 
+from Core.FileFunction import JsonFunc
+from Ui.LoginPage.Card.AccountListItem import AccountListView
 from Ui.StyleSheet import LoginPageStyleSheet
 
 
@@ -29,32 +31,15 @@ class AccountListCard(CardWidget):
         super().__init__()
         self.createControl()
         self.setupControl()
+        self.addCard()
         self.setupLayout()
         LoginPageStyleSheet.LOGIN_PAGE.apply(self)
-
-    def setupLayout(self):
-        """设置布局"""
-        # 水平布局
-        h_layout_1 = QHBoxLayout()
-        h_layout_1.addWidget(self.icon)
-        h_layout_1.addWidget(self.title)
-        h_layout_1.addItem(QSpacerItem(30, 1, hPolicy=QSizePolicy.Maximum))
-
-        # 网格布局
-        layout = QGridLayout()
-        layout.addLayout(h_layout_1, 0, 0, 1, 2, Qt.AlignTop)
-
-        # 设置布局
-        h_layout_1.setSpacing(10)
-        layout.setContentsMargins(15, 10, 15, 15)
-        layout.setVerticalSpacing(15)
-
-        self.setLayout(layout)
 
     def createControl(self):
         """创建控件"""
         self.icon = IconWidget()
         self.title = BodyLabel()
+        self.accountCardView = AccountListView()
 
     def setupControl(self):
         """设置控件属性"""
@@ -72,6 +57,31 @@ class AccountListCard(CardWidget):
         # 设置宽高
         self.title.setMaximumHeight(22)
         self.icon.setMaximumHeight(20)
+
+    def addCard(self):
+        """添加卡片"""
+        for cammy in create(JsonFunc).readJson(create(JsonFunc).cammy_path):
+            self.accountCardView.addCard(cammy)
+
+    def setupLayout(self):
+        """设置布局"""
+        # 水平布局
+        hLayout1 = QHBoxLayout()
+        hLayout1.addWidget(self.icon)
+        hLayout1.addWidget(self.title)
+        hLayout1.addItem(QSpacerItem(30, 1, hPolicy=QSizePolicy.Maximum))
+
+        # 网格布局
+        layout = QGridLayout()
+        layout.addLayout(hLayout1, 0, 0, 1, 2, Qt.AlignTop)
+        layout.addWidget(self.accountCardView, 1, 0, 1, 2)
+
+        # 设置布局
+        hLayout1.setSpacing(10)
+        layout.setContentsMargins(15, 10, 15, 15)
+        layout.setVerticalSpacing(8)
+
+        self.setLayout(layout)
 
 
 class AccountListCardClassCreator(AbstractCreator, ABC):

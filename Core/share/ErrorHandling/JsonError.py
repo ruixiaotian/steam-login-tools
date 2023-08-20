@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @FileName :ErrorHandling.py
+# @FileName :JsonError.py
 # @Time :2023-8-18 下午 11:14
 # @Author :Qiao
 import itertools
@@ -19,13 +19,11 @@ from Core.FileFunction import PathFunc, JsonFunc
 class JsonDecodingErrorDispose:
     """json解码错误处理"""
 
-    def __init__(self, path: Path, parent, parentClass):
+    def __init__(self, path: Path, parent, parentClass) -> None:
         self.path = path
         self.parent = parent
         self.parentClass = parentClass
-
         self.__setupMsg()
-
         self.box.exec()
 
     def __setupMsg(self) -> None:
@@ -65,22 +63,22 @@ class JsonDecodingErrorDispose:
         # 弹出消息条
         self.__backUpDelMsg()
 
-    def __generateNewName(self):
+    def __generateNewName(self) -> Path:
         """用于生成新的文件名"""
         for count in itertools.islice(itertools.count(1), 1000):
             # 利用itertools来迭代计数
-            file_name = f"{self.path.stem}({count}){self.path.suffix}"
-            file_path = create(PathFunc).desktop_path / file_name
-            if not file_path.exists():
+            fileName = f"{self.path.stem}({count}){self.path.suffix}"
+            filePath = create(PathFunc).desktop_path / fileName
+            if not filePath.exists():
                 # 如果不存在了,则返回新名字
-                return file_path
+                return filePath
         else:
             # 如果上方方法不管用,则生成随机名字
-            file_name = "".join(random.sample(string.ascii_letters, 16))
-            file_name = f"{file_name}{self.path.suffix}"
-            file_path = create(PathFunc).desktop_path / file_name
-            if not file_path.exists():
-                return file_path
+            fileName = "".join(random.sample(string.ascii_letters, 16))
+            fileName = f"{fileName}{self.path.suffix}"
+            filePath = create(PathFunc).desktop_path / fileName
+            if not filePath.exists():
+                return filePath
 
     def __backUpDelMsg(self) -> None:
         """备份并删除成功的消息条"""

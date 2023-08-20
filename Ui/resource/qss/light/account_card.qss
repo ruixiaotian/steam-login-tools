@@ -1,35 +1,35 @@
 AccountCard {
-    border: 1px solid rgb(46, 46, 46);
+    border: 1px solid rgb(234, 234, 234);
     border-radius: 10px;
-    background-color: rgba(39, 39, 39, 0.95);
+    background-color: rgba(249, 249, 249, 0.95);
 }
 
 AccountCard:hover {
-    background-color: rgba(39, 39, 39, 0.93);
-    border: 1px solid rgb(66, 66, 66);
+    background-color: rgba(249, 249, 249, 0.93);
+    border: 1px solid rgb(220, 220, 220);
 }
 
 #iconLabel {
     font: normal bold 32px 'Segoe UI', 'Microsoft YaHei', 'PingFang SC';
-    background-color: rgb(32, 32, 32);
+    background-color: rgb(253, 253, 253);
     border-bottom-left-radius: 10px;
     border-top-left-radius: 10px;
-    color: white;
+    color: black;
 }
 
 #remarkLabel {
     font: normal bold 20px 'Segoe UI', 'Microsoft YaHei', 'PingFang SC';
-    color: white;
+    color: black;
 }
 
 #userLabel {
     font: 12px 'Segoe UI', 'Microsoft YaHei', 'PingFang SC';
-    color: rgb(208, 208, 208);
+    color: rgb(93, 93, 93);
 }
 
 #timeLabel {
     font: 12px 'Segoe UI', 'Microsoft YaHei', 'PingFang SC';
-    color: rgb(208, 208, 208);
+    color: rgb(93, 93, 93);
 }
 
 AccountListView {

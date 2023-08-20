@@ -45,12 +45,12 @@ class AddAccountCard(CardWidget):
         """初始化"""
         self.parentClass = parent
 
-        self.createControl()
-        self.setupControl()
-        self.connectSignal()
-        self.setupLayout()
+        self.__createControl()
+        self.__setupControl()
+        self.__connectSignal()
+        self.__setupLayout()
 
-    def setupLayout(self):
+    def __setupLayout(self):
         """设置布局"""
         # 水平布局
         h_layout_1 = QHBoxLayout()
@@ -82,7 +82,7 @@ class AddAccountCard(CardWidget):
 
         self.setLayout(layout)
 
-    def createControl(self):
+    def __createControl(self):
         """创建控件"""
         self.icon = IconWidget()
         self.title = BodyLabel()
@@ -93,7 +93,15 @@ class AddAccountCard(CardWidget):
         self.login_button = PushButton()
         self.save_button = PrimaryPushButton()
 
-    def setupControl(self):
+        self.tips_list = [
+            self.user_edit,
+            self.password_edit,
+            self.ssfn_edit,
+            self.login_button,
+            self.save_button,
+        ]
+
+    def __setupControl(self):
         """设置控件属性"""
 
         # 设置text
@@ -113,16 +121,15 @@ class AddAccountCard(CardWidget):
         self.steam_logo.setMaximumSize(512, 512)
 
         # 设置Tip
-        self.login_button.setToolTip(
-            self.tr("Import a large number of accounts from a specified file")
-        )
+        self.user_edit.setToolTip(self.tr("Enter your account number here"))
+        self.password_edit.setToolTip(self.tr("Enter your account password here"))
+        self.ssfn_edit.setToolTip(self.tr("Enter your account ssfn here"))
+        self.login_button.setToolTip(self.tr("Log in to your account"))
         self.save_button.setToolTip(self.tr("Save the data in the input box above"))
-        self.login_button.installEventFilter(
-            ToolTipFilter(self.login_button, 300, ToolTipPosition.TOP)
-        )
-        self.save_button.installEventFilter(
-            ToolTipFilter(self.save_button, 300, ToolTipPosition.TOP)
-        )
+
+        for tips in self.tips_list:
+            # 循环添加tips
+            tips.installEventFilter(ToolTipFilter(tips, 300, ToolTipPosition.TOP))
 
         # 设置对象名称
         self.title.setObjectName("AddAccountCard-title")
@@ -132,12 +139,12 @@ class AddAccountCard(CardWidget):
         self.icon.setMaximumHeight(20)
         self.setMaximumWidth(400)
 
-    def connectSignal(self):
+    def __connectSignal(self):
         """连接信号"""
-        self.login_button.clicked.connect(self.loginButtonTrough)
-        self.save_button.clicked.connect(self.saveButtonTrough)
+        self.login_button.clicked.connect(self.__loginButtonTrough)
+        self.save_button.clicked.connect(self.__saveButtonTrough)
 
-    def loginButtonTrough(self):
+    def __loginButtonTrough(self):
         """登录按钮的槽函数"""
         if not self.user_edit.text() or not self.password_edit.text():
             # 如果用户未输入账号或者密码就弹出提示框
@@ -150,7 +157,7 @@ class AddAccountCard(CardWidget):
             # 没有输入或者不正确
             self.__ssfnTips(False)
 
-    def saveButtonTrough(self):
+    def __saveButtonTrough(self):
         """保存按钮槽函数"""
         # 拷贝一个数据模板
         cammy_item = deepcopy(Template.cammy_item_template)

@@ -14,6 +14,8 @@
     <qresource prefix="LoginPage">
         <file>qss/dark/login_page.qss</file>
         <file>qss/light/login_page.qss</file>
+        <file>qss/dark/account_card.qss</file>
+        <file>qss/light/account_card.qss</file>
         <file>image/LoginPage/Steam_black.svg</file>
         <file>image/LoginPage/Steam_white.svg</file>
         <file>image/LoginPage/Face_black.svg</file>

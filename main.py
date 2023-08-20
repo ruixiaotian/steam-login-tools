@@ -7,8 +7,10 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
+from creart import create
 
 from Ui import MainWindow
+from Core.FileFunction import JsonFunc
 
 if __name__ == "__main__":
 
@@ -18,6 +20,9 @@ if __name__ == "__main__":
     )
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+
+    # 检查文件
+    create(JsonFunc).checkDataFile()
 
     app = QApplication(sys.argv)
     window = MainWindow()

@@ -17,6 +17,7 @@ class MainWindowIcon(FluentIconBase, Enum):
 
 class LoginPageIcon(FluentIconBase, Enum):
     STEAM = "Steam"
+    NONE_AVATAR = "NoneAvatar"
 
     def path(self, theme=Theme.AUTO) -> str:
         return f":LoginPage/image/LoginPage/{self.value}_{getIconColor(theme)}.svg"
